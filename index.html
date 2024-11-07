@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me</title>
+    <style>
+        /* Make the background image cover the entire page */
+        body {
+            font-family: Comic Sans MS, cursive;
+            margin: 0;
+            padding: 0;
+            background-image: url('000052090024.jpg'); /* Background photo */
+            background-size: cover; /* Ensures the image covers the whole page */
+            background-attachment: fixed; /* Keeps background fixed on scroll */
+            background-position: center;
+            color: #fff;
+        }
+        
+        /* Add a transparent overlay over the background */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            z-index: -1; /* Places it behind content */
+        }
+
+        /* Page content styling */
+        .content {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(38, 102, 28, 0.8); /* Slightly transparent background */
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: auto; /* Ensure content width is flexible */
+            min-height: 100px; /* Minimum height in case content is very small */
+        }
+        
+        .flex-container {
+            display: flex;                /* Enables Flexbox */
+            justify-content: space-between; /* Spaces out items to the ends */
+            width: auto;                   /* Makes the container width adjust based on content */
+        }
+        
+        h1, h2 {
+            color: #E2FFDE;
+        }
+        a {
+            color: #E2FFDE;
+            text-decoration: underline;
+        }
+        a:hover {
+            color: #38732F;
+            text-decoration: underline;
+        }
+        .profile-picture {
+            width: 150px;              /* Set width */
+            height: 150px;             /* Set height */
+            border-radius: 50%;        /* Makes the image circular */
+            object-fit: cover;         /* Ensures the image scales to fit */
+            margin-top: 20px;
+        }
+    </style>
+    
+</head>
+<body>
+
+    <!-- Overlay for semi-transparent background effect -->
+    <div class="overlay"></div>
+
+    <div class="content">
+        <header>
+            <h1>Welcome to My Website!</h1>
+        </header>
+
+        <section>
+            <h2>About Me</h2>
+            <img src="Anh Phan - Headshot 5.jpg" alt="Profile Picture" class="profile-picture">
+            <p>Hello! My name is <b>Anh (May)</b>. I’m a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
+        </section>
+
+        <section>
+            <h2>Profile</h2>
+            <p>Aspiring Data Analyst/Scientist with a strong foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
+        </section>
+
+        <section>
+            <h2>Technical Skills</h2>
+            <div><b>Programming Languages:</b> Java, Python, SQL, R, C#, Haskell, Mathematica</div>
+            <div><b>Data Analysis Tools:</b> Excel (advanced formulas, pivot tables), Google Sheets</div>
+            <div><b>Software:</b> Microsoft Office (Excel, Word, PowerPoint, Outlook), Google Workspace</div>
+            <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
+        </section>
+        
+        <section>
+            <h2>Education</h2>
+            <p>
+                <div class="flex-container">
+                    <span><b>Knox College</b>, Galesburg, IL 61401</span>
+                    <span>Expected Graduation June 2027</span>
+                </div>
+                <div>Bachelor of Arts in Data Science | GPA: 3.93</div>
+                <div>Relevant coursework: Mathematical Statistics, Programming Languages</div>
+            </p>
+            <p>
+              <div class="flex-container">
+                <span><b>Nguyen Hue High School for the Gifted</b>, Hanoi, Vietnam</span>
+                <span>May 2023</span>
+              </div>
+              <div>High School Diploma | SAT: M: 800 R&W: 730</div>
+              <div>Majored in Russian language</div>
+            </p>
+        </section>
+
+        <section>
+            <h2>Work Experience</h2>
+            <p>
+                <div class="flex-container">
+                    <span><b>Dining Services Office Worker</b></span>
+                    <span>September 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
+                <div>● Manage meal plans and ID cards for students as necessary</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Lab Assistant</b></span>
+                    <span>January 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Answer and assist lab users with any questions about the lab facilities</div>
+                <div>● Provide technical assistance to lab users on various software, helping to troubleshoot issues and ensure smooth operation</div>
+                <div>● Check that lab devices are running as intended (printer toner replaced, PCs connected, etc.)</div>
+                <div>● Ensure all equipment is returned (headphones, staplers, pens, etc.)</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Writing Tutor</b></span>
+                    <span>September 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Helped students with any stage of their papers</div>
+                <div>● Assisted with teaching an Intensive English class for 6 ESL students</div>
+            </p>
+        </section>
+
+        <section>
+            <h2>Campus Involvement</h2>
+            <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board, Knox Ultimate Frisbee, Badminton Club</p>
+        </section>
+        
+        <section>
+            <h2>Connect with Me</h2>
+            <p>Feel free to reach out or follow me on social media:</p>
+            <ul>
+                <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
+                <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
+                <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
+            </ul>
+        </section>
+    </div>
+
+</body>
+</html>
+
