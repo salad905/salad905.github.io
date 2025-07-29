@@ -3,98 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me</title>
+    <title>My Personal Website</title>
     <style>
-        /* Make the background image cover the entire page */
         body {
-            font-family: Comic Sans MS;
+            font-family: "Comic Sans MS";
             margin: 0;
             padding: 0;
-            background-image: url('000052090024.jpg'); /* Background photo */
-            background-size: cover; /* Ensures the image covers the whole page */
-            background-attachment: fixed; /* Keeps background fixed on scroll */
+            background-image: url('000052090024.jpg');
+            background-size: cover;
+            background-attachment: fixed;
             background-position: center;
             color: #fff;
         }
-        
-        /* Add a transparent overlay over the background */
+
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
-            z-index: -1; /* Places it behind content */
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
-        /* Page content styling */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+
+        .navbar ul li a {
+            color: #E2FFDE;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .navbar ul li a:hover {
+            color: #38732F;
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #E2FFDE;
+            color: #E2FFDE !important;
+        }
+
         .content {
             max-width: 850px;
             margin: 20px auto;
             padding: 20px;
-            background-color: rgba(38, 102, 28, 0.8); /* Slightly transparent background */
+            background-color: rgba(38, 102, 28, 0.8);
             border-radius: 8px;
-            color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: auto; /* Ensure content width is flexible */
-            min-height: 100px; /* Minimum height in case content is very small */
         }
-        
+
         .flex-container {
-            display: flex;                /* Enables Flexbox */
-            justify-content: space-between; /* Spaces out items to the ends */
-            width: auto;                   /* Makes the container width adjust based on content */
+            display: flex;
+            justify-content: space-between;
+            width: auto;
         }
-        
-        h1, h2 {
+
+        h1, h2, h3 {
             color: #E2FFDE;
         }
+
         a {
             color: #E2FFDE;
             text-decoration: underline;
         }
+
         a:hover {
             color: #38732F;
-            text-decoration: underline;
         }
+
         .profile-picture {
-            width: 150px;              /* Set width */
-            height: 150px;             /* Set height */
-            border-radius: 50%;        /* Makes the image circular */
-            object-fit: cover;         /* Ensures the image scales to fit */
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
             margin-top: 20px;
         }
+
+        .sub-navbar {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .sub-navbar button {
+            background-color: #1E5E16;
+            color: #E2FFDE;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .sub-navbar button:hover {
+            background-color: #38732F;
+        }
+
+        .active-sub-tab {
+            border-bottom: 2px solid #E2FFDE;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .gallery-item {
+          display: flex;
+          background-color: rgba(0,0,0,0.3);
+          border-radius: 10px;
+          overflow: hidden;
+          cursor: pointer;
+        }
+
+        .gallery-item img {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+        }
+        
+        .gallery-description {
+          padding: 10px;
+          display: flex;
+          align-items: center;
+        }
+
+        /* Lightbox Styles */
+        .lightbox {
+          display: none;
+          position: fixed;
+          z-index: 999;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.8);
+          justify-content: center;
+          align-items: center;
+        }
+
+        .lightbox img {
+          max-width: 90%;
+          max-height: 90%;
+          border-radius: 10px;
+        }
+
+        .lightbox:target {
+          display: flex;
+        }
+
+        .lightbox-close {
+          position: absolute;
+          top: 20px;
+          right: 30px;
+          font-size: 30px;
+          color: #fff;
+          text-decoration: none;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
     </style>
-    
 </head>
 <body>
 
-    <!-- Overlay for semi-transparent background effect -->
     <div class="overlay"></div>
 
+    <nav class="navbar">
+        <ul>
+            <li><a onclick="showSection('about')">About Me</a></li>
+            <li><a onclick="showSection('resume')">My Resume</a></li>
+            <li><a onclick="showSection('projects')">My Projects</a></li>
+            <li><a onclick="showSection('gallery')">Gallery</a></li>
+        </ul>
+    </nav>
+
     <div class="content">
-        <header>
-            <h1>Welcome to My Website!</h1>
-        </header>
 
-        <section>
-            <h2>About Me</h2>
-            <img src="389046_499370383412054_602369392_n.jpg" alt="Profile Picture" class="profile-picture">
-            <p>Hello! My name is <b>Anh (May)</b>. I’m a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
-        </section>
-
-        <section>
+        <!-- About Me Section -->
+        <div id="about" class="tab-section">
+            <header>
+                <h1>Welcome to My Website!</h1>
+            </header>
+            <section>
+                <h2>About Me</h2>
+                <img src="389046_499370383412054_602369392_n.jpg" alt="Profile Picture" class="profile-picture">
+                <p>Hello! My name is <b>Anh (May)</b>. I’m a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
+            </section>
+            <section>
+                <h2>Connect with Me</h2>
+                <ul>
+                    <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
+                    <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
+                    <li><a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a></li>
+                </ul>
+            </section>
+        </div>
+        
+        <div id="resume" class="tab-section">
+          <header>
+            <h1>Anh Phan</h1>
+          </header>
+          <section>
             <h2>Profile</h2>
             <p>Aspiring Data Analyst/Scientist with a strong foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
-        </section>
-
-        <section>
-            <h2>Technical Skills</h2>
-            <div><b>Programming Languages:</b> Java, Python, SQL, R, html, C#, Haskell, Mathematica</div>
-            <div><b>Data Analysis Tools:</b> Excel (advanced formulas, pivot tables), Google Sheets</div>
-            <div><b>Software:</b> Microsoft Office (Excel, Word, PowerPoint, Outlook), Google Workspace</div>
-            <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
         </section>
         
         <section>
@@ -102,7 +239,7 @@
             <p>
                 <div class="flex-container">
                     <span><b>Knox College</b>, Galesburg, IL 61401</span>
-                    <span>Expected Graduation June 2027</span>
+                    <span>June 2027</span>
                 </div>
                 <div>Bachelor of Arts in Data Science | GPA: 3.93</div>
                 <div>Relevant coursework: Mathematical Statistics, Data Mining</div>
@@ -120,37 +257,46 @@
         <section>
             <h2>Technical Projects</h2>
             <p>
-                <div class="flex-container">
-                    <span><b>Fake News Detector (ongoing)</b></span>
-                </div>
-                <div>● Developed a machine learning model in Python to detect fake news using a Kaggle dataset</div>
-                <div>● Preprocessed data with TF-IDF, Bag of Words , word tokenization, and lemmatization</div>
-                <div>● Trained Support Vector Machine, Naive Bayes, and deep learning models, achieving ~99% accuracy</div>
-                <div>● Integrated the model into a Google Chrome extension for real-time article analysis</div>
+              <div class="flex-container">
+                <span><b>Deepfake Generation & Detection</b> | Python, PyTorch, FaceNet, OpenCV, Gradio </span>
+                <span>June 2025 - Present </span>
+              </div>
+              <div>● Built a binary image classifier using FaceNet embeddings and a custom neural network to detect real vs. StyleGAN3-generated deepfake faces with 92% accuracy on a test set of 20k samples.</div>
+                <div>● Achieved 0.92 precision, recall, and F1-score for both classes (real and fake), and a high ROC-AUC score of 0.98, indicating strong separability and generalization.</div>
+                <div>● Generated synthetic face images using StyleGAN3 pretrained on FFHQ, and interpolated latent vectors to simulate ambiguous or hybrid identities for robust model training.</div>
+                <div>●Integrated the detection model into a Google Chrome extension that extracts images from the active tab and displays real-time detection results on hover.</div>
             </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Fake News Detector</b> | Python, Keras, Scikit-learn, NLTK, BeautifulSoup, Gradio</span>
+                    <span>March 2025 - May 2025</span>
+                </div>
+                <div>● Conducted exploratory data analysis (EDA) on 50,000+ news articles to uncover linguistic and structural features associated with misinformation.</div>
+                <div>● Preprocessed data with TF-IDF, Bag of Words, word tokenization, and lemmatization.</div>
+                <div>● Built a fake news classifier using an ensemble of five models (Logistic Regression, SVM, Neural Network, Bagging, and Decision Tree) combined via majority voting, achieving 98% accuracy.</div>
+                <div>● Assessed model robustness and generalization using the ROC-AUC metric, improving interpretability and reliability of fake news detection.</div>
+                <div>● Built a Gradio web interface supporting both text and URL inputs for real-time fake news classification using NLP and ensemble models. </div>
+            </p>
+            <p>
+              <div class="flex-container">
+                <span><b>Hospital Chairs</b> | Java, Topologies</span>
+                <span>September 2024 - December 2024</span>
+              </div>
+              <div>● Collaborated with a professor and 7 teammates on a supercomputer network topology research project, developing and testing custom designs in Java.</div>
+              <div>● Identified and implemented a topology named “Hospital Chairs”, which improved average inter-node distance by 3.6% compared to previous designs, enhancing overall communication efficiency.</div>
+            </p>
+        </section>
+        
+        <section>
+            <h2>Technical Skills</h2>
+            <div><b>Programming Languages:</b> Java, Python, SQL, R, html, C#, Haskell, Mathematica, LaTeX</div>
+            <div><b>Machine Learning Frameworks:</b> TensorFlow, Keras, PyTorch, scikit-learn, facenet-pytorch</div>
+            <div><b>Software & Tools:</b> Microsoft Office, Google Workspace, Jupyter, Google Colab, Gradio, Git</div>
+            <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
         </section>
 
         <section>
             <h2>Work Experience</h2>
-            <p>
-                <div class="flex-container">
-                    <span><b>Dining Services Office Worker</b></span>
-                    <span>September 2024 - Present</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
-                <div>● Manage meal plans and ID cards for students as necessary</div>
-            </p>
-            <p>
-                <div class="flex-container">
-                    <span><b>Computer Science Teaching Assistant</b></span>
-                    <span>January 2024 - Present</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Assist professor and students in CS 142: Program Design and Methodology</div>
-                <div>● Help students navigate through assignments in lab sessions and office hours</div>
-                <div>● Grade assignments and leave feedback on homeworks for students</div>
-            </p>
             <p>
                 <div class="flex-container">
                     <span><b>Lab Assistant</b></span>
@@ -171,34 +317,151 @@
                 <div>● Helped students with any stage of their papers</div>
                 <div>● Assisted with teaching an Intensive English class for 6 ESL students</div>
             </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Dining Services Office Worker</b></span>
+                    <span>September 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
+                <div>● Manage meal plans and ID cards for students as necessary</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Computer Science Teaching Assistant</b></span>
+                    <span>January 2025 - March 2025</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Assist professor and students in CS 142: Program Design and Methodology</div>
+                <div>● Help students navigate through assignments in lab sessions and office hours</div>
+                <div>● Grade assignments and leave feedback on homeworks for students</div>
+            </p>
+            
         </section>
 
         <section>
             <h2>Campus Involvement</h2>
-            <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board, Knox Ultimate Frisbee, Badminton Club</p>
+            <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board Co-Chair, Knox Ultimate Frisbee, Badminton Club</p>
         </section>
 
-        <section>
-            <h2>2 truths and 1 lie about me</h2>
-            <ul>
-                <li>I have a 600+ day Duolingo streak for Russian</li>
-                <li>I have a skin tag on my left ear that most of my friends don't know about</li>
-                <li>I have a 100+ day streak for 2 games on LinkedIn</li>
-            </ul>
-        </section>
-        
-        <section>
-            <h2>Connect with Me</h2>
-            <p>Feel free to reach out or follow me on social media:</p>
-            <ul>
-                <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
-                <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
-                <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
-                <li><a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a></li>
-            </ul>
-        </section>
+          
+        </div>
+
+        <!-- Projects Section -->
+        <div id="projects" class="tab-section" style="display: none;">
+            <section>
+                <h2>My Projects</h2>
+                <div class="sub-navbar">
+                    <button onclick="showProject('fake-news')">Fake News Detector</button>
+                    <button onclick="showProject('deepfake')">Deepfake Generation & Detection (StyleGAN3)</button>
+                    <button onclick="showProject('hospital')">Hospital Chairs</button>
+                </div>
+
+                <div id="fake-news" class="project-section">
+                    <h3>Fake News Detector</h3>
+                    <ul>
+                        <li>To be updated
+                    </ul>
+                </div>
+
+                <div id="deepfake" class="project-section" style="display: none;">
+                    <h3>Deepfake Generation & Detection (StyleGAN3)</h3>
+                    <ul>
+                        <li>To be updated</li>
+                    </ul>
+                </div>
+
+                <div id="hospital" class="project-section" style="display: none;">
+                    <h3>Hospital Chairs</h3>
+                    <ul>
+                        <li>To be updated</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <!-- Gallery Section -->
+        <div id="gallery" class="tab-section" style="display: none;">
+          <section>
+            <h2>Gallery</h2>
+            <p>Here are some of my favorite photos. Click to enlarge!</p>
+            <div class="gallery-grid">
+              <div class="gallery-item" onclick="openLightbox('lightbox1')">
+                <img src="photo1.jpg" alt="Photo 1">
+                <div class="gallery-description">Description of photo 1.</div>
+              </div>
+              <div class="gallery-item" onclick="openLightbox('lightbox2')">
+                <img src="photo2.jpg" alt="Photo 2">
+                <div class="gallery-description">Description of photo 2.</div>
+              </div>
+              <div class="gallery-item" onclick="openLightbox('lightbox3')">
+                <img src="photo3.jpg" alt="Photo 3">
+                <div class="gallery-description">Description of photo 3.</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
     </div>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.getElementsByClassName('tab-section');
+            for (let i = 0; i < sections.length; i++) {
+                sections[i].style.display = 'none';
+            }
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Highlight active nav link
+            const navLinks = document.querySelectorAll('.navbar a');
+            navLinks.forEach(link => link.classList.remove('active-tab'));
+
+            const activeLink = document.querySelector(`.navbar a[onclick*="${sectionId}"]`);
+            if (activeLink) activeLink.classList.add('active-tab');
+
+            // Reset project sub-tab if navigating to Projects
+            if (sectionId === 'projects') {
+                showProject('fake-news');
+            }
+        }
+
+        function showProject(projectId) {
+            const projectSections = document.getElementsByClassName('project-section');
+            for (let i = 0; i < projectSections.length; i++) {
+                projectSections[i].style.display = 'none';
+            }
+            document.getElementById(projectId).style.display = 'block';
+
+            const subButtons = document.querySelectorAll('.sub-navbar button');
+            subButtons.forEach(btn => btn.classList.remove('active-sub-tab'));
+
+            const activeBtn = document.querySelector(`.sub-navbar button[onclick*="${projectId}"]`);
+            if (activeBtn) activeBtn.classList.add('active-sub-tab');
+        }
+        
+        function openLightbox(id) {
+            location.hash = id;
+        }
+
+        // Initialize default tab on load
+        window.onload = function() {
+            showSection('about');
+        };
+    </script>
+    <!-- Lightbox Overlays -->
+    <div id="lightbox1" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="photo1.jpg" alt="Photo 1 Enlarged">
+    </div>
+    <div id="lightbox2" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="photo2.jpg" alt="Photo 2 Enlarged">
+    </div>
+    <div id="lightbox3" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="photo3.jpg" alt="Photo 3 Enlarged">
+    </div>
+
 
 </body>
 </html>
-
