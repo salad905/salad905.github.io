@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>May’s Website</title>
+  <title>may's website</title>
   <style>
     /* Base */
     body {
@@ -18,6 +18,17 @@
       background: rgba(0,0,0,0.5);
       z-index: -1;
     }
+    a:link,
+a:visited {
+  color: #E2FFDE;
+  text-decoration: underline;
+}
+
+a:hover,
+a:active {
+  color: #38732F;
+  text-decoration: underline;
+}
 
     /* Navbar */
     .navbar {
@@ -79,23 +90,30 @@
       .gallery-grid { grid-template-columns:1fr 1fr; }
     }
     .gallery-item {
-      display:flex; align-items:center;
-      background:rgba(0,0,0,0.3);
-      border-radius:10px; overflow:hidden;
-      cursor:pointer; border:none;
-      font-family:inherit; padding:0;
+  display: block;                      
+  background-color: rgba(38,102,28,0.8); 
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  margin: 0;                           
+  text-align: left;
     }
-    .gallery-item img {
-      width:200px; height:200px;
-      object-fit:cover; flex-shrink:0;
-      margin-right:20px;
-    }
-    .gallery-description {
-      padding:10px; flex:1;
-      color:#ccc; line-height:1.4;
-      overflow-wrap:break-word; word-break:break-word;
-      white-space:normal;
-    }
+
+.gallery-item img {
+  width: 100%;                     
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-description {
+  padding: 15px;
+  color: #fff;
+  line-height: 1.5;
+  white-space: normal;
+  font-family: "Comic Sans MS";
+}
 
     /* Slideshow modal */
     #slideshow {
@@ -124,11 +142,21 @@
       border:none; color:#fff;
       margin:0 20px; cursor:pointer;
     }
-    #slideshow .close-btn {
-      position:absolute; top:20px; right:30px;
-      font-size:30px; background:none;
-      border:none; color:#fff; cursor:pointer;
-    }
+    .lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lightbox-close:hover {
+  color: #ccc;
+}
+
 
   </style>
 </head>
@@ -149,13 +177,14 @@
     <div id="about" class="tab-section">
       <h1>Welcome to My Website!</h1>
       <img src="389046_499370383412054_602369392_n.jpg" alt="Profile Picture" class="profile-picture">
-      <p>Hello! My name is <b>Anh (May)</b>. I’m a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
+      <p>Hello! My name is <b>Anh (May)</b>. I'm a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
       <h2>Connect with Me</h2>
       <ul>
         <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
         <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
         <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
         <li><a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a></li>
+        <li><a href="https://www.huggingface.co/salad905" target="_blank">HuggingFace</a></li>
       </ul>
     </div>
 
@@ -199,7 +228,13 @@
         <button onclick="showProject('hospital')">Hospital Chairs</button>
       </div>
       <div id="fake-news" class="project-section">
-        <h3>Fake News Detector</h3><ul><li>To be updated</li></ul>
+        <h3>Fake News Detector</h3>
+        <ul>
+            This was a project I worked on for my Data Mining class. All details can be found in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view?usp=sharing" target="_blank">paper</a>.<br>
+            Summary:
+            <h4>1. Abstract</h4>
+            Misinformation is an ever-lasting relevant issue. To combat this, we wanted to 
+        </ul>
       </div>
       <div id="deepfake" class="project-section" style="display:none;">
         <h3>Deepfake Generation & Detection</h3><ul><li>To be updated</li></ul>
@@ -239,7 +274,7 @@
           </div>
         </button>
         <button class="gallery-item" onclick="openSlideshow(3)">
-          <img src="DSCF2067.JPG" alt="Photo 4">
+          <img src="DSCF3982.JPG" alt="Photo 4">
           <div class="gallery-description">
             Date taken: January 26th, 2022<br>
             Camera: Fujifilm X‑A5<br>
@@ -364,7 +399,7 @@
 
   <!-- Slideshow Modal -->
   <div id="slideshow">
-    <button class="close-btn" onclick="closeSlideshow()">&times;</button>
+    <button class="lightbox-close" onclick="closeSlideshow()">&times;</button>
     <img id="slide-img" src="" alt="">
     <div id="slide-caption" class="caption"></div>
     <div class="controls">
