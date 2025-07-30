@@ -189,34 +189,124 @@ a:active {
     </div>
 
     <!-- My Resume -->
-    <div id="resume" class="tab-section" style="display:none;">
-      <h1>Anh Phan</h1>
-      <h2>Profile</h2>
-      <p>Aspiring Data Analyst/Scientist with a strong foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
-      <h2>Education</h2>
-      <div class="flex-container">
-        <span><b>Knox College</b>, Galesburg, IL</span><span>June 2027</span>
-      </div>
-      <p>B.A. Data Science | GPA 3.93 – Relevant coursework: Mathematical Statistics, Data Mining</p>
-      <div class="flex-container">
-        <span><b>Nguyen Hue High School for the Gifted</b>, Hanoi, Vietnam</span><span>May 2023</span>
-      </div>
-      <p>High School Diploma | SAT: M 800/R&W 730 – Majored in Russian language</p>
-      <h2>Technical Projects</h2>
-      <p>
-        <b>Deepfake Generation & Detection</b> | Python, PyTorch, StyleGAN3, FaceNet, Gradio (June 2025–Present)<br>
-        <b>Fake News Detector</b> | Python, scikit‑learn, Keras, NLTK, Gradio (Mar 2025–May 2025)<br>
-        <b>Hospital Chairs Topology</b> | Java, Custom Network Topologies (Sep 2024–Dec 2024)
-      </p>
-      <h2>Technical Skills</h2>
-      <p>Java, Python, SQL, R, HTML, C#, Haskell, Mathematica, TensorFlow, Keras, PyTorch, scikit‑learn, facenet-pytorch, Excel, Google Sheets, Git</p>
-      <h2>Work Experience</h2>
-      <div class="flex-container"><span><b>Lab Assistant</b></span><span>Jan 2024–Present</span></div>
-      <p>Knox College – Troubleshoot lab software/hardware; assist users</p>
-      <div class="flex-container"><span><b>Writing Tutor</b></span><span>Sep 2024–Present</span></div>
-      <p>Knox College – Tutor essay revisions; teach ESL intensive class</p>
-      <h2>Campus Involvement</h2>
-      <p>Vietnamese Club Treasurer/PR, Honor Board Co‑Chair, Ultimate Frisbee, Badminton Club</p>
+    <div id="resume" class="tab-section">
+          <header>
+            <h1>Anh Phan</h1>
+          </header>
+          <section>
+            <h2>Profile</h2>
+            <p>Aspiring Data Analyst/Scientist with a strong foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
+        </section>
+        
+        <section>
+            <h2>Education</h2>
+            <p>
+                <div class="flex-container">
+                    <span><b>Knox College</b>, Galesburg, IL 61401</span>
+                    <span>June 2027</span>
+                </div>
+                <div>Bachelor of Arts in Data Science | GPA: 3.93</div>
+                <div>Relevant coursework: Mathematical Statistics, Data Mining</div>
+            </p>
+            <p>
+              <div class="flex-container">
+                <span><b>Nguyen Hue High School for the Gifted</b>, Hanoi, Vietnam</span>
+                <span>May 2023</span>
+              </div>
+              <div>High School Diploma | SAT: M: 800 R&W: 730</div>
+              <div>Majored in Russian language</div>
+            </p>
+        </section>
+
+        <section>
+            <h2>Technical Projects</h2>
+            <p>
+              <div class="flex-container">
+                <span><b>Deepfake Generation & Detection</b> | Python, PyTorch, FaceNet, OpenCV, Gradio </span>
+                <span>June 2025 - Present </span>
+              </div>
+              <div>● Built a binary image classifier using FaceNet embeddings and a custom neural network to detect real vs. StyleGAN3-generated deepfake faces with 92% accuracy on a test set of 20k samples.</div>
+                <div>● Achieved 0.92 precision, recall, and F1-score for both classes (real and fake), and a high ROC-AUC score of 0.98, indicating strong separability and generalization.</div>
+                <div>● Generated synthetic face images using StyleGAN3 pretrained on FFHQ, and interpolated latent vectors to simulate ambiguous or hybrid identities for robust model training.</div>
+                <div>●Integrated the detection model into a Google Chrome extension that extracts images from the active tab and displays real-time detection results on hover.</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Fake News Detector</b> | Python, Keras, Scikit-learn, NLTK, BeautifulSoup, Gradio</span>
+                    <span>March 2025 - May 2025</span>
+                </div>
+                <div>● Conducted exploratory data analysis (EDA) on 50,000+ news articles to uncover linguistic and structural features associated with misinformation.</div>
+                <div>● Preprocessed data with TF-IDF, Bag of Words, word tokenization, and lemmatization.</div>
+                <div>● Built a fake news classifier using an ensemble of five models (Logistic Regression, SVM, Neural Network, Bagging, and Decision Tree) combined via majority voting, achieving 98% accuracy.</div>
+                <div>● Assessed model robustness and generalization using the ROC-AUC metric, improving interpretability and reliability of fake news detection.</div>
+                <div>● Built a Gradio web interface supporting both text and URL inputs for real-time fake news classification using NLP and ensemble models. </div>
+            </p>
+            <p>
+              <div class="flex-container">
+                <span><b>Hospital Chairs</b> | Java, Topologies</span>
+                <span>September 2024 - December 2024</span>
+              </div>
+              <div>● Collaborated with a professor and 7 teammates on a supercomputer network topology research project, developing and testing custom designs in Java.</div>
+              <div>● Identified and implemented a topology named “Hospital Chairs”, which improved average inter-node distance by 3.6% compared to previous designs, enhancing overall communication efficiency.</div>
+            </p>
+        </section>
+        
+        <section>
+            <h2>Technical Skills</h2>
+            <div><b>Programming Languages:</b> Java, Python, SQL, R, html, C#, Haskell, Mathematica, LaTeX</div>
+            <div><b>Machine Learning Frameworks:</b> TensorFlow, Keras, PyTorch, scikit-learn, facenet-pytorch</div>
+            <div><b>Software & Tools:</b> Microsoft Office, Google Workspace, Jupyter, Google Colab, Gradio, Git</div>
+            <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
+        </section>
+
+        <section>
+            <h2>Work Experience</h2>
+            <p>
+                <div class="flex-container">
+                    <span><b>Lab Assistant</b></span>
+                    <span>January 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Answer and assist lab users with any questions about the lab facilities</div>
+                <div>● Provide technical assistance to lab users on various software, helping to troubleshoot issues and ensure smooth operation</div>
+                <div>● Check that lab devices are running as intended (printer toner replaced, PCs connected, etc.)</div>
+                <div>● Ensure all equipment is returned (headphones, staplers, pens, etc.)</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Writing Tutor</b></span>
+                    <span>September 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Helped students with any stage of their papers</div>
+                <div>● Assisted with teaching an Intensive English class for 6 ESL students</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Dining Services Office Worker</b></span>
+                    <span>September 2024 - Present</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
+                <div>● Manage meal plans and ID cards for students as necessary</div>
+            </p>
+            <p>
+                <div class="flex-container">
+                    <span><b>Computer Science Teaching Assistant</b></span>
+                    <span>January 2025 - March 2025</span>
+                </div>
+                <div>Knox College, Galesburg, IL</div>
+                <div>● Assist professor and students in CS 142: Program Design and Methodology</div>
+                <div>● Help students navigate through assignments in lab sessions and office hours</div>
+                <div>● Grade assignments and leave feedback on homeworks for students</div>
+            </p>
+            
+        </section>
+
+        <section>
+            <h2>Campus Involvement</h2>
+            <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board Co-Chair, Knox Ultimate Frisbee, Badminton Club</p>
+        </section>
     </div>
 
     <!-- My Projects -->
@@ -233,14 +323,31 @@ a:active {
             This was a project I worked on for my Data Mining class. All details can be found in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view?usp=sharing" target="_blank">paper</a>.<br>
             Summary:
             <h4>1. Abstract</h4>
-            Misinformation is an ever-lasting relevant issue. To combat this, we wanted to 
+            Misinformation is an ever-lasting relevant issue. To combat this, we aimed to classify news articles as real or fake using natural language processing and machine learning. It focuses on detecting misleading or fabricated content based on textual patterns, aiming to support digital literacy and trust in online information.
+            <h4>2. Methodologies</h4>
+            Found a Kaggle dataset with about 40k articles. Preprocessing steps included tokenization, lemmatization, and feature extraction using Bag of Words and TF-IDF. Several classifiers were tested, including Logistic Regression, Naive Bayes, and Random Forest, with model performance evaluated through metrics like accuracy, ROC-AUC, and confusion matrix. A Gradio interface was created for interactive predictions based on user-inputted text.
+            <h4>3. Reflection</h4>
+            The lines between "fake" and "real" are ambiguous. As much as this project helped familiarize me with NLP tasks, exploratory data analysis, building a front-end interface, and so on, I found that this project is not the most practical.
         </ul>
       </div>
       <div id="deepfake" class="project-section" style="display:none;">
-        <h3>Deepfake Generation & Detection</h3><ul><li>To be updated</li></ul>
+        <h3>Deepfake Generation & Detection</h3><ul>
+            This was my 2025 Summer Project.
+            Summary:
+            <h4>1. Abstract</h4>
+            This project addresses the growing threat of deepfake videos by building a machine learning pipeline to detect manipulated facial content. It targets the classification of real vs. fake images, contributing to media authentication efforts.
+            <h4>2. Methodologies</h4>
+            Removed background using BiRefNet. Face detection and cropping were performed using MTCNN and facenet-pytorch. Embeddings from a pre-trained FaceNet model were extracted and used to train a classifier across five categories. Evaluation included accuracy, confusion matrices, ROC-AUC curve, and visual inspection of misclassified samples.
+            <h4>3. Reflection</h4>
+            Deepfake images are reaching an eery realness. AI will eventually get to the point of complete realistic-ness and be undiscernable from real images to the average human eye. I am aware that I can't shoot for anything groundbreaking with this project, but I at the very least hoped for promotion of media literacy and a sense of caution when approaching faces on the Internet.
       </div>
       <div id="hospital" class="project-section" style="display:none;">
-        <h3>Hospital Chairs</h3><ul><li>To be updated</li></ul>
+        <h3>Hospital Chairs</h3>
+        <ul>
+            This was my Winter 2024 Collaborative Research Project. We worked in 4 pairs, each pair tackling a different question. Mine was "Can we come up with a better-performing topology?". The answer is no. But process mattered!
+            <h4>1. Abstrac</h4>
+            
+        </ul>
       </div>
     </div>
 
@@ -419,7 +526,7 @@ a:active {
       { src: "DSCF3806.JPG", caption: `Date taken: January 25th, 2022<br>
         Camera: Fujifilm X-A5<br>
         Description: We went on a little vacation to my parents' hometown for my mom's birthday. This was taken at a beach in the neighboring city. This might be my favorite photo (that I took) ever. There's something so calming about the ocean when no one's around.` },
-      { src: "DSCF2067.JPG", caption: `Date taken: January 26th, 2022<br>
+      { src: "DSCF3982.JPG", caption: `Date taken: January 26th, 2022<br>
         Camera: Fujifilm X-A5<br>
         Description: Legend has it that Uncle Ho had a fondness for raising goldfish. It just so happened that he's not around anymore, so there's always someone selling fish food at the pond where he grew up (it's a tourist attraction). They seem hungry. Business for that fish food vendor must not be going too well.` },
       { src: "DSCF4091.JPG", caption: `Date taken: January 27th, 2022<br>
