@@ -175,6 +175,46 @@
         .lightbox-close:hover {
             color: #ccc;
         }
+        
+        /* Mobile settings */
+        @media (max-width: 600px) {
+            #slideshow {
+                flex-direction: column;
+                padding: 10px;
+                justify-content: flex-start;
+                overflow-y: auto;
+            }
+            #slideshow img {
+                max-width: 100%;
+                max-height: 50vh;
+                margin-bottom: 10px;
+            }
+            #slideshow .caption {
+                max-height: 25vh;
+                overflow-y: auto;
+                margin-bottom: 10px;
+                padding: 0 5px;
+            }
+            .lightbox-close {
+                top: 10px;
+                right: 10px;
+                font-size: 24px;
+            }
+            #slideshow .controls {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                padding: 8px 0;
+                background: rgba(0,0,0,0.5);
+            }
+            #slideshow .controls button {
+                font-size: 28px;
+                margin: 0 8px;
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 
