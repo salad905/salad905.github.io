@@ -1,619 +1,649 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>may's website</title>
-  <style>
-    /* Base */
-    body {
-      font-family: "Comic Sans MS", sans-serif;
-      margin: 0; padding: 0;
-      background: url('000052090024.jpg') center/cover fixed;
-      color: #fff;
-    }
-    .overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: -1;
-    }
-    a:link,
-a:visited {
-  color: #E2FFDE;
-  text-decoration: underline;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>may's website</title>
+    <style>
+        /* Base */
+        body {
+            font-family: "Comic Sans MS", sans-serif;
+            margin: 0; padding: 0;
+            background: url('000052090024.jpg') center/cover fixed;
+            color: #fff;
+        }
 
-a:hover,
-a:active {
-  color: #38732F;
-  text-decoration: underline;
-}
+        .overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: -1;
+        }
 
-    /* Navbar */
-    .navbar {
-      background: rgba(0,0,0,0.6);
-      padding: 10px 0; text-align: center;
-    }
-    .navbar ul { list-style: none; margin: 0; padding: 0; }
-    .navbar li { display: inline; margin: 0 20px; }
-    .navbar a {
-      color: #E2FFDE; text-decoration: none;
-      font-weight: bold; font-size: 18px;
-      cursor: pointer;
-    }
-    .navbar a:hover { color: #38732F; }
-    .active-tab {
-      border-bottom: 2px solid #E2FFDE !important;
-      color: #E2FFDE !important;
-    }
+        a:link,
+        a:visited {
+            color: #E2FFDE;
+            text-decoration: underline;
+            }
+        a:hover,
+        a:active {
+            color: #38732F;
+            text-decoration: underline;
+        }
 
-    /* Content */
-    .content {
-      max-width: 850px;
-      margin: 20px auto;
-      padding: 20px;
-      background: rgba(38,102,28,0.8);
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1,h2,h3 { color: #E2FFDE; }
-    .profile-picture {
-      width:150px; height:150px;
-      border-radius:50%;
-      object-fit:cover;
-      margin-top:20px;
-    }
-    .flex-container {
-      display:flex; justify-content:space-between;
-    }
+        /* Navbar */
+        .navbar {
+            background: rgba(0,0,0,0.6);
+            padding: 10px 0; text-align: center;
+        }
 
-    /* Projects sub‑nav */
-    .sub-navbar {
-      text-align:center; margin-bottom:15px;
-    }
-    .sub-navbar button {
-      background:#1E5E16; color:#E2FFDE;
-      border:none; padding:10px 20px; margin:0 10px;
-      border-radius:5px; cursor:pointer;
-      font-family:"Comic Sans MS",sans-serif;
-      font-weight:bold;
-    }
-    .sub-navbar button:hover { background:#38732F; }
-    .active-sub-tab { border-bottom:2px solid #E2FFDE; }
+        .navbar ul { list-style: none; margin: 0; padding: 0; }
 
-    /* Gallery grid */
-    .gallery-grid {
-      display:grid; grid-template-columns:1fr; gap:20px;
-    }
-    @media(min-width:768px){
-      .gallery-grid { grid-template-columns:1fr 1fr; }
-    }
-    .gallery-item {
-  display: block;                      
-  background-color: rgba(38,102,28,0.8); 
-  border: none;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  margin: 0;                           
-  text-align: left;
-    }
+        .navbar li { display: inline; margin: 0 20px; }
 
-.gallery-item img {
-  width: 100%;                     
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
+        .navbar a {
+            color: #E2FFDE; text-decoration: none;
+            font-weight: bold; font-size: 18px;
+            cursor: pointer;
+        }
 
-.gallery-description {
-  padding: 15px;
-  color: #fff;
-  line-height: 1.5;
-  white-space: normal;
-  font-family: "Comic Sans MS";
-}
+        .navbar a:hover { color: #38732F; }
 
-    /* Slideshow modal */
-    #slideshow {
-      display:none;
-      position:fixed; z-index:999;
-      top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.85);
-      justify-content:center; align-items:center;
-      flex-direction:column; padding:20px;
-      text-align:center;
-    }
-    #slideshow img {
-      max-width:90%; max-height:75%;
-      border-radius:10px;
-      box-shadow:0 0 20px rgba(0,0,0,0.5);
-    }
-    #slideshow .caption {
-      margin-top:15px; color:#ccc;
-      max-width:90%; line-height:1.6;
-    }
-    #slideshow .controls {
-      margin-top:20px;
-    }
-    #slideshow .controls button {
-      font-size:36px; background:none;
-      border:none; color:#fff;
-      margin:0 20px; cursor:pointer;
-    }
-    .lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 30px;
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-family: inherit;
-}
-.lightbox-close:hover {
-  color: #ccc;
-}
+        .active-tab {
+            border-bottom: 2px solid #E2FFDE !important;
+            color: #E2FFDE !important;
+        }
 
+        /* Content */
+        .content {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(38,102,28,0.8);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
 
-  </style>
+        h1,h2,h3 { color: #E2FFDE; }
+
+        .profile-picture {
+            width:150px; height:150px;
+            border-radius:50%;
+            object-fit:cover;
+            margin-top:20px;
+        }
+
+        .flex-container {
+            display:flex; justify-content:space-between;
+        }
+
+        /* Projects sub‑nav */
+        .sub-navbar {
+            text-align:center; margin-bottom:15px;
+        }
+
+        .sub-navbar button {
+            background:#1E5E16; color:#E2FFDE;
+            border:none; padding:10px 20px; margin:0 10px;
+            border-radius:5px; cursor:pointer;
+            font-family:"Comic Sans MS",sans-serif;
+            font-weight:bold;
+        }
+
+        .sub-navbar button:hover { background:#38732F; }
+        .active-sub-tab { border-bottom:2px solid #E2FFDE; }
+
+        /* Gallery grid */
+        .gallery-grid {
+            display:grid; grid-template-columns:1fr; gap:20px;
+        }
+
+        @media(min-width:768px){
+            .gallery-grid { grid-template-columns:1fr 1fr; }
+        }
+
+        .gallery-item {
+            display: block;                      
+            background-color: rgba(38,102,28,0.8); 
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            margin: 0;                           
+            text-align: left;
+        }
+
+        .gallery-item img {
+            width: 100%;                     
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .gallery-description {
+            padding: 15px;
+            color: #fff;
+            line-height: 1.5;
+            white-space: normal;
+            font-family: "Comic Sans MS";
+        }
+
+        /* Slideshow modal */
+        #slideshow {
+            display:none;
+            position:fixed; z-index:999;
+            top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.85);
+            justify-content:center; align-items:center;
+            flex-direction:column; padding:20px;
+            text-align:center;
+        }
+
+        #slideshow img {
+            max-width:90%; max-height:75%;
+            border-radius:10px;
+            box-shadow:0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #slideshow .caption {
+            margin-top:15px; color:#fff;
+            max-width:90%; line-height:1.6;
+        }
+
+        #slideshow .controls {
+            margin-top:20px;
+        }
+
+        #slideshow .controls button {
+            font-size:36px; background:none;
+            border:none; color:#fff;
+            margin:0 20px; cursor:pointer;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 30px;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .lightbox-close:hover {
+            color: #ccc;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="overlay"></div>
-
-  <nav class="navbar">
-    <ul>
-      <li><a onclick="showSection('about')">About Me</a></li>
-      <li><a onclick="showSection('resume')">My Resume</a></li>
-      <li><a onclick="showSection('projects')">My Projects</a></li>
-      <li><a onclick="showSection('gallery')">Gallery</a></li>
-    </ul>
-  </nav>
-
-  <div class="content">
-    <!-- About Me -->
-    <div id="about" class="tab-section">
-      <h1>Welcome to My Website!</h1>
-      <img src="389046_499370383412054_602369392_n.jpg" alt="Profile Picture" class="profile-picture">
-      <p>Hello! My name is <b>Anh (May)</b>. I'm a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
-      <h2>Connect with Me</h2>
-      <ul>
-        <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
-        <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
-        <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
-        <li><a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a></li>
-        <li><a href="https://www.huggingface.co/salad905" target="_blank">HuggingFace</a></li>
-      </ul>
-    </div>
-
-    <!-- My Resume -->
-    <div id="resume" class="tab-section">
-          <header>
-            <h1>Anh Phan</h1>
-          </header>
-          <section>
-            <h2>Profile</h2>
-            <p>Aspiring Data Analyst/Scientist with a strong foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
-        </section>
-        
-        <section>
-            <h2>Education</h2>
-            <p>
-                <div class="flex-container">
-                    <span><b>Knox College</b>, Galesburg, IL 61401</span>
-                    <span>June 2027</span>
-                </div>
-                <div>Bachelor of Arts in Data Science | GPA: 3.93</div>
-                <div>Relevant coursework: Mathematical Statistics, Data Mining</div>
-            </p>
-            <p>
-              <div class="flex-container">
-                <span><b>Nguyen Hue High School for the Gifted</b>, Hanoi, Vietnam</span>
-                <span>May 2023</span>
-              </div>
-              <div>High School Diploma | SAT: M: 800 R&W: 730</div>
-              <div>Majored in Russian language</div>
-            </p>
-        </section>
-
-        <section>
-            <h2>Technical Projects</h2>
-            <p>
-              <div class="flex-container">
-                <span><b>Deepfake Generation & Detection</b> | Python, PyTorch, FaceNet, OpenCV, Gradio </span>
-                <span>June 2025 - Present </span>
-              </div>
-              <div>● Built a binary image classifier using FaceNet embeddings and a custom neural network to detect real vs. StyleGAN3-generated deepfake faces with 92% accuracy on a test set of 20k samples.</div>
-                <div>● Achieved 0.92 precision, recall, and F1-score for both classes (real and fake), and a high ROC-AUC score of 0.98, indicating strong separability and generalization.</div>
-                <div>● Generated synthetic face images using StyleGAN3 pretrained on FFHQ, and interpolated latent vectors to simulate ambiguous or hybrid identities for robust model training.</div>
-                <div>●Integrated the detection model into a Google Chrome extension that extracts images from the active tab and displays real-time detection results on hover.</div>
-            </p>
-            <p>
-                <div class="flex-container">
-                    <span><b>Fake News Detector</b> | Python, Keras, Scikit-learn, NLTK, BeautifulSoup, Gradio</span>
-                    <span>March 2025 - May 2025</span>
-                </div>
-                <div>● Conducted exploratory data analysis (EDA) on 50,000+ news articles to uncover linguistic and structural features associated with misinformation.</div>
-                <div>● Preprocessed data with TF-IDF, Bag of Words, word tokenization, and lemmatization.</div>
-                <div>● Built a fake news classifier using an ensemble of five models (Logistic Regression, SVM, Neural Network, Bagging, and Decision Tree) combined via majority voting, achieving 98% accuracy.</div>
-                <div>● Assessed model robustness and generalization using the ROC-AUC metric, improving interpretability and reliability of fake news detection.</div>
-                <div>● Built a Gradio web interface supporting both text and URL inputs for real-time fake news classification using NLP and ensemble models. </div>
-            </p>
-            <p>
-              <div class="flex-container">
-                <span><b>Hospital Chairs</b> | Java, Topologies</span>
-                <span>September 2024 - December 2024</span>
-              </div>
-              <div>● Collaborated with a professor and 7 teammates on a supercomputer network topology research project, developing and testing custom designs in Java.</div>
-              <div>● Identified and implemented a topology named “Hospital Chairs”, which improved average inter-node distance by 3.6% compared to previous designs, enhancing overall communication efficiency.</div>
-            </p>
-        </section>
-        
-        <section>
-            <h2>Technical Skills</h2>
-            <div><b>Programming Languages:</b> Java, Python, SQL, R, html, C#, Haskell, Mathematica, LaTeX</div>
-            <div><b>Machine Learning Frameworks:</b> TensorFlow, Keras, PyTorch, scikit-learn, facenet-pytorch</div>
-            <div><b>Software & Tools:</b> Microsoft Office, Google Workspace, Jupyter, Google Colab, Gradio, Git</div>
-            <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
-        </section>
-
-        <section>
-            <h2>Work Experience</h2>
-            <p>
-                <div class="flex-container">
-                    <span><b>Lab Assistant</b></span>
-                    <span>January 2024 - Present</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Answer and assist lab users with any questions about the lab facilities</div>
-                <div>● Provide technical assistance to lab users on various software, helping to troubleshoot issues and ensure smooth operation</div>
-                <div>● Check that lab devices are running as intended (printer toner replaced, PCs connected, etc.)</div>
-                <div>● Ensure all equipment is returned (headphones, staplers, pens, etc.)</div>
-            </p>
-            <p>
-                <div class="flex-container">
-                    <span><b>Writing Tutor</b></span>
-                    <span>September 2024 - Present</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Helped students with any stage of their papers</div>
-                <div>● Assisted with teaching an Intensive English class for 6 ESL students</div>
-            </p>
-            <p>
-                <div class="flex-container">
-                    <span><b>Dining Services Office Worker</b></span>
-                    <span>September 2024 - Present</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
-                <div>● Manage meal plans and ID cards for students as necessary</div>
-            </p>
-            <p>
-                <div class="flex-container">
-                    <span><b>Computer Science Teaching Assistant</b></span>
-                    <span>January 2025 - March 2025</span>
-                </div>
-                <div>Knox College, Galesburg, IL</div>
-                <div>● Assist professor and students in CS 142: Program Design and Methodology</div>
-                <div>● Help students navigate through assignments in lab sessions and office hours</div>
-                <div>● Grade assignments and leave feedback on homeworks for students</div>
-            </p>
-            
-        </section>
-
-        <section>
-            <h2>Campus Involvement</h2>
-            <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board Co-Chair, Knox Ultimate Frisbee, Badminton Club</p>
-        </section>
-    </div>
-
-    <!-- My Projects -->
-    <div id="projects" class="tab-section" style="display:none;">
-      <h2>My Projects</h2>
-      <div class="sub-navbar">
-        <button onclick="showProject('fake-news')">Fake News Detector</button>
-        <button onclick="showProject('deepfake')">Deepfake Generation & Detection</button>
-        <button onclick="showProject('hospital')">Hospital Chairs</button>
-      </div>
-      <div id="fake-news" class="project-section">
-        <h3>Fake News Detector</h3>
+    <div class="overlay"></div>
+    <nav class="navbar">
         <ul>
-            This was a project I worked on for my Data Mining class. All details can be found in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view?usp=sharing" target="_blank">paper</a>.<br>
-            Summary:
-            <h4>1. Abstract</h4>
-            Misinformation is an ever-lasting relevant issue. To combat this, we aimed to classify news articles as real or fake using natural language processing and machine learning. It focuses on detecting misleading or fabricated content based on textual patterns, aiming to support digital literacy and trust in online information.
-            <h4>2. Methodologies</h4>
-            Found a Kaggle dataset with about 40k articles. Preprocessing steps included tokenization, lemmatization, and feature extraction using Bag of Words and TF-IDF. Several classifiers were tested, including Logistic Regression, Naive Bayes, and Random Forest, with model performance evaluated through metrics like accuracy, ROC-AUC, and confusion matrix. A Gradio interface was created for interactive predictions based on user-inputted text.
-            <h4>3. Reflection</h4>
-            The lines between "fake" and "real" are ambiguous. As much as this project helped familiarize me with NLP tasks, exploratory data analysis, building a front-end interface, and so on, I found that this project is not the most practical.
+            <li><a onclick="showSection('about')">About Me</a></li>
+            <li><a onclick="showSection('resume')">My Resume</a></li>
+            <li><a onclick="showSection('projects')">My Projects</a></li>
+            <li><a onclick="showSection('gallery')">Gallery</a></li>
         </ul>
-      </div>
-      <div id="deepfake" class="project-section" style="display:none;">
-        <h3>Deepfake Generation & Detection</h3><ul>
-            This was my 2025 Summer Project.
-            Summary:
-            <h4>1. Abstract</h4>
-            This project addresses the growing threat of deepfake videos by building a machine learning pipeline to detect manipulated facial content. It targets the classification of real vs. fake images, contributing to media authentication efforts.
-            <h4>2. Methodologies</h4>
-            Removed background using BiRefNet. Face detection and cropping were performed using MTCNN and facenet-pytorch. Embeddings from a pre-trained FaceNet model were extracted and used to train a classifier across five categories. Evaluation included accuracy, confusion matrices, ROC-AUC curve, and visual inspection of misclassified samples.
-            <h4>3. Reflection</h4>
-            Deepfake images are reaching an eery realness. AI will eventually get to the point of complete realistic-ness and be undiscernable from real images to the average human eye. I am aware that I can't shoot for anything groundbreaking with this project, but I at the very least hoped for promotion of media literacy and a sense of caution when approaching faces on the Internet.
-      </div>
-      <div id="hospital" class="project-section" style="display:none;">
-        <h3>Hospital Chairs</h3>
+    </nav>
+
+    <div class="content">
+        <!-- About Me -->
+        <div id="about" class="tab-section">
+        <h1>Welcome to My Website!</h1>
+        <img src="389046_499370383412054_602369392_n.jpg" alt="Profile Picture" class="profile-picture">
+        <p>Hello! My name is <b>Anh (May)</b>. I'm a Data Science student at Knox College. I like taking naps in my free time.. Welcome to my website!</p>
+        <h2>Connect with Me</h2>
         <ul>
-            This was my Winter 2024 Collaborative Research Project. We worked in 4 pairs, each pair tackling a different question. Mine was "Can we come up with a better-performing topology?". The answer is no. But process mattered!
-            <h4>1. Abstrac</h4>
-            
+            <li><a href="https://github.com/salad905" target="_blank">GitHub</a></li>
+            <li><a href="https://linkedin.com/in/anh-phan-906943215/" target="_blank">LinkedIn</a></li>
+            <li><a href="https://facebook.com/salad905" target="_blank">Facebook</a></li>
+            <li><a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a></li>
+            <li><a href="https://www.huggingface.co/salad905" target="_blank">HuggingFace</a></li>
         </ul>
-      </div>
+        </div>
+
+        <!-- My Resume -->
+        <div id="resume" class="tab-section">
+            <header><h1>Anh Phan</h1></header>
+            <section>
+                <h2>Profile</h2>
+                <p>Aspiring Data Analyst/Scientist with a foundation in programming and analytical skills. Eager to contribute to solving real-world challenges using data-driven insights and grow within a professional environment. Flexible, determined, and hard-working team player.</p>
+            </section>
+            
+            <section>
+                <h2>Education</h2>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Knox College</b>, Galesburg, IL 61401</span>
+                        <span>June 2027</span>
+                    </div>
+                    <div>Bachelor of Arts in Data Science | GPA: 3.93</div>
+                    <div>Relevant coursework: Mathematical Statistics, Data Mining</div>
+                </p>
+                <p>
+                <div class="flex-container">
+                    <span><b>Nguyen Hue High School for the Gifted</b>, Hanoi, Vietnam</span>
+                    <span>May 2023</span>
+                </div>
+                <div>High School Diploma | SAT: M: 800 R&W: 730</div>
+                <div>Majored in Russian language</div>
+                </p>
+            </section>
+
+            <section>
+                <h2>Technical Projects</h2>
+                <p>
+                <div class="flex-container">
+                    <span><b>Deepfake Generation & Detection</b> | Python, PyTorch, FaceNet, OpenCV, Gradio </span>
+                    <span>June 2025 - Present </span>
+                </div>
+                <div>● Built a binary image classifier using FaceNet embeddings and a custom neural network to detect real vs. StyleGAN3-generated deepfake faces with 92% accuracy on a test set of 20k samples.</div>
+                    <div>● Achieved 0.92 precision, recall, and F1-score for both classes (real and fake), and a high ROC-AUC score of 0.98, indicating strong separability and generalization.</div>
+                    <div>● Generated synthetic face images using StyleGAN3 pretrained on FFHQ, and interpolated latent vectors to simulate ambiguous or hybrid identities for robust model training.</div>
+                    <div>●Integrated the detection model into a Google Chrome extension that extracts images from the active tab and displays real-time detection results on hover.</div>
+                </p>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Fake News Detector</b> | Python, Keras, Scikit-learn, NLTK, BeautifulSoup, Gradio</span>
+                        <span>March 2025 - May 2025</span>
+                    </div>
+                    <div>● Conducted exploratory data analysis (EDA) on 50,000+ news articles to uncover linguistic and structural features associated with misinformation.</div>
+                    <div>● Preprocessed data with TF-IDF, Bag of Words, word tokenization, and lemmatization.</div>
+                    <div>● Built a fake news classifier using an ensemble of five models (Logistic Regression, SVM, Neural Network, Bagging, and Decision Tree) combined via majority voting, achieving 98% accuracy.</div>
+                    <div>● Assessed model robustness and generalization using the ROC-AUC metric, improving interpretability and reliability of fake news detection.</div>
+                    <div>● Built a Gradio web interface supporting both text and URL inputs for real-time fake news classification using NLP and ensemble models. </div>
+                </p>
+                <p>
+                <div class="flex-container">
+                    <span><b>Hospital Chairs</b> | Java, Topologies</span>
+                    <span>September 2024 - December 2024</span>
+                </div>
+                <div>● Collaborated with a professor and 7 teammates on a supercomputer network topology research project, developing and testing custom designs in Java.</div>
+                <div>● Identified and implemented a topology named “Hospital Chairs”, which improved average inter-node distance by 3.6% compared to previous designs, enhancing overall communication efficiency.</div>
+                </p>
+            </section>
+            
+            <section>
+                <h2>Technical Skills</h2>
+                <div><b>Programming Languages:</b> Java, Python, SQL, R, html, C#, Haskell, Mathematica, LaTeX</div>
+                <div><b>Machine Learning Frameworks:</b> TensorFlow, Keras, PyTorch, scikit-learn, facenet-pytorch</div>
+                <div><b>Software & Tools:</b> Microsoft Office, Google Workspace, Jupyter, Google Colab, Gradio, Git</div>
+                <div><b>Languages:</b> Vietnamese (native), English (fluent), Russian (proficient)</div>
+            </section>
+
+            <section>
+                <h2>Work Experience</h2>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Lab Assistant</b></span>
+                        <span>January 2024 - Present</span>
+                    </div>
+                    <div>Knox College, Galesburg, IL</div>
+                    <div>● Answer and assist lab users with any questions about the lab facilities</div>
+                    <div>● Provide technical assistance to lab users on various software, helping to troubleshoot issues and ensure smooth operation</div>
+                    <div>● Check that lab devices are running as intended (printer toner replaced, PCs connected, etc.)</div>
+                    <div>● Ensure all equipment is returned (headphones, staplers, pens, etc.)</div>
+                </p>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Writing Tutor</b></span>
+                        <span>September 2024 - Present</span>
+                    </div>
+                    <div>Knox College, Galesburg, IL</div>
+                    <div>● Helped students with any stage of their papers</div>
+                    <div>● Assisted with teaching an Intensive English class for 6 ESL students</div>
+                </p>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Dining Services Office Worker</b></span>
+                        <span>September 2024 - Present</span>
+                    </div>
+                    <div>Knox College, Galesburg, IL</div>
+                    <div>● Use Google Sheets for data entry and perform basic data analysis (e.g., summarizing data, creating visualizations) for data related to Dining Services (student worker information, internal transfers, invoices, etc.)</div>
+                    <div>● Manage meal plans and ID cards for students as necessary</div>
+                </p>
+                <p>
+                    <div class="flex-container">
+                        <span><b>Computer Science Teaching Assistant</b></span>
+                        <span>January 2025 - March 2025</span>
+                    </div>
+                    <div>Knox College, Galesburg, IL</div>
+                    <div>● Assist professor and students in CS 142: Program Design and Methodology</div>
+                    <div>● Help students navigate through assignments in lab sessions and office hours</div>
+                    <div>● Grade assignments and leave feedback on homeworks for students</div>
+                </p>
+                
+            </section>
+
+            <section>
+                <h2>Campus Involvement</h2>
+                <p>Vietnamese Club Executive Member - Treasurer and Public Relations, Honor Board Co-Chair, Knox Ultimate Frisbee, Badminton Club</p>
+            </section>
+        </div>
+
+        <!-- My Projects -->
+        <div id="projects" class="tab-section" style="display:none;">
+            <h2>My Projects</h2>
+            <div class="sub-navbar">
+                <button onclick="showProject('fake-news')">Fake News Detector</button>
+                <button onclick="showProject('deepfake')">Deepfake Generation & Detection</button>
+                <button onclick="showProject('hospital')">Hospital Chairs</button>
+            </div>
+            <div id="fake-news" class="project-section">
+                <h3>Fake News Detector</h3>
+                <ul>
+                    This was a project I worked on for my Data Mining class. All details can be found in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view?usp=sharing" target="_blank">paper</a>.<br>
+                    Summary:
+                    <h4>1. Abstract</h4>
+                    Misinformation is an ever-lasting relevant issue. To combat this, we aimed to classify news articles as real or fake using natural language processing and machine learning. It focuses on detecting fabricated content based on textual patterns, aiming to support digital literacy and trust in online information.
+                    <h4>2. Methodologies</h4>
+                    Found a Kaggle dataset with about 40k articles. Preprocessing steps included tokenization, lemmatization, and feature extraction using Bag of Words and TF-IDF. Several classifiers were tested, including Logistic Regression, Naive Bayes, and Random Forest, with model performance evaluated through metrics like accuracy, ROC-AUC, and confusion matrix. A <a href="https://salad905-fake-news-detector.hf.space/?__theme=system&deep_link=hF7hJs8eL14" target="_blank">Gradio interface</a> was created for interactive predictions based on user-inputted text.
+                    <h4>3. Reflection</h4>
+                    The lines between "fake" and "real" are ambiguous. As much as this project helped familiarize me with NLP tasks, exploratory data analysis, building a front-end interface, and so on, I found that this project is not the most practical.
+                </ul>
+            </div>
+            <div id="deepfake" class="project-section" style="display:none;">
+                <h3>Deepfake Generation & Detection</h3><ul>
+                    This is my 2025 Summer Project.
+                    Summary:
+                    <h4>1. Abstract</h4>
+                    This project addresses the growing threat of deepfake videos by building a machine learning pipeline to detect manipulated facial content. It targets the classification of real vs. fake images, contributing to media authentication efforts.
+                    <h4>2. Methodologies</h4>
+                    Removed background using BiRefNet. Face detection and cropping were performed using MTCNN and facenet-pytorch. Embeddings from a pre-trained FaceNet model were extracted and used to train a classifier. Evaluation included accuracy, confusion matrices, ROC-AUC, and visual inspection of misclassified samples. Currently has a running <a href="https://salad905-space2.hf.space/?__theme=system&deep_link=hVptdHSzaXo" target="_blank">Gradio interface</a>, planning to expand to a Chrome extension.
+                    <h4>3. Reflection</h4>
+                    Deepfake images are reaching an eery realness. AI will eventually get to the point of complete indistinguishability from real images to the average human eye. I am aware that I can't shoot for anything groundbreaking with this project, but I at the very least hoped for promotion of media literacy and a sense of caution when approaching faces on the Internet.
+            </div>
+            <div id="hospital" class="project-section" style="display:none;">
+                <h3>Hospital Chairs</h3>
+                <ul>
+                    This was my Winter 2024 Collaborative Research Project. We worked in 4 pairs, each pair tackling a different question. Mine was "Can we come up with a better-performing topology?". The answer is no. But the process is what mattered! We learned how to conduct a proper literature review, learned to brainstorm and propose compelling/plausible research questions, and learned to make a research poster. We presented at Horizons, which is a Knox College on-campus research symposium. Here is our poster:
+                    <button
+                        type="button"
+                        style="background:none; border:none; padding:0; cursor:pointer;"
+                        onclick="openSlideshow(slides.length - 1)"
+                    >
+                    <img
+                        src="poster.jpg"
+                        alt="Winter Collaborative Project Poster"
+                        style="max-width:100%; border-radius:8px; margin-bottom:12px;"
+                    >
+                    </button>
+                    
+                </ul>
+            </div>
+        </div>
+
+        <!-- Gallery -->
+        <div id="gallery" class="tab-section" style="display:none;">
+        <h2>Gallery</h2>
+        <p>Here are some photos I took throughout the years. Click to enlarge!</p>
+        <div class="gallery-grid">
+            <button class="gallery-item" onclick="openSlideshow(0)">
+            <img src="DSCF1837.JPG" alt="Photo 1">
+            <div class="gallery-description">
+                Date taken: February 7th, 2021<br>
+                Camera: Fujifilm X‑A5<br>
+                Description: In Vietnamese culture, yellow chrysanthemums are generally used in the table of "offerings" for ancestors. Our culture is deeply rooted in gratitude, and every 15th day in the lunisolar calendar, we set a table of "offerings" for our ancestors.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(1)">
+            <img src="DSCF2067.JPG" alt="Photo 2">
+            <div class="gallery-description">
+                Date taken: May 1st, 2021<br>
+                Camera: Fujifilm X‑A5<br>
+                Description: I was on a mini vacation with my family, and they had a cool display of Vietnamese straw hats.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(2)">
+            <img src="DSCF3806.JPG" alt="Photo 3">
+            <div class="gallery-description">
+                Date taken: January 25th, 2022<br>
+                Camera: Fujifilm X‑A5<br>
+                Description: We went on a little vacation to my parents' hometown for my mom's birthday. This was taken at a beach in the neighboring city. This might be my favorite photo (that I took) ever. There's something so calming about the ocean when no one's around.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(3)">
+            <img src="DSCF3982.JPG" alt="Photo 4">
+            <div class="gallery-description">
+                Date taken: January 26th, 2022<br>
+                Camera: Fujifilm X‑A5<br>
+                Description: Legend has it that Uncle Ho had a fondness for raising goldfish. It just so happened that he's not around anymore, so there's always someone selling fish food at the pond where he grew up (it's a tourist attraction). They seem hungry. Business for that fish food vendor must not be going too well.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(4)">
+            <img src="DSCF4091.JPG" alt="Photo 5">
+            <div class="gallery-description">
+                Date taken: January 27th, 2022<br>
+                Camera: Fujifilm X‑A5<br>
+                Description: This was taken at Huong Tich Pagoda in my hometown. It's somewhere we hike everytime we visit my parents' hometown.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(5)">
+            <img src="000043.JPG" alt="Photo 6">
+            <div class="gallery-description">
+                Date taken: March 30th, 2022<br>
+                Camera: Minolta SR101<br>
+                Description: My first (and still only) analog SLR. Taken in front of a mirror somewhere in high school.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(6)">
+            <img src="000038.JPG" alt="Photo 7">
+            <div class="gallery-description">
+                Date taken: April 13th, 2022<br>
+                Camera: Minolta SR101<br>
+                Description: My high school. The school had a change of leadership and was renovated the year after I left, so I'm very sure this is not how it looks anymore.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(7)">
+            <img src="000041.JPG" alt="Photo 8">
+            <div class="gallery-description">
+                Date taken: May 29th, 2022<br>
+                Camera: Minolta SR101<br>
+                Description: My mom. We had a mini girls' trip to Sài Gòn and we took a stroll in a little park.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(8)">
+            <img src="000058.JPG" alt="Photo 9">
+            <div class="gallery-description">
+                Date taken: June 7th, 2022<br>
+                Camera: Minolta SR101<br>
+                Description: My high school friends and I took a little trip to Moc Chau, and this photo was taken at a plum farm we visited during that trip.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(9)">
+            <img src="000039.JPEG" alt="Photo 10">
+            <div class="gallery-description">
+                Date taken: November 11th, 2022<br>
+                Camera: Konica Z‑UP70<br>
+                Description: My parents at my senior photo session. We were all dressed up in graduation gowns and our parents were dressed in traditional Vietnamese dresses or suits.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(10)">
+            <img src="000052090024.jpg" alt="Photo 11">
+            <div class="gallery-description">
+                Date taken: October 10th, 2022<br>
+                Camera: Konica Z‑UP70<br>
+                Description: This was taken at a cafe near my high school. As you may recognize, this is the background photo of this website.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(11)">
+            <img src="000055.JPEG" alt="Photo 12">
+            <div class="gallery-description">
+                Date taken: January 15th, 2023<br>
+                Camera: Minolta SR101<br>
+                Description: This is the street I cross everyday to get to the bus station on my way to high school. I've had my fair share of memories on the pedestrian bridge this photo was taken from.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(12)">
+            <img src="000035.JPG" alt="Photo 13">
+            <div class="gallery-description">
+                Date taken: August 21st, 2023<br>
+                Camera: Minolta SR101<br>
+                Description: I happened to be the Vice President of the Photography club at my high school. We were getting ready for one of the first organization fairs at my high school at one of the member's dorm room.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(13)">
+            <img src="DSC01667.JPG" alt="Photo 14">
+            <div class="gallery-description">
+                Date taken: June 18th, 2024<br>
+                Camera: Sony Cybershot DSC-RX100<br>
+                Description: Sa Vi is the north-eastern most point of Vietnam. They have a cool Australian pine-shaped building because that is what the area is best known for.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(14)">
+            <img src="DSC01776.JPG" alt="Photo 15">
+            <div class="gallery-description">
+                Date taken: July 14th, 2024<br>
+                Camera: Sony Cybershot DSC-RX100<br>
+                Description: I asked my dad why the roofs of most buildings are red. He told me that back in the day, roofs tended to make up of clay tiles, which were naturally red. Red roofs became a signature look, and even roofs with other materials nowadays would still be red.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(15)">
+            <img src="DSC01977.JPG" alt="Photo 16">
+            <div class="gallery-description">
+                Date taken: August 10th, 2024<br>
+                Camera: Sony Cybershot DSC-RX100<br>
+                Description: My high school friends and I went to Hang Ma street, known for its bustling holiday markets. Mid-Autumn festival was approaching, so the streets were packed with people looking for decorations.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(16)">
+            <img src="May101589-R1-019-8.jpg" alt="Photo 17">
+            <div class="gallery-description">
+                Date taken: November 21st, 2024<br>
+                Camera: Olympus MJU<br>
+                Description: Me and some college friends visited Chicago for a short trip right after we were done with our finals. We did the thing most international students do: take the Red line to Chinatown.
+            </div>
+            </button>
+            <button class="gallery-item" onclick="openSlideshow(17)">
+            <img src="May101589-R1-077-37.jpg" alt="Photo 18">
+            <div class="gallery-description">
+                Date taken: December 28th, 2024<br>
+                Camera: Sony Cybershot DSC-RX100<br>
+                Description: I travelled solo in Chicago for 3 days. Oh the perks of living 3 hours away from a big city. I took a stroll near Navy Pier, got one of the coolest I ever took, and witnessed a proposal(!!). It was eventful in the most unexpected ways.
+            </div>
+            </button>
+        </div>
+        </div>
     </div>
 
-    <!-- Gallery -->
-    <div id="gallery" class="tab-section" style="display:none;">
-      <h2>Gallery</h2>
-      <p>Here are some photos I took throughout the years. Click to enlarge!</p>
-      <div class="gallery-grid">
-        <button class="gallery-item" onclick="openSlideshow(0)">
-          <img src="DSCF1837.JPG" alt="Photo 1">
-          <div class="gallery-description">
-            Date taken: February 7th, 2021<br>
-            Camera: Fujifilm X‑A5<br>
-            Description: In Vietnamese culture, yellow chrysanthemums are generally used in the table of "offerings" for ancestors. Our culture is deeply rooted in gratitude, and every 15th day in the lunisolar calendar, we set a table of "offerings" for our ancestors.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(1)">
-          <img src="DSCF2067.JPG" alt="Photo 2">
-          <div class="gallery-description">
-            Date taken: May 1st, 2021<br>
-            Camera: Fujifilm X‑A5<br>
-            Description: I was on a mini vacation with my family, and they had a cool display of Vietnamese straw hats.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(2)">
-          <img src="DSCF3806.JPG" alt="Photo 3">
-          <div class="gallery-description">
-            Date taken: January 25th, 2022<br>
-            Camera: Fujifilm X‑A5<br>
-            Description: We went on a little vacation to my parents' hometown for my mom's birthday. This was taken at a beach in the neighboring city. This might be my favorite photo (that I took) ever. There's something so calming about the ocean when no one's around.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(3)">
-          <img src="DSCF3982.JPG" alt="Photo 4">
-          <div class="gallery-description">
-            Date taken: January 26th, 2022<br>
-            Camera: Fujifilm X‑A5<br>
-            Description: Legend has it that Uncle Ho had a fondness for raising goldfish. It just so happened that he's not around anymore, so there's always someone selling fish food at the pond where he grew up (it's a tourist attraction). They seem hungry. Business for that fish food vendor must not be going too well.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(4)">
-          <img src="DSCF4091.JPG" alt="Photo 5">
-          <div class="gallery-description">
-            Date taken: January 27th, 2022<br>
-            Camera: Fujifilm X‑A5<br>
-            Description: This was taken at Huong Tich Pagoda in my hometown. It's somewhere we hike everytime we visit my parents' hometown.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(5)">
-          <img src="000043.JPG" alt="Photo 6">
-          <div class="gallery-description">
-            Date taken: March 30th, 2022<br>
-            Camera: Minolta SR101<br>
-            Description: My first (and still only) analog SLR. Taken in front of a mirror somewhere in high school.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(6)">
-          <img src="000038.JPG" alt="Photo 7">
-          <div class="gallery-description">
-            Date taken: April 13th, 2022<br>
-            Camera: Minolta SR101<br>
-            Description: My high school. The school had a change of leadership and was renovated the year after I left, so I'm very sure this is not how it looks anymore.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(7)">
-          <img src="000041.JPG" alt="Photo 8">
-          <div class="gallery-description">
-            Date taken: May 29th, 2022<br>
-            Camera: Minolta SR101<br>
-            Description: My mom. We had a mini girls' trip to Sài Gòn and we took a stroll in a little park.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(8)">
-          <img src="000058.JPG" alt="Photo 9">
-          <div class="gallery-description">
-            Date taken: June 7th, 2022<br>
-            Camera: Minolta SR101<br>
-            Description: My high school friends and I took a little trip to Moc Chau, and this photo was taken at a plum farm we visited during that trip.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(9)">
-          <img src="000039.JPEG" alt="Photo 10">
-          <div class="gallery-description">
-            Date taken: November 11th, 2022<br>
-            Camera: Konica Z‑UP70<br>
-            Description: My parents at my senior photo session. We were all dressed up in graduation gowns and our parents were dressed in traditional Vietnamese dresses or suits.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(10)">
-          <img src="000052090024.jpg" alt="Photo 11">
-          <div class="gallery-description">
-            Date taken: October 10th, 2022<br>
-            Camera: Konica Z‑UP70<br>
-            Description: This was taken at a cafe near my high school. As you may recognize, this is the background photo of this website.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(11)">
-          <img src="000055.JPEG" alt="Photo 12">
-          <div class="gallery-description">
-            Date taken: January 15th, 2023<br>
-            Camera: Minolta SR101<br>
-            Description: This is the street I cross everyday to get to the bus station on my way to high school. I've had my fair share of memories on the pedestrian bridge this photo was taken from.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(12)">
-          <img src="000035.JPG" alt="Photo 13">
-          <div class="gallery-description">
-            Date taken: August 21st, 2023<br>
-            Camera: Minolta SR101<br>
-            Description: I happened to be the Vice President of the Photography club at my high school. We were getting ready for one of the first organization fairs at my high school at one of the member's dorm room.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(13)">
-          <img src="DSC01667.JPG" alt="Photo 14">
-          <div class="gallery-description">
-            Date taken: June 18th, 2024<br>
-            Camera: Sony Cybershot DSC-RX100<br>
-            Description: Sa Vi is the north-eastern most point of Vietnam. They have a cool Australian pine-shaped building because that is what the area is best known for.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(14)">
-          <img src="DSC01776.JPG" alt="Photo 15">
-          <div class="gallery-description">
-            Date taken: July 14th, 2024<br>
-            Camera: Sony Cybershot DSC-RX100<br>
-            Description: I asked my dad why the roofs of most buildings are red. He told me that back in the day, roofs tended to make up of clay tiles, which were naturally red. Red roofs became a signature look, and even roofs with other materials nowadays would still be red.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(15)">
-          <img src="DSC01977.JPG" alt="Photo 16">
-          <div class="gallery-description">
-            Date taken: August 10th, 2024<br>
-            Camera: Sony Cybershot DSC-RX100<br>
-            Description: My high school friends and I went to Hang Ma street, known for its bustling holiday markets. Mid-Autumn festival was approaching, so the streets were packed with people looking for decorations.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(16)">
-          <img src="May101589-R1-019-8.jpg" alt="Photo 17">
-          <div class="gallery-description">
-            Date taken: November 21st, 2024<br>
-            Camera: Olympus MJU<br>
-            Description: Me and some college friends visited Chicago for a short trip right after we were done with our finals. We did the thing most international students do: take the Red line to Chinatown.
-          </div>
-        </button>
-        <button class="gallery-item" onclick="openSlideshow(17)">
-          <img src="May101589-R1-077-37.jpg" alt="Photo 18">
-          <div class="gallery-description">
-            Date taken: December 28th, 2024<br>
-            Camera: Sony Cybershot DSC-RX100<br>
-            Description: I travelled solo in Chicago for 3 days. Oh the perks of living 3 hours away from a big city. I took a stroll near Navy Pier, got one of the coolest I ever took, and witnessed a proposal(!!). It was eventful in the most unexpected ways.
-          </div>
-        </button>
-      </div>
+    <!-- Slideshow Modal -->
+    <div id="slideshow">
+        <button class="lightbox-close" onclick="closeSlideshow()">&times;</button>
+        <img id="slide-img" src="" alt="">
+        <div id="slide-caption" class="caption"></div>
+        <div class="controls">
+        <button onclick="prevSlide()">&#10094;</button>
+        <button onclick="nextSlide()">&#10095;</button>
+        </div>
     </div>
-  </div>
 
-  <!-- Slideshow Modal -->
-  <div id="slideshow">
-    <button class="lightbox-close" onclick="closeSlideshow()">&times;</button>
-    <img id="slide-img" src="" alt="">
-    <div id="slide-caption" class="caption"></div>
-    <div class="controls">
-      <button onclick="prevSlide()">&#10094;</button>
-      <button onclick="nextSlide()">&#10095;</button>
-    </div>
-  </div>
+    <script>
+        const slides = [
+        { src: "DSCF1837.JPG", caption: `Date taken: February 7th, 2021<br>
+            Camera: Fujifilm X-A5<br>
+            Description: In Vietnamese culture, yellow chrysanthemums are generally used in the table of "offerings" for ancestors. Our culture is deeply rooted in gratitude, and every 15th day in the lunisolar calendar, we set a table of "offerings" for our ancestors.` },
+        { src: "DSCF2067.JPG", caption: `Date taken: May 1st, 2021<br>
+            Camera: Fujifilm X-A5<br>
+            Description: I was on a mini vacation with my family, and they had a cool display of Vietnamese straw hats.` },
+        { src: "DSCF3806.JPG", caption: `Date taken: January 25th, 2022<br>
+            Camera: Fujifilm X-A5<br>
+            Description: We went on a little vacation to my parents' hometown for my mom's birthday. This was taken at a beach in the neighboring city. This might be my favorite photo (that I took) ever. There's something so calming about the ocean when no one's around.` },
+        { src: "DSCF3982.JPG", caption: `Date taken: January 26th, 2022<br>
+            Camera: Fujifilm X-A5<br>
+            Description: Legend has it that Uncle Ho had a fondness for raising goldfish. It just so happened that he's not around anymore, so there's always someone selling fish food at the pond where he grew up (it's a tourist attraction). They seem hungry. Business for that fish food vendor must not be going too well.` },
+        { src: "DSCF4091.JPG", caption: `Date taken: January 27th, 2022<br>
+            Camera: Fujifilm X-A5<br>
+            Description: This was taken at Huong Tich Pagoda in my hometown. It's somewhere we hike everytime we visit my parents' hometown.` },
+        { src: "000043.JPG", caption: `Date taken: March 30th, 2022<br>
+            Camera: Minolta SR101<br>
+            Description: My first (and still only) analog SLR. Taken in front of a mirror somewhere in high school.` },
+        { src: "000038.JPG", caption: `Date taken: April 13th, 2022<br>
+            Camera: Minolta SR101<br>
+            Description: My high school. The school had a change of leadership and was renovated the year after I left, so I'm very sure this is not how it looks anymore.` },
+        { src: "000041.JPG", caption: `Date taken: May 29th, 2022<br>
+            Camera: Minolta SR101<br>
+            Description: My mom. We had a mini girls' trip to Sài Gòn and we took a stroll in a little park.` },
+        { src: "000058.JPG", caption: `Date taken: June 7th, 2022<br>
+            Camera: Minolta SR101<br>
+            Description: My high school friends and I took a little trip to Moc Chau, and this photo was taken at a plum farm we visited during that trip.` },
+        { src: "000039.JPEG", caption: `Date taken: November 11th, 2022<br>
+            Camera: Konica Z-UP70<br>
+            Description: My parents at my senior photo session. We were all dressed up in graduation gowns and our parents were dressed in traditional Vietnamese dresses or suits.` },
+        { src: "000052090024.jpg", caption: `Date taken: October 10th, 2022<br>
+            Camera: Konica Z-UP70<br>
+            Description: This was taken at a cafe near my high school. As you may recognize, this is the background photo of this website.` },
+        { src: "000055.JPEG", caption: `Date taken: January 15th, 2023<br>
+            Camera: Minolta SR101<br>
+            Description: This is the street I cross everyday to get to the bus station on my way to high school. I've had my fair share of memories on the pedestrian bridge this photo was taken from.` },
+        { src: "000035.JPG", caption: `Date taken: August 21st, 2023<br>
+            Camera: Minolta SR101<br>
+            Description: I happened to be the Vice President of the Photography club at my high school. We were getting ready for one of the first organization fairs at my high school at one of the member's dorm room.` },
+        { src: "DSC01667.JPG", caption: `Date taken: June 18th, 2024<br>
+            Camera: Sony Cybershot DSC-RX100<br>
+            Description: Sa Vi is the north-eastern most point of Vietnam. They have a cool Australian pine-shaped building because that is what the area is best known for.` },
+        { src: "DSC01776.JPG", caption: `Date taken: July 14th, 2024<br>
+            Camera: Sony Cybershot DSC-RX100<br>
+            Description: I asked my dad why the roofs of most buildings are red. He told me that back in the day, roofs tended to make up of clay tiles, which were naturally red. Red roofs became a signature look, and even roofs with other materials nowadays would still be red.` },
+        { src: "DSC01977.JPG", caption: `Date taken: August 10th, 2024<br>
+            Camera: Sony Cybershot DSC-RX100<br>
+            Description: My high school friends and I went to Hang Ma street, known for its bustling holiday markets. Mid-Autumn festival was approaching, so the streets were packed with people looking for decorations.` },
+        { src: "May101589-R1-019-8.jpg", caption: `Date taken: November 21st, 2024<br>
+            Camera: Olympus MJU<br>
+            Description: Me and some college friends visited Chicago for a short trip right after we were done with our finals. We did the thing most international students do: take the Red line to Chinatown.` },
+        { src: "May101589-R1-077-37.jpg", caption: `Date taken: December 28th, 2024<br>
+            Camera: Sony Cybershot DSC-RX100<br>
+            Description: I travelled solo in Chicago for 3 days. Oh the perks of living 3 hours away from a big city. I took a stroll near Navy Pier, got one of the coolest I ever took, and witnessed a proposal(!!). It was eventful in the most unexpected ways.` }
+        ];
 
-  <script>
-    const slides = [
-      { src: "DSCF1837.JPG", caption: `Date taken: February 7th, 2021<br>
-        Camera: Fujifilm X-A5<br>
-        Description: In Vietnamese culture, yellow chrysanthemums are generally used in the table of "offerings" for ancestors. Our culture is deeply rooted in gratitude, and every 15th day in the lunisolar calendar, we set a table of "offerings" for our ancestors.` },
-      { src: "DSCF2067.JPG", caption: `Date taken: May 1st, 2021<br>
-        Camera: Fujifilm X-A5<br>
-        Description: I was on a mini vacation with my family, and they had a cool display of Vietnamese straw hats.` },
-      { src: "DSCF3806.JPG", caption: `Date taken: January 25th, 2022<br>
-        Camera: Fujifilm X-A5<br>
-        Description: We went on a little vacation to my parents' hometown for my mom's birthday. This was taken at a beach in the neighboring city. This might be my favorite photo (that I took) ever. There's something so calming about the ocean when no one's around.` },
-      { src: "DSCF3982.JPG", caption: `Date taken: January 26th, 2022<br>
-        Camera: Fujifilm X-A5<br>
-        Description: Legend has it that Uncle Ho had a fondness for raising goldfish. It just so happened that he's not around anymore, so there's always someone selling fish food at the pond where he grew up (it's a tourist attraction). They seem hungry. Business for that fish food vendor must not be going too well.` },
-      { src: "DSCF4091.JPG", caption: `Date taken: January 27th, 2022<br>
-        Camera: Fujifilm X-A5<br>
-        Description: This was taken at Huong Tich Pagoda in my hometown. It's somewhere we hike everytime we visit my parents' hometown.` },
-      { src: "000043.JPG", caption: `Date taken: March 30th, 2022<br>
-        Camera: Minolta SR101<br>
-        Description: My first (and still only) analog SLR. Taken in front of a mirror somewhere in high school.` },
-      { src: "000038.JPG", caption: `Date taken: April 13th, 2022<br>
-        Camera: Minolta SR101<br>
-        Description: My high school. The school had a change of leadership and was renovated the year after I left, so I'm very sure this is not how it looks anymore.` },
-      { src: "000041.JPG", caption: `Date taken: May 29th, 2022<br>
-        Camera: Minolta SR101<br>
-        Description: My mom. We had a mini girls' trip to Sài Gòn and we took a stroll in a little park.` },
-      { src: "000058.JPG", caption: `Date taken: June 7th, 2022<br>
-        Camera: Minolta SR101<br>
-        Description: My high school friends and I took a little trip to Moc Chau, and this photo was taken at a plum farm we visited during that trip.` },
-      { src: "000039.JPEG", caption: `Date taken: November 11th, 2022<br>
-        Camera: Konica Z-UP70<br>
-        Description: My parents at my senior photo session. We were all dressed up in graduation gowns and our parents were dressed in traditional Vietnamese dresses or suits.` },
-      { src: "000052090024.jpg", caption: `Date taken: October 10th, 2022<br>
-        Camera: Konica Z-UP70<br>
-        Description: This was taken at a cafe near my high school. As you may recognize, this is the background photo of this website.` },
-      { src: "000055.JPEG", caption: `Date taken: January 15th, 2023<br>
-        Camera: Minolta SR101<br>
-        Description: This is the street I cross everyday to get to the bus station on my way to high school. I've had my fair share of memories on the pedestrian bridge this photo was taken from.` },
-      { src: "000035.JPG", caption: `Date taken: August 21st, 2023<br>
-        Camera: Minolta SR101<br>
-        Description: I happened to be the Vice President of the Photography club at my high school. We were getting ready for one of the first organization fairs at my high school at one of the member's dorm room.` },
-      { src: "DSC01667.JPG", caption: `Date taken: June 18th, 2024<br>
-        Camera: Sony Cybershot DSC-RX100<br>
-        Description: Sa Vi is the north-eastern most point of Vietnam. They have a cool Australian pine-shaped building because that is what the area is best known for.` },
-      { src: "DSC01776.JPG", caption: `Date taken: July 14th, 2024<br>
-        Camera: Sony Cybershot DSC-RX100<br>
-        Description: I asked my dad why the roofs of most buildings are red. He told me that back in the day, roofs tended to make up of clay tiles, which were naturally red. Red roofs became a signature look, and even roofs with other materials nowadays would still be red.` },
-      { src: "DSC01977.JPG", caption: `Date taken: August 10th, 2024<br>
-        Camera: Sony Cybershot DSC-RX100<br>
-        Description: My high school friends and I went to Hang Ma street, known for its bustling holiday markets. Mid-Autumn festival was approaching, so the streets were packed with people looking for decorations.` },
-      { src: "May101589-R1-019-8.jpg", caption: `Date taken: November 21st, 2024<br>
-        Camera: Olympus MJU<br>
-        Description: Me and some college friends visited Chicago for a short trip right after we were done with our finals. We did the thing most international students do: take the Red line to Chinatown.` },
-      { src: "May101589-R1-077-37.jpg", caption: `Date taken: December 28th, 2024<br>
-        Camera: Sony Cybershot DSC-RX100<br>
-        Description: I travelled solo in Chicago for 3 days. Oh the perks of living 3 hours away from a big city. I took a stroll near Navy Pier, got one of the coolest I ever took, and witnessed a proposal(!!). It was eventful in the most unexpected ways.` }
-    ];
+        let current = 0;
 
-    let current = 0;
+        slides.push({
+            src: "poster.jpg",
+            caption: "Winter Collaborative Project Poster."
+        });
 
-    function showSection(id) {
-      document.querySelectorAll('.tab-section').forEach(s => s.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-      document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active-tab'));
-      document.querySelector(`.navbar a[onclick*="${id}"]`).classList.add('active-tab');
-      if (id==='projects') showProject('fake-news');
-    }
+        function showSection(id) {
+        document.querySelectorAll('.tab-section').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active-tab'));
+        document.querySelector(`.navbar a[onclick*="${id}"]`).classList.add('active-tab');
+        if (id==='projects') showProject('fake-news');
+        }
 
-    function showProject(id) {
-      document.querySelectorAll('.project-section').forEach(s => s.style.display='none');
-      document.getElementById(id).style.display='block';
-      document.querySelectorAll('.sub-navbar button').forEach(b => b.classList.remove('active-sub-tab'));
-      document.querySelector(`.sub-navbar button[onclick*="${id}"]`).classList.add('active-sub-tab');
-    }
+        function showProject(id) {
+        document.querySelectorAll('.project-section').forEach(s => s.style.display='none');
+        document.getElementById(id).style.display='block';
+        document.querySelectorAll('.sub-navbar button').forEach(b => b.classList.remove('active-sub-tab'));
+        document.querySelector(`.sub-navbar button[onclick*="${id}"]`).classList.add('active-sub-tab');
+        }
 
-    function openSlideshow(i) {
-      current = i;
-      updateSlide();
-      document.getElementById('slideshow').style.display = 'flex';
-    }
-    function closeSlideshow() {
-      document.getElementById('slideshow').style.display = 'none';
-    }
-    function updateSlide() {
-      document.getElementById('slide-img').src = slides[current].src;
-      document.getElementById('slide-caption').innerHTML = slides[current].caption;
-    }
-    function nextSlide() { current=(current+1)%slides.length; updateSlide(); }
-    function prevSlide() { current=(current-1+slides.length)%slides.length; updateSlide(); }
+        function openSlideshow(i) {
+        current = i;
+        updateSlide();
+        document.getElementById('slideshow').style.display = 'flex';
+        }
+        function closeSlideshow() {
+        document.getElementById('slideshow').style.display = 'none';
+        }
+        function updateSlide() {
+        document.getElementById('slide-img').src = slides[current].src;
+        document.getElementById('slide-caption').innerHTML = slides[current].caption;
+        }
+        function nextSlide() { current=(current+1)%slides.length; updateSlide(); }
+        function prevSlide() { current=(current-1+slides.length)%slides.length; updateSlide(); }
 
-    document.addEventListener('keydown', e => {
-      const vis = document.getElementById('slideshow').style.display==='flex';
-      if (!vis) return;
-      if (e.key==='Escape') closeSlideshow();
-      if (e.key==='ArrowRight') nextSlide();
-      if (e.key==='ArrowLeft') prevSlide();
-    });
+        document.addEventListener('keydown', e => {
+        const vis = document.getElementById('slideshow').style.display==='flex';
+        if (!vis) return;
+        if (e.key==='Escape') closeSlideshow();
+        if (e.key==='ArrowRight') nextSlide();
+        if (e.key==='ArrowLeft') prevSlide();
+        });
 
-    window.onload = () => showSection('about');
-  </script>
+        window.onload = () => showSection('about');
+    </script>
 </body>
 </html>
