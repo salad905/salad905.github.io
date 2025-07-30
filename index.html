@@ -124,33 +124,33 @@
 
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        .gallery-grid img {
-            width: 100%;
-            border-radius: 10px;
-            object-fit: cover;
-        }
         .gallery-item {
-          display: flex;
-          background-color: rgba(0,0,0,0.3);
-          border-radius: 10px;
-          overflow: hidden;
-          cursor: pointer;
-        }
+            display: flex;
+            flex-wrap: wrap;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            align-items: center;
+            padding: 10px;
+        }   
 
         .gallery-item img {
-          width: 150px;
-          height: 150px;
-          object-fit: cover;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+            margin-right: 20px;
         }
-        
+
         .gallery-description {
-          padding: 10px;
-          display: flex;
-          align-items: center;
+            flex: 1;
+            min-width: 200px;
         }
 
         /* Lightbox Styles */
