@@ -1,0 +1,6 @@
+guid,bucket,search_term,decoration_text,image_url,record_uri
+TEST-001,bucket-a,dog,"A hound, running, with a collar",https://example.com/img1.jpg,https://example.com/rec1
+TEST-002,bucket-b,lion,"Lion attacking deer, ""very fierce""",https://example.com/img2.jpg,https://example.com/rec2
+TEST-003,bucket-a,dog,"Dog sitting
+on steps, watching",https://example.com/img3.jpg,https://example.com/rec3
+TEST-004,bucket-c,horse,"Horse, chariot, and rider",https://example.com/img4.jpg,
