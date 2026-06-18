@@ -5,192 +5,215 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vase Dog Labeler</title>
 <style>
-* { box-sizing: border-box; }
-body { font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 16px; }
-#main-img { max-width: 100%; max-height: 520px; cursor: zoom-in; display: block; margin: 8px auto; border: 1px solid #ccc; }
-#zoom-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 100; cursor: zoom-out; align-items: center; justify-content: center; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: sans-serif; }
+
+/* ── Overlays ── */
+#zoom-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.9); z-index: 100;
+  cursor: zoom-out; align-items: center; justify-content: center;
+}
 #zoom-overlay.on { display: flex; }
-#zoom-overlay img { max-width: 95vw; max-height: 95vh; object-fit: contain; }
-#help-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200; overflow-y: auto; }
+#zoom-overlay img { max-width: 98vw; max-height: 98vh; object-fit: contain; }
+
+#help-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 200; overflow-y: auto;
+}
 #help-overlay.on { display: block; }
-#help-box { background: white; max-width: 600px; margin: 40px auto; padding: 24px; }
-#help-box table { border-collapse: collapse; }
-#help-box td { padding: 3px 10px 3px 0; }
-.screen { display: none; }
-.screen.active { display: block; }
-button { margin: 3px 2px; padding: 5px 12px; font-size: 1em; cursor: pointer; }
-textarea { width: 100%; height: 60px; font-size: 1em; }
-input[type="text"] { font-size: 1em; padding: 4px; }
-.err { color: red; }
-.info { color: #555; font-style: italic; font-size: .9em; }
-#pose-btns button { min-width: 10em; }
-#stage2 { border: 1px solid #888; padding: 12px; margin-top: 12px; }
-#footer-credit { margin-top: 48px; font-size: .8em; color: #555; border-top: 1px solid #ccc; padding-top: 8px; }
+#help-box {
+  background: white; max-width: 500px;
+  margin: 40px auto; padding: 24px;
+}
+#help-box table { border-collapse: collapse; margin-top: 8px; }
+#help-box td { padding: 4px 12px 4px 0; }
+
+/* ── Start / Done screens ── */
+.plain-screen { padding: 32px 24px; max-width: 680px; }
+.plain-screen h1 { margin-bottom: 16px; }
+.plain-screen p, .plain-screen label { display: block; margin-bottom: 12px; line-height: 1.5; }
+.plain-screen button { margin: 3px 4px 3px 0; padding: 7px 16px; font-size: 1em; cursor: pointer; }
+.plain-screen input[type="file"] { margin-top: 4px; }
+.err { color: red; margin-top: 6px; }
+.info { color: #666; font-style: italic; font-size: .9em; }
+.session-box { border: 1px solid #aaa; padding: 14px; margin-bottom: 20px; }
+
+/* ── Label screen ── */
+#screen-label {
+  display: none; flex-direction: column; height: 100vh;
+}
+#screen-label.active { display: flex; }
+
+#top-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px; border-bottom: 1px solid #ddd;
+  flex-shrink: 0; flex-wrap: wrap;
+}
+#top-bar button { padding: 4px 10px; font-size: .9em; cursor: pointer; }
+#progress-text { font-weight: bold; font-size: 1em; }
+#btn-export-mid { margin-left: auto; }
+#prev-label { font-size: .85em; color: #777; font-style: italic; }
+
+#img-area {
+  flex: 1; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: #1a1a1a; position: relative; overflow: hidden;
+}
+#main-img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain; cursor: zoom-in; display: block;
+}
+#img-error {
+  display: none; color: #ccc; text-align: center; padding: 24px;
+}
+#img-error button { margin-top: 10px; display: block; margin-left: auto; margin-right: auto; }
+
+/* ── Button bar ── */
+#btn-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 12px 10px;
+  border-top: 1px solid #ddd; flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.btn-nav {
+  font-size: 1.1em; padding: 12px 18px; cursor: pointer;
+  border: 1px solid #bbb; background: #f2f2f2; border-radius: 5px;
+  min-width: 60px;
+}
+.btn-nav:hover:not(:disabled) { background: #e0e0e0; }
+.btn-nav:disabled { opacity: 0.35; cursor: default; }
+
+.btn-count {
+  font-size: 1.4em; font-weight: bold;
+  padding: 12px 0; min-width: 64px; cursor: pointer;
+  border: 2px solid #aaa; background: white; border-radius: 5px;
+  transition: background .08s;
+}
+.btn-count:hover { background: #e8f0ff; border-color: #5580cc; }
+.btn-count:active { background: #c8d8ff; }
+
+.btn-skip {
+  font-size: 1.1em; padding: 12px 18px; cursor: pointer;
+  border: 1px solid #bbb; background: #f2f2f2; border-radius: 5px;
+  min-width: 80px; color: #555;
+}
+.btn-skip:hover { background: #e0e0e0; }
+
+.btn-sep { width: 16px; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
-<!-- ── Help overlay ── -->
+<!-- Help overlay -->
 <div id="help-overlay">
   <div id="help-box">
-    <h2>Help — Vase Dog Labeler</h2>
-    <h3>What counts as a dog?</h3>
-    <p>Label an image <strong>Dog</strong> only if it clearly shows a <strong>domestic dog</strong> (canis lupus familiaris). The following animals are <strong>NOT dogs</strong> and should be labeled "No dog" or "Not sure":</p>
-    <ul>
-      <li>Lions, panthers, leopards</li>
-      <li>Wolves, foxes, jackals</li>
-      <li>Horses, donkeys</li>
-      <li>Boars, deer, goats</li>
-      <li>Any other wild animal</li>
-    </ul>
-    <p><strong>"Not sure" is always a correct answer — never guess.</strong> If you cannot tell whether the animal is a domestic dog or something else, choose Not sure.</p>
-    <h3>Keyboard shortcuts</h3>
+    <h2>Help</h2>
+    <p>Click the number of dogs visible in the image. Click 0 if there are no dogs.</p>
+    <p>Use <strong>Skip</strong> if you are not sure.</p>
+    <h3 style="margin-top:16px;">Keyboard shortcuts</h3>
     <table>
-      <tr><td><b>D &nbsp;or&nbsp; →</b></td><td>Dog</td></tr>
-      <tr><td><b>N &nbsp;or&nbsp; ←</b></td><td>No dog</td></tr>
-      <tr><td><b>U</b></td><td>Not sure</td></tr>
-      <tr><td><b>Backspace</b></td><td>Go back to previous image</td></tr>
+      <tr><td><b>0 – 4</b></td><td>Label count (4 = four or more)</td></tr>
+      <tr><td><b>→ or S</b></td><td>Skip / not sure</td></tr>
+      <tr><td><b>← or Backspace</b></td><td>Go back</td></tr>
       <tr><td><b>?</b></td><td>Show / hide this help</td></tr>
     </table>
-    <p><em>On the pose screen (shown after selecting Dog):</em></p>
-    <table>
-      <tr><td><b>1 – 6</b></td><td>Select pose</td></tr>
-      <tr><td><b>M</b></td><td>Toggle "more than one dog"</td></tr>
-      <tr><td><b>C</b></td><td>Focus the comment box</td></tr>
-      <tr><td><b>Enter</b></td><td>Confirm and advance</td></tr>
-      <tr><td><b>Esc</b></td><td>Go back to Dog / No dog / Not sure</td></tr>
-    </table>
+    <p style="margin-top:16px;"><strong>What counts as a dog?</strong> Only domestic dogs (canis lupus familiaris). Lions, wolves, foxes, horses, boars, deer, etc. are not dogs -- use Skip if unsure.</p>
     <br><button onclick="closeHelp()">Close</button>
   </div>
 </div>
 
-<!-- ── Zoom overlay ── -->
+<!-- Zoom overlay -->
 <div id="zoom-overlay" onclick="closeZoom()">
   <img id="zoom-img" src="" alt="">
 </div>
 
-<!-- ── Start screen ── -->
-<div id="screen-start" class="screen active">
-  <h1>Ancient Greek Vase — Dog Labeler</h1>
-  <p id="manifest-status" class="info">Loading manifest.csv…</p>
+<!-- Start screen -->
+<div id="screen-start" class="plain-screen">
+  <h1>Vase Dog Labeler</h1>
+  <p id="manifest-status" class="info">Loading manifest.csv...</p>
 
-  <div id="session-prompt" style="display:none; border:1px solid #888; padding:12px; margin-bottom:16px;">
-    <strong>Saved session found</strong> — <em id="saved-count"></em> images labeled.<br><br>
-    <button id="btn-continue">Continue from where I left off</button>
+  <div id="session-prompt" class="session-box" style="display:none;">
+    <strong>Saved session found</strong> -- <span id="saved-count"></span> images labeled.<br><br>
+    <button id="btn-continue">Continue</button>
     <button id="btn-startover">Start over</button>
   </div>
 
-  <p>
-    <label><strong>Import previous labels CSV</strong> (optional — use this to resume on a different computer):<br>
-      <input id="import-file" type="file" accept=".csv">
-    </label>
-  </p>
+  <label>
+    <strong>Import previous labels CSV</strong> (optional -- to resume on a different computer):<br>
+    <input id="import-file" type="file" accept=".csv">
+  </label>
 
-  <p>
-    <button id="btn-start" disabled>Start labeling</button>
-  </p>
+  <p><button id="btn-start" disabled>Start labeling</button></p>
   <p id="start-err" class="err"></p>
 </div>
 
-<!-- ── Label screen ── -->
+<!-- Label screen -->
 <div id="screen-label" class="screen">
-  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+  <div id="top-bar">
     <button onclick="toggleHelp()" title="Help (press ?)">?</button>
-    <strong id="progress-text"></strong>
-    <button id="btn-export-mid" style="margin-left:auto;">Export CSV</button>
+    <span id="progress-text"></span>
+    <span id="prev-label"></span>
+    <button id="btn-export-mid">Export CSV</button>
   </div>
 
-  <div id="img-wrap">
+  <div id="img-area">
     <img id="main-img" src="" alt="Vase image">
-    <div id="img-error" style="display:none;">
-      <p class="err">⚠ Image failed to load.</p>
+    <div id="img-error">
+      <p>Image failed to load.</p>
       <button id="btn-retry">Retry</button>
-      <button id="btn-broken">Mark as broken &amp; continue →</button>
+      <button id="btn-broken">Mark broken and continue</button>
     </div>
   </div>
 
-  <p id="record-link" class="info" style="margin:4px 0;"></p>
-  <p id="prev-label"  class="info" style="margin:4px 0;"></p>
-
-  <!-- Stage 1 -->
-  <div id="stage1">
-    <button id="btn-dog">🐕 Dog &nbsp;(D / →)</button>
-    <button id="btn-nodog">✗ No dog &nbsp;(N / ←)</button>
-    <button id="btn-unsure">? Not sure &nbsp;(U)</button>
-    <button id="btn-back" style="margin-left:20px;">← Back (Backspace)</button>
-  </div>
-
-  <!-- Stage 2 (dog pose) -->
-  <div id="stage2" style="display:none;">
-    <strong>Pose:</strong>
-    <div id="pose-btns" style="margin:6px 0;"></div>
-    <p style="margin:8px 0;">
-      <label><input type="checkbox" id="chk-multiple"> More than one dog &nbsp;(M)</label>
-    </p>
-    <p style="margin:8px 0;">
-      <label>Comment (optional — press C to focus):<br>
-        <textarea id="comment-box"></textarea>
-      </label>
-    </p>
-    <button id="btn-confirm">✓ Confirm (Enter)</button>
-    <button id="btn-back2">← Back (Esc)</button>
+  <div id="btn-bar">
+    <button class="btn-nav" id="btn-back" title="Back (← / Backspace)">&#8592; Back</button>
+    <div class="btn-sep"></div>
+    <button class="btn-count" data-count="0" title="0 dogs (press 0)">0</button>
+    <button class="btn-count" data-count="1" title="1 dog (press 1)">1</button>
+    <button class="btn-count" data-count="2" title="2 dogs (press 2)">2</button>
+    <button class="btn-count" data-count="3" title="3 dogs (press 3)">3</button>
+    <button class="btn-count" data-count="4+" title="4 or more dogs (press 4)">4+</button>
+    <div class="btn-sep"></div>
+    <button class="btn-skip" id="btn-skip" title="Skip / not sure (→ / S)">Skip &#8594;</button>
   </div>
 </div>
 
-<!-- ── Done screen ── -->
-<div id="screen-done" class="screen">
+<!-- Done screen -->
+<div id="screen-done" class="plain-screen">
   <h2>All images labeled!</h2>
-  <div id="summary"></div>
+  <div id="summary" style="margin: 16px 0;"></div>
   <button id="btn-export-done">Export CSV</button>
 </div>
 
-<div id="footer-credit">
-  Images: Beazley Archive Pottery Database, Classical Art Research Centre, University of Oxford
-</div>
-
 <script>
-// ── Config (edit poses here) ───────────────────────────────────────────────
-const POSES = [
-  'resting',
-  'alert',
-  'play',
-  'aggression',
-  'neutral (walking/standing)',
-  'unclear'
-];
-
 const STORAGE_KEY = 'vase_dog_labels_v1';
 
-// ── State ──────────────────────────────────────────────────────────────────
-let items = [];   // [{guid, image_url, record_uri}, ...] — sorted by hash
-let labels = {};  // guid → {label, pose, multiple_dogs, comment, timestamp}
+let items = [];
+let labels = {};
 let currentIndex = 0;
-let stage = 1;
-let pendingPose = null;
 let errActive = false;
 
-// ── Hash (for deterministic shuffle) ──────────────────────────────────────
 function hashStr(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
   return h >>> 0;
 }
 
-// ── RFC-4180 CSV parser ────────────────────────────────────────────────────
 function parseCSV(text) {
   const rows = [];
-  let i = 0;
-  const n = text.length;
+  let i = 0, n = text.length;
   while (i < n) {
     const row = [];
     while (true) {
       let field = '';
       if (i < n && text[i] === '"') {
-        i++; // skip opening quote
+        i++;
         while (i < n) {
           if (text[i] === '"') {
             if (i + 1 < n && text[i + 1] === '"') { field += '"'; i += 2; }
-            else { i++; break; } // closing quote
+            else { i++; break; }
           } else { field += text[i++]; }
         }
       } else {
@@ -202,7 +225,7 @@ function parseCSV(text) {
         if (i < n && text[i] === '\n') i++;
         break;
       }
-      i++; // skip comma
+      i++;
     }
     if (!(row.length === 1 && row[0] === '')) rows.push(row);
   }
@@ -220,7 +243,6 @@ function csvToObjects(text) {
   });
 }
 
-// ── CSV export ─────────────────────────────────────────────────────────────
 function esc(v) {
   const s = v == null ? '' : String(v);
   return (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r'))
@@ -228,20 +250,11 @@ function esc(v) {
 }
 
 function buildExportCSV() {
-  const hdr = ['guid', 'label', 'pose', 'multiple_dogs', 'comment', 'timestamp', 'record_uri'];
-  const lines = [hdr.join(',')];
+  const lines = ['guid,count,timestamp,record_uri'];
   for (const item of items) {
     const lb = labels[item.guid];
     if (!lb) continue;
-    lines.push([
-      item.guid,
-      lb.label,
-      lb.pose || '',
-      lb.label === 'dog' ? (lb.multiple_dogs ? 'true' : 'false') : '',
-      lb.comment || '',
-      lb.timestamp || '',
-      item.record_uri || ''
-    ].map(esc).join(','));
+    lines.push([item.guid, lb.count, lb.timestamp || '', item.record_uri || ''].map(esc).join(','));
   }
   return lines.join('\r\n');
 }
@@ -256,29 +269,27 @@ function exportCSV() {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// ── LocalStorage ───────────────────────────────────────────────────────────
 function lsSave() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ labels, currentIndex }));
-  } catch (_) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ labels, currentIndex })); } catch (_) {}
 }
-
 function lsLoad() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
-  catch (_) { return null; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
 }
-
 function lsClear() {
   try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
 }
 
-// ── Screens ────────────────────────────────────────────────────────────────
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#screen-start, #screen-label, #screen-done').forEach(s => {
+    s.classList.remove('active');
+    if (s.id === 'screen-label') s.style.display = 'none';
+    else s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  if (id === 'screen-label') { el.style.display = 'flex'; el.classList.add('active'); }
+  else { el.style.display = ''; el.classList.add('active'); }
 }
 
-// ── Help / Zoom ────────────────────────────────────────────────────────────
 function toggleHelp() { document.getElementById('help-overlay').classList.toggle('on'); }
 function closeHelp()  { document.getElementById('help-overlay').classList.remove('on'); }
 
@@ -290,37 +301,29 @@ function openZoom() {
 }
 function closeZoom() { document.getElementById('zoom-overlay').classList.remove('on'); }
 
-// ── Image error ────────────────────────────────────────────────────────────
 function onImgError() {
   if (errActive) return;
   errActive = true;
   document.getElementById('main-img').style.display = 'none';
   document.getElementById('img-error').style.display = 'block';
-  document.getElementById('stage1').style.display = 'none';
-  document.getElementById('stage2').style.display = 'none';
 }
 
 function onImgLoad() {
-  // Clears any spurious error state when image eventually loads
   errActive = false;
   document.getElementById('main-img').style.display = 'block';
   document.getElementById('img-error').style.display = 'none';
-  if (stage === 1) document.getElementById('stage1').style.display = '';
 }
 
 function retryImage() {
   errActive = false;
   document.getElementById('img-error').style.display = 'none';
   document.getElementById('main-img').style.display = 'block';
-  if (stage === 1) document.getElementById('stage1').style.display = '';
   const url = items[currentIndex].image_url;
   document.getElementById('main-img').src = url + (url.includes('?') ? '&' : '?') + '_r=' + Date.now();
 }
 
-// ── Manifest ───────────────────────────────────────────────────────────────
 function processManifest(text) {
-  const seen = new Set();
-  const arr = [];
+  const seen = new Set(), arr = [];
   for (const row of csvToObjects(text)) {
     const g = row.guid, u = row.image_url;
     if (!g || !u || seen.has(g)) continue;
@@ -332,96 +335,31 @@ function processManifest(text) {
   return arr.length;
 }
 
-// ── Labeling ───────────────────────────────────────────────────────────────
 function loadItem(idx) {
   currentIndex = idx;
-  stage = 1;
-  pendingPose = null;
   errActive = false;
-
   if (idx < 0 || idx >= items.length) { showDoneScreen(); return; }
 
   const item = items[idx];
   const existing = labels[item.guid];
 
-  const img = document.getElementById('main-img');
-  img.style.display = 'block';
+  document.getElementById('main-img').style.display = 'block';
   document.getElementById('img-error').style.display = 'none';
-  document.getElementById('stage1').style.display = '';
-  document.getElementById('stage2').style.display = 'none';
-
-  img.src = item.image_url;
+  document.getElementById('main-img').src = item.image_url;
 
   const done = Object.keys(labels).length;
   document.getElementById('progress-text').textContent = done + ' / ' + items.length;
-  document.getElementById('record-link').textContent = item.record_uri ? 'Record: ' + item.record_uri : '';
-  document.getElementById('prev-label').textContent = existing
-    ? 'Previous answer: ' + existing.label + (existing.pose ? ' / ' + existing.pose : '')
-    : '';
+  document.getElementById('prev-label').textContent = existing ? 'Previously: ' + existing.count : '';
   document.getElementById('btn-back').disabled = idx === 0;
 
   lsSave();
 }
 
-function vote(label) {
-  if (label === 'dog') {
-    stage = 2;
-    pendingPose = null;
-    document.getElementById('stage1').style.display = 'none';
-    document.getElementById('stage2').style.display = 'block';
-    document.getElementById('chk-multiple').checked = false;
-    document.getElementById('comment-box').value = '';
-    highlightPose(null);
-    // Prefill from existing dog label
-    const ex = labels[items[currentIndex].guid];
-    if (ex && ex.label === 'dog') {
-      if (ex.pose) { pendingPose = ex.pose; highlightPose(ex.pose); }
-      document.getElementById('chk-multiple').checked = !!ex.multiple_dogs;
-      document.getElementById('comment-box').value = ex.comment || '';
-    }
-  } else {
-    saveLabel({ label, pose: '', multiple_dogs: false, comment: '' });
-  }
-}
-
-function highlightPose(name) {
-  document.querySelectorAll('#pose-btns button').forEach((btn, i) => {
-    const on = POSES[i] === name;
-    btn.style.fontWeight = on ? 'bold' : '';
-    btn.style.outline   = on ? '2px solid #333' : '';
-  });
-}
-
-function selectPose(name) { pendingPose = name; highlightPose(name); }
-
-function confirmDog() {
-  if (!pendingPose) { alert('Please select a pose (click a button or press 1–6).'); return; }
-  saveLabel({
-    label: 'dog',
-    pose: pendingPose,
-    multiple_dogs: document.getElementById('chk-multiple').checked,
-    comment: document.getElementById('comment-box').value.trim()
-  });
-}
-
-function backToStage1() {
-  stage = 1;
-  pendingPose = null;
-  document.getElementById('stage2').style.display = 'none';
-  document.getElementById('stage1').style.display = '';
-}
-
-function saveLabel(lb) {
+function record(count) {
+  labels[items[currentIndex].guid] = { count, timestamp: new Date().toISOString() };
   errActive = false;
   document.getElementById('img-error').style.display = 'none';
   document.getElementById('main-img').style.display = 'block';
-
-  labels[items[currentIndex].guid] = Object.assign({}, lb, { timestamp: new Date().toISOString() });
-
-  stage = 1;
-  pendingPose = null;
-  document.getElementById('stage2').style.display = 'none';
-  document.getElementById('stage1').style.display = '';
 
   const done = Object.keys(labels).length;
   document.getElementById('progress-text').textContent = done + ' / ' + items.length;
@@ -439,26 +377,22 @@ function saveLabel(lb) {
 
 function goBack() {
   if (currentIndex <= 0) return;
-  stage = 1;
-  pendingPose = null;
   loadItem(currentIndex - 1);
 }
 
 function showDoneScreen() {
   showScreen('screen-done');
   const counts = {};
-  for (const lb of Object.values(labels)) counts[lb.label] = (counts[lb.label] || 0) + 1;
+  for (const lb of Object.values(labels)) counts[lb.count] = (counts[lb.count] || 0) + 1;
   let html = '<p><strong>' + Object.keys(labels).length + '</strong> labeled out of ' + items.length + ' total.</p><ul>';
   for (const [k, v] of Object.entries(counts)) html += '<li>' + k + ': ' + v + '</li>';
   html += '</ul>';
   document.getElementById('summary').innerHTML = html;
 }
 
-// ── Start screen ───────────────────────────────────────────────────────────
 function startSession() {
-  if (!items.length) { document.getElementById('start-err').textContent = 'Manifest not loaded yet — please wait.'; return; }
+  if (!items.length) { document.getElementById('start-err').textContent = 'Manifest not loaded yet -- please wait.'; return; }
   document.getElementById('start-err').textContent = '';
-
   const f = document.getElementById('import-file').files[0];
   if (f) {
     const reader = new FileReader();
@@ -472,14 +406,8 @@ function startSession() {
 function mergeLabels(csvText) {
   try {
     for (const row of csvToObjects(csvText)) {
-      if (!row.guid || !row.label) continue;
-      labels[row.guid] = {
-        label: row.label,
-        pose: row.pose || '',
-        multiple_dogs: row.multiple_dogs === 'true',
-        comment: row.comment || '',
-        timestamp: row.timestamp || ''
-      };
+      if (!row.guid || !row.count) continue;
+      labels[row.guid] = { count: row.count, timestamp: row.timestamp || '' };
     }
   } catch (e) { console.warn('Import labels failed:', e); }
 }
@@ -495,7 +423,7 @@ function continueSession() {
   const saved = lsLoad();
   if (!saved) return;
   if (!items.length) {
-    document.getElementById('start-err').textContent = 'Manifest still loading — please wait a moment.';
+    document.getElementById('start-err').textContent = 'Manifest still loading -- please wait a moment.';
     return;
   }
   labels = saved.labels || {};
@@ -510,42 +438,37 @@ function startOver() {
   document.getElementById('session-prompt').style.display = 'none';
 }
 
-// ── Init ───────────────────────────────────────────────────────────────────
 (function init() {
-  // Build pose buttons
-  const poseDiv = document.getElementById('pose-btns');
-  POSES.forEach((pose, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = (i + 1) + '. ' + pose;
-    btn.onclick = () => selectPose(pose);
-    poseDiv.appendChild(btn);
-  });
+  // Hide all screens initially except start
+  document.getElementById('screen-label').style.display = 'none';
+  document.getElementById('screen-done').style.display = 'none';
+  document.getElementById('screen-start').style.display = '';
 
-  // Wire buttons
-  document.getElementById('btn-start').onclick       = startSession;
-  document.getElementById('btn-continue').onclick    = continueSession;
-  document.getElementById('btn-startover').onclick   = startOver;
-  document.getElementById('btn-retry').onclick       = retryImage;
-  document.getElementById('btn-broken').onclick      = () => saveLabel({ label: 'image_error', pose: '', multiple_dogs: false, comment: '' });
-  document.getElementById('btn-back').onclick        = goBack;
-  document.getElementById('btn-back2').onclick       = backToStage1;
-  document.getElementById('btn-confirm').onclick     = confirmDog;
+  document.getElementById('btn-start').onclick      = startSession;
+  document.getElementById('btn-continue').onclick   = continueSession;
+  document.getElementById('btn-startover').onclick  = startOver;
+  document.getElementById('btn-retry').onclick      = retryImage;
+  document.getElementById('btn-broken').onclick     = () => record('broken');
+  document.getElementById('btn-back').onclick       = goBack;
+  document.getElementById('btn-skip').onclick       = () => record('skip');
   document.getElementById('btn-export-mid').onclick  = exportCSV;
   document.getElementById('btn-export-done').onclick = exportCSV;
 
-  const img = document.getElementById('main-img');
-  img.onclick  = openZoom;
-  img.onerror  = onImgError;
-  img.onload   = onImgLoad;
+  document.querySelectorAll('.btn-count').forEach(btn => {
+    btn.onclick = () => record(btn.dataset.count);
+  });
 
-  // Check saved session
+  const img = document.getElementById('main-img');
+  img.onclick = openZoom;
+  img.onerror = onImgError;
+  img.onload  = onImgLoad;
+
   const saved = lsLoad();
   if (saved && Object.keys(saved.labels || {}).length > 0) {
     document.getElementById('saved-count').textContent = Object.keys(saved.labels).length;
     document.getElementById('session-prompt').style.display = 'block';
   }
 
-  // Fetch manifest automatically
   fetch('manifest.csv')
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
     .then(text => {
@@ -555,51 +478,32 @@ function startOver() {
     })
     .catch(err => {
       document.getElementById('manifest-status').textContent =
-        'Could not load manifest.csv (' + err.message + '). Use Demo to test, or check the file is in the same folder as this page.';
+        'Could not load manifest.csv (' + err.message + '). Check the file is in the same folder as this page.';
     });
 })();
 
-// ── Keyboard ───────────────────────────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
   const helpOn  = document.getElementById('help-overlay').classList.contains('on');
   const zoomOn  = document.getElementById('zoom-overlay').classList.contains('on');
   const labelOn = document.getElementById('screen-label').classList.contains('active');
-  const inText  = e.target.matches('textarea, input[type="text"]');
 
-  // Global: help toggle
-  if ((e.key === '?' || e.key === '/') && !inText) { e.preventDefault(); toggleHelp(); return; }
+  if ((e.key === '?' || e.key === '/')) { e.preventDefault(); toggleHelp(); return; }
 
-  // Global: Escape closes overlays or stage 2
   if (e.key === 'Escape') {
-    if (helpOn)             { closeHelp();     return; }
-    if (zoomOn)             { closeZoom();     return; }
-    if (labelOn && stage === 2) { backToStage1(); return; }
+    if (helpOn) { closeHelp(); return; }
+    if (zoomOn) { closeZoom(); return; }
     return;
   }
 
   if (helpOn || zoomOn || !labelOn) return;
 
-  if (stage === 1) {
-    if (inText) return;
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); vote('dog');    }
-    else if (e.key === 'ArrowLeft' || e.key === 'n' || e.key === 'N') { e.preventDefault(); vote('no_dog'); }
-    else if (e.key === 'u' || e.key === 'U')                          { e.preventDefault(); vote('unsure'); }
-    else if (e.key === 'Backspace')                                   { e.preventDefault(); goBack();    }
-  } else if (stage === 2) {
-    if (e.key === 'Enter' && !inText) { e.preventDefault(); confirmDog(); return; }
-    // Esc already handled above
-    if (inText) return;
-    if (e.key === 'Backspace') { e.preventDefault(); backToStage1(); return; }
-    if (e.key >= '1' && e.key <= '6') {
-      const idx = parseInt(e.key, 10) - 1;
-      if (idx < POSES.length) selectPose(POSES[idx]);
-    } else if (e.key === 'm' || e.key === 'M') {
-      const chk = document.getElementById('chk-multiple');
-      chk.checked = !chk.checked;
-    } else if (e.key === 'c' || e.key === 'C') {
-      document.getElementById('comment-box').focus();
-    }
-  }
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); goBack(); }
+  else if (e.key === 'ArrowRight' || e.key === 's' || e.key === 'S') { e.preventDefault(); record('skip'); }
+  else if (e.key === '0') { e.preventDefault(); record('0'); }
+  else if (e.key === '1') { e.preventDefault(); record('1'); }
+  else if (e.key === '2') { e.preventDefault(); record('2'); }
+  else if (e.key === '3') { e.preventDefault(); record('3'); }
+  else if (e.key === '4') { e.preventDefault(); record('4+'); }
 });
 </script>
 </body>
