@@ -3,28 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vase Dog Labeler</title>
+<title>Vase Dog Annotator</title>
 <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  height: 100%;
-  font-family: "Comic Sans MS", "Comic Relief", Roboto, sans-serif;
-  color: #fff;
-}
-body {
-  background: url('../images/000052090024.jpg') center/cover fixed;
-}
+html, body { height: 100%; font-family: "Comic Sans MS", "Comic Relief", Roboto, sans-serif; color: #fff; }
+body { background: url('../images/000052090024.jpg') center/cover fixed; }
 
-.overlay {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: -1;
-}
-
-a { color: #E2FFDE; }
-a:hover { color: #38732F; }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
 
 /* ── Overlays ── */
 #zoom-overlay {
@@ -41,41 +27,24 @@ a:hover { color: #38732F; }
 }
 #help-overlay.on { display: block; }
 #help-box {
-  background: rgba(38,102,28,0.95);
-  max-width: 500px; margin: 40px auto; padding: 24px;
-  border-radius: 8px;
+  background: rgba(38,102,28,0.95); max-width: 500px;
+  margin: 40px auto; padding: 24px; border-radius: 8px;
 }
 #help-box h2, #help-box h3 { color: #E2FFDE; margin-bottom: 10px; }
 #help-box p { margin-bottom: 10px; line-height: 1.5; }
 #help-box table { border-collapse: collapse; margin-top: 6px; }
 #help-box td { padding: 4px 14px 4px 0; }
 #help-box button {
-  margin-top: 14px;
-  background: #1E5E16; color: #E2FFDE;
-  border: none; padding: 8px 20px;
-  border-radius: 5px; cursor: pointer;
-  font-family: inherit; font-weight: bold;
+  margin-top: 14px; background: #1E5E16; color: #E2FFDE;
+  border: none; padding: 8px 20px; border-radius: 5px;
+  cursor: pointer; font-family: inherit; font-weight: bold;
 }
 #help-box button:hover { background: #38732F; }
-
-/* ── Navbar ── */
-.navbar {
-  background: rgba(0,0,0,0.6);
-  padding: 10px 0; text-align: center;
-  flex-shrink: 0;
-}
-.navbar a {
-  color: #E2FFDE; text-decoration: none;
-  font-weight: bold; font-size: 18px;
-  margin: 0 20px; cursor: pointer;
-}
-.navbar a:hover { color: #38732F; }
 
 /* ── Start / Done screens ── */
 .plain-screen {
   max-width: 700px; margin: 30px auto; padding: 24px;
-  background: rgba(38,102,28,0.85);
-  border-radius: 8px;
+  background: rgba(38,102,28,0.85); border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 .plain-screen h1, .plain-screen h2 { color: #E2FFDE; margin-bottom: 14px; }
@@ -88,32 +57,27 @@ a:hover { color: #38732F; }
 }
 .plain-screen button:hover { background: #38732F; }
 .plain-screen button:disabled { opacity: 0.45; cursor: default; }
-#btn-start {
-  background: #E2FFDE; color: #1E5E16;
-  font-size: 1.2em; padding: 12px 32px;
-  border: 2px solid #38732F;
-  margin-top: 4px;
-}
-#btn-start:hover:not(:disabled) { background: #c8f0c4; }
 .plain-screen input[type="file"] { margin-top: 4px; color: #E2FFDE; }
-.err { color: #ffaaaa; margin-top: 6px; }
+.err  { color: #ffaaaa; margin-top: 6px; }
 .info { color: #c8f0c4; font-style: italic; font-size: .9em; }
 .session-box {
   border: 1px solid #38732F; padding: 14px; margin-bottom: 18px;
   border-radius: 6px; background: rgba(0,0,0,0.2);
 }
-
-/* ── Label screen (full viewport) ── */
-#screen-label {
-  display: none; flex-direction: column; height: 100vh;
+#btn-start {
+  background: #E2FFDE; color: #1E5E16;
+  font-size: 1.2em; padding: 12px 32px;
+  border: 2px solid #38732F; margin-top: 4px;
 }
+#btn-start:hover:not(:disabled) { background: #c8f0c4; }
+
+/* ── Label screen ── */
+#screen-label { display: none; flex-direction: column; height: 100vh; }
 #screen-label.active { display: flex; }
 
 #top-bar {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  padding: 8px 14px;
-  background: rgba(0,0,0,0.6);
-  flex-shrink: 0;
+  padding: 8px 14px; background: rgba(0,0,0,0.6); flex-shrink: 0;
 }
 #top-bar button {
   background: none; border: 1px solid #E2FFDE; color: #E2FFDE;
@@ -126,16 +90,23 @@ a:hover { color: #38732F; }
 #btn-export-mid { margin-left: auto; }
 
 #img-area {
-  flex: 1; min-height: 0;
+  flex: 1; min-height: 0; position: relative;
   display: flex; align-items: center; justify-content: center;
-  background: #111; position: relative; overflow: hidden;
+  background: #111; overflow: hidden;
 }
 #main-img {
   max-width: 100%; max-height: 100%;
-  object-fit: contain; cursor: zoom-in; display: block;
+  object-fit: contain; display: block;
+  user-select: none; pointer-events: none;
+}
+#box-canvas {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  cursor: crosshair; touch-action: none;
 }
 #img-error {
-  display: none; color: #ccc; text-align: center; padding: 24px;
+  display: none; color: #ccc; text-align: center;
+  padding: 24px; position: absolute;
 }
 #img-error button {
   display: block; margin: 10px auto 0;
@@ -149,47 +120,38 @@ a:hover { color: #38732F; }
 #btn-bar {
   display: flex; align-items: center; justify-content: center;
   gap: 8px; padding: 12px 10px; flex-wrap: wrap;
-  background: rgba(0,0,0,0.6);
-  flex-shrink: 0;
+  background: rgba(0,0,0,0.6); flex-shrink: 0;
 }
-
 .btn-nav {
-  font-size: 1em; font-weight: bold;
-  padding: 12px 20px; cursor: pointer;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid #aaa; color: #E2FFDE;
-  border-radius: 5px; min-width: 70px;
-  font-family: inherit;
+  font-size: 1em; font-weight: bold; padding: 10px 16px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 1px solid #aaa;
+  color: #E2FFDE; border-radius: 5px; font-family: inherit;
 }
 .btn-nav:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
 .btn-nav:disabled { opacity: 0.3; cursor: default; }
-
-.btn-count {
-  font-size: 1.5em; font-weight: bold;
-  padding: 12px 0; min-width: 68px; cursor: pointer;
-  background: #1E5E16; color: #E2FFDE;
-  border: 2px solid #38732F; border-radius: 5px;
-  font-family: inherit;
-  transition: background .08s;
+#box-count {
+  color: #c8f0c4; font-style: italic; font-size: .95em;
+  min-width: 110px; text-align: center;
 }
-.btn-count:hover { background: #38732F; }
-.btn-count:active { background: #4a9a3a; }
-
+.btn-action {
+  font-size: 1em; font-weight: bold; padding: 10px 18px; cursor: pointer;
+  background: #1E5E16; color: #E2FFDE;
+  border: 2px solid #38732F; border-radius: 5px; font-family: inherit;
+}
+.btn-action:hover { background: #38732F; }
+.btn-confirm {
+  font-size: 1.1em; font-weight: bold; padding: 10px 24px; cursor: pointer;
+  background: #E2FFDE; color: #1E5E16;
+  border: 2px solid #38732F; border-radius: 5px; font-family: inherit;
+}
+.btn-confirm:hover { background: #c8f0c4; }
 .btn-skip {
-  font-size: 1em; font-weight: bold;
-  padding: 12px 20px; cursor: pointer;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid #aaa; color: #E2FFDE;
-  border-radius: 5px; min-width: 80px;
-  font-family: inherit;
+  font-size: 1em; font-weight: bold; padding: 10px 16px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 1px solid #aaa;
+  color: #E2FFDE; border-radius: 5px; font-family: inherit;
 }
 .btn-skip:hover { background: rgba(255,255,255,0.18); }
-
-.btn-sep { width: 16px; flex-shrink: 0; }
-
-/* ── Done summary ── */
-#summary ul { margin: 10px 0 10px 20px; }
-#summary li { margin-bottom: 4px; }
+.btn-sep { width: 14px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -200,13 +162,17 @@ a:hover { color: #38732F; }
 <div id="help-overlay">
   <div id="help-box">
     <h2>Help</h2>
-    <p>Click the number of dogs visible in the image. Click 0 if there are no dogs. Use Skip if you are not sure.</p>
-    <p>What counts as a dog? Only domestic dogs (canis lupus familiaris). Lions, wolves, foxes, horses, boars, deer, etc. are not dogs -- use Skip if unsure.</p>
+    <p><strong>Draw a box:</strong> Click and drag over each dog. Draw one box per dog.</p>
+    <p><strong>Delete a box:</strong> Click the red X on the box.</p>
+    <p>When done, click <strong>Confirm</strong>. If there are no dogs, click <strong>No dogs</strong>. If unsure, click <strong>Skip</strong>.</p>
+    <p>Only label domestic dogs -- wolves, foxes, lions, horses etc. are not dogs.</p>
     <h3>Keyboard shortcuts</h3>
     <table>
-      <tr><td><b>0 – 4</b></td><td>Label count (4 = four or more)</td></tr>
-      <tr><td><b>→ or S</b></td><td>Skip / not sure</td></tr>
-      <tr><td><b>← or Backspace</b></td><td>Go back</td></tr>
+      <tr><td><b>Enter</b></td><td>Confirm and advance</td></tr>
+      <tr><td><b>N</b></td><td>No dogs</td></tr>
+      <tr><td><b>Z</b></td><td>Undo last box</td></tr>
+      <tr><td><b>→</b></td><td>Skip</td></tr>
+      <tr><td><b>← / Backspace</b></td><td>Go back</td></tr>
       <tr><td><b>?</b></td><td>Show / hide this help</td></tr>
     </table>
     <button onclick="closeHelp()">Close</button>
@@ -220,28 +186,28 @@ a:hover { color: #38732F; }
 
 <!-- Start screen -->
 <div id="screen-start" class="plain-screen">
-  <h1>Vase Dog Labeler</h1>
+  <h1>Vase Dog Annotator</h1>
   <p id="manifest-status" class="info">Loading manifest.csv...</p>
 
   <div id="session-prompt" class="session-box" style="display:none;">
-    <strong>Saved session found</strong> -- <span id="saved-count"></span> images labeled.<br><br>
+    <strong>Saved session found</strong> -- <span id="saved-count"></span> images annotated.<br><br>
     <button id="btn-continue">Continue</button>
     <button id="btn-startover">Start over</button>
   </div>
 
   <label>
-    <strong>Import previous labels CSV</strong> (optional -- to resume on a different computer):<br>
+    <strong>Import previous annotations CSV</strong> (optional):<br>
     <input id="import-file" type="file" accept=".csv">
   </label>
 
-  <p><button id="btn-start" disabled>Start labeling</button></p>
+  <p><button id="btn-start" disabled>Start annotating</button></p>
   <p id="start-err" class="err"></p>
 </div>
 
 <!-- Label screen -->
 <div id="screen-label">
   <div id="top-bar">
-    <button onclick="toggleHelp()" title="Help (press ?)">?</button>
+    <button onclick="toggleHelp()">?</button>
     <span id="progress-text"></span>
     <span id="prev-label"></span>
     <button id="btn-export-mid">Export CSV</button>
@@ -249,6 +215,7 @@ a:hover { color: #38732F; }
 
   <div id="img-area">
     <img id="main-img" src="" alt="Vase image">
+    <canvas id="box-canvas"></canvas>
     <div id="img-error">
       <p>Image failed to load.</p>
       <button id="btn-retry">Retry</button>
@@ -257,32 +224,41 @@ a:hover { color: #38732F; }
   </div>
 
   <div id="btn-bar">
-    <button class="btn-nav" id="btn-back" title="Back (← / Backspace)">&#8592; Back</button>
+    <button class="btn-nav" id="btn-back">&#8592; Back</button>
     <div class="btn-sep"></div>
-    <button class="btn-count" data-count="0" title="0 dogs (press 0)">0</button>
-    <button class="btn-count" data-count="1" title="1 dog (press 1)">1</button>
-    <button class="btn-count" data-count="2" title="2 dogs (press 2)">2</button>
-    <button class="btn-count" data-count="3" title="3 dogs (press 3)">3</button>
-    <button class="btn-count" data-count="4+" title="4 or more (press 4)">4+</button>
+    <span id="box-count">No boxes drawn</span>
+    <button class="btn-action" id="btn-undo">Undo</button>
     <div class="btn-sep"></div>
-    <button class="btn-skip" id="btn-skip" title="Skip / not sure (→ / S)">Skip &#8594;</button>
+    <button class="btn-action" id="btn-nodog">No dogs (N)</button>
+    <button class="btn-confirm" id="btn-confirm">Confirm &#8594;</button>
+    <button class="btn-skip" id="btn-skip">Skip</button>
   </div>
 </div>
 
 <!-- Done screen -->
 <div id="screen-done" class="plain-screen" style="display:none;">
-  <h2>All images labeled!</h2>
-  <div id="summary" style="margin: 16px 0;"></div>
+  <h2>All images annotated!</h2>
+  <div id="summary" style="margin:16px 0;"></div>
   <button id="btn-export-done">Export CSV</button>
 </div>
 
 <script>
-const STORAGE_KEY = 'vase_dog_labels_v1';
+const STORAGE_KEY = 'vase_dog_bbox_v1';
 
 let items = [];
-let labels = {};
+let labels = {}; // guid → {status, boxes:[{x,y,w,h}], timestamp}  (x,y = top-left, normalized)
 let currentIndex = 0;
 let errActive = false;
+let imgLoaded = false;
+
+let isDrawing = false;
+let drawStart = null;   // canvas px coords
+let drawCurrent = null;
+let currentBoxes = []; // boxes for the image being edited
+
+const DEL_SIZE = 20; // px size of the delete button on each box
+
+// ── Utilities ────────────────────────────────────────────────────────────────
 
 function hashStr(s) {
   let h = 0;
@@ -301,7 +277,7 @@ function parseCSV(text) {
         i++;
         while (i < n) {
           if (text[i] === '"') {
-            if (i + 1 < n && text[i + 1] === '"') { field += '"'; i += 2; }
+            if (i + 1 < n && text[i+1] === '"') { field += '"'; i += 2; }
             else { i++; break; }
           } else { field += text[i++]; }
         }
@@ -338,12 +314,31 @@ function esc(v) {
     ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 
+// ── CSV export ────────────────────────────────────────────────────────────────
+
 function buildExportCSV() {
-  const lines = ['guid,count,timestamp,record_uri'];
+  const lines = ['guid,status,box_index,x_center,y_center,width,height,timestamp,record_uri'];
   for (const item of items) {
     const lb = labels[item.guid];
     if (!lb) continue;
-    lines.push([item.guid, lb.count, lb.timestamp || '', item.record_uri || ''].map(esc).join(','));
+    if (lb.status === 'annotated' && lb.boxes && lb.boxes.length > 0) {
+      lb.boxes.forEach((box, i) => {
+        lines.push([
+          item.guid, lb.status, i,
+          (box.x + box.w / 2).toFixed(6),
+          (box.y + box.h / 2).toFixed(6),
+          box.w.toFixed(6),
+          box.h.toFixed(6),
+          lb.timestamp || '',
+          item.record_uri || ''
+        ].map(esc).join(','));
+      });
+    } else {
+      lines.push([
+        item.guid, lb.status, '', '', '', '', '',
+        lb.timestamp || '', item.record_uri || ''
+      ].map(esc).join(','));
+    }
   }
   return lines.join('\r\n');
 }
@@ -353,10 +348,12 @@ function exportCSV() {
   const blob = new Blob([buildExportCSV()], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'labels_' + date + '.csv';
+  a.download = 'annotations_' + date + '.csv';
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+
+// ── LocalStorage ─────────────────────────────────────────────────────────────
 
 function lsSave() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ labels, currentIndex })); } catch (_) {}
@@ -368,14 +365,18 @@ function lsClear() {
   try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
 }
 
+// ── Screen management ─────────────────────────────────────────────────────────
+
 function showScreen(id) {
   document.getElementById('screen-start').style.display = 'none';
-  document.getElementById('screen-label').style.display = 'none';
-  document.getElementById('screen-label').classList.remove('active');
+  const labelEl = document.getElementById('screen-label');
+  labelEl.style.display = 'none';
+  labelEl.classList.remove('active');
   document.getElementById('screen-done').style.display = 'none';
   if (id === 'screen-label') {
-    document.getElementById('screen-label').style.display = 'flex';
-    document.getElementById('screen-label').classList.add('active');
+    labelEl.style.display = 'flex';
+    labelEl.classList.add('active');
+    resizeCanvas();
   } else {
     document.getElementById(id).style.display = '';
   }
@@ -383,35 +384,203 @@ function showScreen(id) {
 
 function toggleHelp() { document.getElementById('help-overlay').classList.toggle('on'); }
 function closeHelp()  { document.getElementById('help-overlay').classList.remove('on'); }
+function closeZoom()  { document.getElementById('zoom-overlay').classList.remove('on'); }
 
-function openZoom() {
-  const src = document.getElementById('main-img').src;
-  if (!src || src === location.href) return;
-  document.getElementById('zoom-img').src = src;
-  document.getElementById('zoom-overlay').classList.add('on');
+// ── Canvas ────────────────────────────────────────────────────────────────────
+
+function canvas() { return document.getElementById('box-canvas'); }
+
+function resizeCanvas() {
+  const area = document.getElementById('img-area');
+  const c = canvas();
+  c.width  = area.clientWidth;
+  c.height = area.clientHeight;
+  redraw();
 }
-function closeZoom() { document.getElementById('zoom-overlay').classList.remove('on'); }
+
+// Returns the displayed image bounds within the canvas (accounts for letterboxing from object-fit:contain)
+function imgBounds() {
+  const c = canvas();
+  const img = document.getElementById('main-img');
+  if (!imgLoaded || !img.naturalWidth || !img.naturalHeight) return null;
+  const scale = Math.min(c.width / img.naturalWidth, c.height / img.naturalHeight);
+  const dw = img.naturalWidth  * scale;
+  const dh = img.naturalHeight * scale;
+  const ox = (c.width  - dw) / 2;
+  const oy = (c.height - dh) / 2;
+  return { ox, oy, dw, dh };
+}
+
+// Canvas pixel coords → normalized image coords [0,1]
+function toNorm(cx, cy) {
+  const b = imgBounds();
+  if (!b) return null;
+  return {
+    x: Math.max(0, Math.min(1, (cx - b.ox) / b.dw)),
+    y: Math.max(0, Math.min(1, (cy - b.oy) / b.dh))
+  };
+}
+
+// Get mouse/touch position in canvas pixel space
+function evtPos(e) {
+  const c = canvas();
+  const r = c.getBoundingClientRect();
+  const sx = c.width  / r.width;
+  const sy = c.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  return {
+    x: (src.clientX - r.left) * sx,
+    y: (src.clientY - r.top)  * sy
+  };
+}
+
+// Top-right corner of box in canvas coords → delete button rect
+function delBtn(box) {
+  const b = imgBounds();
+  if (!b) return null;
+  return {
+    x: b.ox + (box.x + box.w) * b.dw - DEL_SIZE,
+    y: b.oy + box.y * b.dh,
+    s: DEL_SIZE
+  };
+}
+
+function hitDel(cx, cy, box) {
+  const d = delBtn(box);
+  return d && cx >= d.x && cx <= d.x + d.s && cy >= d.y && cy <= d.y + d.s;
+}
+
+function redraw() {
+  const c = canvas();
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  const b = imgBounds();
+  if (!b) return;
+
+  currentBoxes.forEach((box, i) => {
+    const x1 = b.ox + box.x * b.dw;
+    const y1 = b.oy + box.y * b.dh;
+    const bw = box.w * b.dw;
+    const bh = box.h * b.dh;
+
+    // Fill
+    ctx.fillStyle = 'rgba(226,255,222,0.08)';
+    ctx.fillRect(x1, y1, bw, bh);
+    // Border
+    ctx.strokeStyle = '#E2FFDE';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x1, y1, bw, bh);
+    // Label background + text
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(x1 + 2, y1 + 2, 58, 18);
+    ctx.fillStyle = '#E2FFDE';
+    ctx.font = 'bold 13px "Comic Sans MS", sans-serif';
+    ctx.fillText('Dog ' + (i + 1), x1 + 5, y1 + 15);
+    // Delete button
+    const d = delBtn(box);
+    if (d) {
+      ctx.fillStyle = '#bb2222';
+      ctx.fillRect(d.x, d.y, d.s, d.s);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText('×', d.x + 4, d.y + 14);
+    }
+  });
+
+  // In-progress box
+  if (isDrawing && drawStart && drawCurrent) {
+    const x1 = Math.min(drawStart.x, drawCurrent.x);
+    const y1 = Math.min(drawStart.y, drawCurrent.y);
+    const bw = Math.abs(drawCurrent.x - drawStart.x);
+    const bh = Math.abs(drawCurrent.y - drawStart.y);
+    ctx.strokeStyle = '#ffff66';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 3]);
+    ctx.strokeRect(x1, y1, bw, bh);
+    ctx.setLineDash([]);
+  }
+}
+
+function updateCount() {
+  const n = currentBoxes.length;
+  document.getElementById('box-count').textContent =
+    n === 0 ? 'No boxes drawn' : n === 1 ? '1 dog drawn' : n + ' dogs drawn';
+}
+
+function undoLast() {
+  if (currentBoxes.length) { currentBoxes.pop(); updateCount(); redraw(); }
+}
+
+// ── Pointer events ────────────────────────────────────────────────────────────
+
+function onDown(e) {
+  if (!imgLoaded) return;
+  e.preventDefault();
+  const { x, y } = evtPos(e);
+  // Check delete buttons first
+  for (let i = currentBoxes.length - 1; i >= 0; i--) {
+    if (hitDel(x, y, currentBoxes[i])) {
+      currentBoxes.splice(i, 1);
+      updateCount();
+      redraw();
+      return;
+    }
+  }
+  isDrawing = true;
+  drawStart = { x, y };
+  drawCurrent = { x, y };
+}
+
+function onMove(e) {
+  if (!isDrawing) return;
+  e.preventDefault();
+  drawCurrent = evtPos(e);
+  redraw();
+}
+
+function onUp(e) {
+  if (!isDrawing) return;
+  e.preventDefault();
+  isDrawing = false;
+  const { x, y } = evtPos(e);
+  if (Math.abs(x - drawStart.x) >= 10 && Math.abs(y - drawStart.y) >= 10) {
+    const p1 = toNorm(Math.min(drawStart.x, x), Math.min(drawStart.y, y));
+    const p2 = toNorm(Math.max(drawStart.x, x), Math.max(drawStart.y, y));
+    if (p1 && p2) currentBoxes.push({ x: p1.x, y: p1.y, w: p2.x - p1.x, h: p2.y - p1.y });
+  }
+  drawStart = drawCurrent = null;
+  updateCount();
+  redraw();
+}
+
+// ── Image events ──────────────────────────────────────────────────────────────
 
 function onImgError() {
   if (errActive) return;
-  errActive = true;
-  document.getElementById('main-img').style.display = 'none';
-  document.getElementById('img-error').style.display = 'block';
+  errActive = true; imgLoaded = false;
+  document.getElementById('main-img').style.display   = 'none';
+  document.getElementById('box-canvas').style.display = 'none';
+  document.getElementById('img-error').style.display  = 'block';
 }
 
 function onImgLoad() {
-  errActive = false;
-  document.getElementById('main-img').style.display = 'block';
-  document.getElementById('img-error').style.display = 'none';
+  errActive = false; imgLoaded = true;
+  document.getElementById('main-img').style.display   = 'block';
+  document.getElementById('box-canvas').style.display = 'block';
+  document.getElementById('img-error').style.display  = 'none';
+  resizeCanvas();
 }
 
 function retryImage() {
-  errActive = false;
-  document.getElementById('img-error').style.display = 'none';
-  document.getElementById('main-img').style.display = 'block';
+  errActive = false; imgLoaded = false;
+  document.getElementById('img-error').style.display  = 'none';
+  document.getElementById('main-img').style.display   = 'block';
+  document.getElementById('box-canvas').style.display = 'block';
   const url = items[currentIndex].image_url;
   document.getElementById('main-img').src = url + (url.includes('?') ? '&' : '?') + '_r=' + Date.now();
 }
+
+// ── Manifest ──────────────────────────────────────────────────────────────────
 
 function processManifest(text) {
   const seen = new Set(), arr = [];
@@ -426,44 +595,67 @@ function processManifest(text) {
   return arr.length;
 }
 
+// ── Navigation ────────────────────────────────────────────────────────────────
+
 function loadItem(idx) {
   currentIndex = idx;
-  errActive = false;
+  errActive = false; imgLoaded = false;
+  isDrawing = false; drawStart = drawCurrent = null;
   if (idx < 0 || idx >= items.length) { showDoneScreen(); return; }
 
   const item = items[idx];
   const existing = labels[item.guid];
+  currentBoxes = (existing && existing.boxes) ? existing.boxes.map(b => ({ ...b })) : [];
+  updateCount();
 
-  document.getElementById('main-img').style.display = 'block';
-  document.getElementById('img-error').style.display = 'none';
+  document.getElementById('main-img').style.display   = 'block';
+  document.getElementById('box-canvas').style.display = 'block';
+  document.getElementById('img-error').style.display  = 'none';
   document.getElementById('main-img').src = item.image_url;
 
-  const done = Object.keys(labels).length;
-  document.getElementById('progress-text').textContent = done + ' / ' + items.length;
-  document.getElementById('prev-label').textContent = existing ? 'Previously: ' + existing.count : '';
+  document.getElementById('progress-text').textContent = Object.keys(labels).length + ' / ' + items.length;
+  document.getElementById('prev-label').textContent = existing
+    ? (existing.status === 'annotated'
+        ? 'Previously: ' + (existing.boxes ? existing.boxes.length : 0) + ' box(es)'
+        : 'Previously: ' + existing.status)
+    : '';
   document.getElementById('btn-back').disabled = idx === 0;
 
+  const ctx = canvas().getContext('2d');
+  ctx.clearRect(0, 0, canvas().width, canvas().height);
   lsSave();
 }
 
-function record(count) {
-  labels[items[currentIndex].guid] = { count, timestamp: new Date().toISOString() };
+function doSave(status) {
+  labels[items[currentIndex].guid] = {
+    status,
+    boxes: status === 'annotated' ? currentBoxes.map(b => ({ ...b })) : [],
+    timestamp: new Date().toISOString()
+  };
   errActive = false;
   document.getElementById('img-error').style.display = 'none';
-  document.getElementById('main-img').style.display = 'block';
-
-  const done = Object.keys(labels).length;
-  document.getElementById('progress-text').textContent = done + ' / ' + items.length;
+  document.getElementById('main-img').style.display  = 'block';
+  document.getElementById('progress-text').textContent = Object.keys(labels).length + ' / ' + items.length;
   lsSave();
 
   const next = currentIndex + 1;
   if (next < items.length) {
     loadItem(next);
   } else {
-    const missed = items.findIndex(it => !labels[it.guid]);
-    if (missed === -1) showDoneScreen();
-    else loadItem(missed);
+    const unlabeled = items.findIndex(it => !labels[it.guid]);
+    if (unlabeled !== -1) { loadItem(unlabeled); return; }
+    const skipped = items.findIndex(it => labels[it.guid] && labels[it.guid].status === 'skip');
+    skipped !== -1 ? loadItem(skipped) : showDoneScreen();
   }
+}
+
+function confirmAnnotation() {
+  doSave(currentBoxes.length > 0 ? 'annotated' : 'no_dog');
+}
+
+function noDogs() {
+  currentBoxes = [];
+  doSave('no_dog');
 }
 
 function goBack() {
@@ -474,12 +666,16 @@ function goBack() {
 function showDoneScreen() {
   showScreen('screen-done');
   const counts = {};
-  for (const lb of Object.values(labels)) counts[lb.count] = (counts[lb.count] || 0) + 1;
-  let html = '<p><strong>' + Object.keys(labels).length + '</strong> labeled out of ' + items.length + ' total.</p><ul>';
+  for (const lb of Object.values(labels)) counts[lb.status] = (counts[lb.status] || 0) + 1;
+  const totalBoxes = Object.values(labels).reduce((s, lb) => s + (lb.boxes ? lb.boxes.length : 0), 0);
+  let html = '<p><strong>' + Object.keys(labels).length + '</strong> annotated out of ' + items.length + ' total.</p>';
+  html += '<p>' + totalBoxes + ' bounding boxes drawn total.</p><ul>';
   for (const [k, v] of Object.entries(counts)) html += '<li>' + k + ': ' + v + '</li>';
   html += '</ul>';
   document.getElementById('summary').innerHTML = html;
 }
+
+// ── Start screen ──────────────────────────────────────────────────────────────
 
 function startSession() {
   if (!items.length) { document.getElementById('start-err').textContent = 'Manifest not loaded yet -- please wait.'; return; }
@@ -496,58 +692,71 @@ function startSession() {
 
 function mergeLabels(csvText) {
   try {
+    const byGuid = {};
     for (const row of csvToObjects(csvText)) {
-      if (!row.guid || !row.count) continue;
-      labels[row.guid] = { count: row.count, timestamp: row.timestamp || '' };
+      if (!row.guid || !row.status) continue;
+      if (!byGuid[row.guid]) byGuid[row.guid] = { status: row.status, boxes: [], timestamp: row.timestamp || '' };
+      if (row.status === 'annotated' && row.x_center !== '') {
+        const xc = parseFloat(row.x_center), yc = parseFloat(row.y_center);
+        const w  = parseFloat(row.width),    h  = parseFloat(row.height);
+        if (!isNaN(xc) && !isNaN(yc) && !isNaN(w) && !isNaN(h))
+          byGuid[row.guid].boxes.push({ x: xc - w / 2, y: yc - h / 2, w, h });
+      }
     }
-  } catch (e) { console.warn('Import labels failed:', e); }
+    Object.assign(labels, byGuid);
+  } catch (e) { console.warn('Import failed:', e); }
 }
 
 function beginLabeling() {
   showScreen('screen-label');
   const first = items.findIndex(it => !labels[it.guid]);
-  if (first === -1) showDoneScreen();
-  else loadItem(first);
+  first === -1 ? showDoneScreen() : loadItem(first);
 }
 
 function continueSession() {
   const saved = lsLoad();
   if (!saved) return;
-  if (!items.length) {
-    document.getElementById('start-err').textContent = 'Manifest still loading -- please wait a moment.';
-    return;
-  }
+  if (!items.length) { document.getElementById('start-err').textContent = 'Manifest still loading -- please wait.'; return; }
   labels = saved.labels || {};
   beginLabeling();
 }
 
 function startOver() {
-  if (!confirm('Start over? All saved labels in this browser will be deleted. Exported CSV files are not affected.')) return;
-  lsClear();
-  labels = {};
-  currentIndex = 0;
+  if (!confirm('Start over? All saved annotations in this browser will be deleted. Exported CSV files are not affected.')) return;
+  lsClear(); labels = {}; currentIndex = 0;
   document.getElementById('session-prompt').style.display = 'none';
 }
+
+// ── Init ──────────────────────────────────────────────────────────────────────
 
 (function init() {
   document.getElementById('btn-start').onclick      = startSession;
   document.getElementById('btn-continue').onclick   = continueSession;
   document.getElementById('btn-startover').onclick  = startOver;
   document.getElementById('btn-retry').onclick      = retryImage;
-  document.getElementById('btn-broken').onclick     = () => record('broken');
+  document.getElementById('btn-broken').onclick     = () => doSave('broken');
   document.getElementById('btn-back').onclick       = goBack;
-  document.getElementById('btn-skip').onclick       = () => record('skip');
+  document.getElementById('btn-undo').onclick       = undoLast;
+  document.getElementById('btn-nodog').onclick      = noDogs;
+  document.getElementById('btn-confirm').onclick    = confirmAnnotation;
+  document.getElementById('btn-skip').onclick       = () => doSave('skip');
   document.getElementById('btn-export-mid').onclick  = exportCSV;
   document.getElementById('btn-export-done').onclick = exportCSV;
 
-  document.querySelectorAll('.btn-count').forEach(btn => {
-    btn.onclick = () => record(btn.dataset.count);
-  });
-
   const img = document.getElementById('main-img');
-  img.onclick = openZoom;
   img.onerror = onImgError;
   img.onload  = onImgLoad;
+
+  const c = canvas();
+  c.addEventListener('mousedown',  onDown);
+  c.addEventListener('mousemove',  onMove);
+  c.addEventListener('mouseup',    onUp);
+  c.addEventListener('mouseleave', () => { if (isDrawing) { isDrawing = false; drawStart = drawCurrent = null; redraw(); } });
+  c.addEventListener('touchstart', onDown, { passive: false });
+  c.addEventListener('touchmove',  onMove, { passive: false });
+  c.addEventListener('touchend',   onUp,   { passive: false });
+
+  new ResizeObserver(resizeCanvas).observe(document.getElementById('img-area'));
 
   const saved = lsLoad();
   if (saved && Object.keys(saved.labels || {}).length > 0) {
@@ -568,28 +777,26 @@ function startOver() {
     });
 })();
 
+// ── Keyboard ──────────────────────────────────────────────────────────────────
+
 document.addEventListener('keydown', function(e) {
   const helpOn  = document.getElementById('help-overlay').classList.contains('on');
   const zoomOn  = document.getElementById('zoom-overlay').classList.contains('on');
   const labelOn = document.getElementById('screen-label').classList.contains('active');
 
   if (e.key === '?' || e.key === '/') { e.preventDefault(); toggleHelp(); return; }
-
   if (e.key === 'Escape') {
     if (helpOn) { closeHelp(); return; }
     if (zoomOn) { closeZoom(); return; }
     return;
   }
-
   if (helpOn || zoomOn || !labelOn) return;
 
-  if      (e.key === 'ArrowLeft'  || e.key === 'Backspace')           { e.preventDefault(); goBack(); }
-  else if (e.key === 'ArrowRight' || e.key === 's' || e.key === 'S') { e.preventDefault(); record('skip'); }
-  else if (e.key === '0') { e.preventDefault(); record('0'); }
-  else if (e.key === '1') { e.preventDefault(); record('1'); }
-  else if (e.key === '2') { e.preventDefault(); record('2'); }
-  else if (e.key === '3') { e.preventDefault(); record('3'); }
-  else if (e.key === '4') { e.preventDefault(); record('4+'); }
+  if      (e.key === 'Enter')                                { e.preventDefault(); confirmAnnotation(); }
+  else if (e.key === 'n' || e.key === 'N')                  { e.preventDefault(); noDogs(); }
+  else if (e.key === 'z' || e.key === 'Z')                  { e.preventDefault(); undoLast(); }
+  else if (e.key === 'ArrowRight')                           { e.preventDefault(); doSave('skip'); }
+  else if (e.key === 'ArrowLeft' || e.key === 'Backspace')  { e.preventDefault(); goBack(); }
 });
 </script>
 </body>
