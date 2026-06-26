@@ -168,11 +168,11 @@ body { background: url('../images/000052090024.jpg') center/cover fixed; }
     <p>Only label domestic dogs -- wolves, foxes, lions, horses etc. are not dogs.</p>
     <h3>Keyboard shortcuts</h3>
     <table>
-      <tr><td><b>Enter</b></td><td>Confirm and advance</td></tr>
-      <tr><td><b>N</b></td><td>Not a vase</td></tr>
-      <tr><td><b>Z</b></td><td>Undo last box</td></tr>
-      <tr><td><b>→</b></td><td>Skip</td></tr>
+      <tr><td><b>→ / Enter</b></td><td>Confirm and advance</td></tr>
+      <tr><td><b>↓ / N</b></td><td>Not a vase</td></tr>
+      <tr><td><b>↑ / U</b></td><td>Uncertain</td></tr>
       <tr><td><b>← / Backspace</b></td><td>Go back</td></tr>
+      <tr><td><b>Z</b></td><td>Undo last box</td></tr>
       <tr><td><b>?</b></td><td>Show / hide this help</td></tr>
     </table>
     <button onclick="closeHelp()">Close</button>
@@ -210,6 +210,7 @@ body { background: url('../images/000052090024.jpg') center/cover fixed; }
     <button onclick="toggleHelp()">?</button>
     <span id="progress-text"></span>
     <span id="prev-label"></span>
+    <a id="record-link" href="#" target="_blank" rel="noopener" style="display:none; color:#c8f0c4; font-size:.9em;">View record ↗</a>
     <button id="btn-export-mid">Export CSV</button>
   </div>
 
@@ -231,7 +232,7 @@ body { background: url('../images/000052090024.jpg') center/cover fixed; }
     <div class="btn-sep"></div>
     <button class="btn-action" id="btn-nodog">Not a vase (N)</button>
     <button class="btn-confirm" id="btn-confirm">Confirm &#8594;</button>
-    <button class="btn-skip" id="btn-skip">Skip</button>
+    <button class="btn-skip" id="btn-skip">Uncertain (U)</button>
   </div>
 </div>
 
@@ -620,6 +621,9 @@ function loadItem(idx) {
         : 'Previously: ' + existing.status)
     : '';
   document.getElementById('btn-back').disabled = idx === 0;
+  const rl = document.getElementById('record-link');
+  if (item.record_uri) { rl.href = item.record_uri; rl.style.display = ''; }
+  else { rl.style.display = 'none'; }
 
   const ctx = canvas().getContext('2d');
   ctx.clearRect(0, 0, canvas().width, canvas().height);
@@ -644,7 +648,7 @@ function doSave(status) {
   } else {
     const unlabeled = items.findIndex(it => !labels[it.guid]);
     if (unlabeled !== -1) { loadItem(unlabeled); return; }
-    const skipped = items.findIndex(it => labels[it.guid] && labels[it.guid].status === 'skip');
+    const skipped = items.findIndex(it => labels[it.guid] && labels[it.guid].status === 'uncertain');
     skipped !== -1 ? loadItem(skipped) : showDoneScreen();
   }
 }
@@ -739,7 +743,7 @@ function startOver() {
   document.getElementById('btn-undo').onclick       = undoLast;
   document.getElementById('btn-nodog').onclick      = noDogs;
   document.getElementById('btn-confirm').onclick    = confirmAnnotation;
-  document.getElementById('btn-skip').onclick       = () => doSave('skip');
+  document.getElementById('btn-skip').onclick       = () => doSave('uncertain');
   document.getElementById('btn-export-mid').onclick  = exportCSV;
   document.getElementById('btn-export-done').onclick = exportCSV;
 
@@ -792,11 +796,11 @@ document.addEventListener('keydown', function(e) {
   }
   if (helpOn || zoomOn || !labelOn) return;
 
-  if      (e.key === 'Enter')                                { e.preventDefault(); confirmAnnotation(); }
-  else if (e.key === 'n' || e.key === 'N')                  { e.preventDefault(); noDogs(); }
-  else if (e.key === 'z' || e.key === 'Z')                  { e.preventDefault(); undoLast(); }
-  else if (e.key === 'ArrowRight')                           { e.preventDefault(); doSave('skip'); }
-  else if (e.key === 'ArrowLeft' || e.key === 'Backspace')  { e.preventDefault(); goBack(); }
+  if      (e.key === 'Enter' || e.key === 'ArrowRight')               { e.preventDefault(); confirmAnnotation(); }
+  else if (e.key === 'ArrowDown' || e.key === 'n' || e.key === 'N')  { e.preventDefault(); noDogs(); }
+  else if (e.key === 'ArrowUp'   || e.key === 'u' || e.key === 'U')  { e.preventDefault(); doSave('uncertain'); }
+  else if (e.key === 'z' || e.key === 'Z')                           { e.preventDefault(); undoLast(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'Backspace')           { e.preventDefault(); goBack(); }
 });
 </script>
 </body>
