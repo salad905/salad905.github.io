@@ -169,7 +169,7 @@ body { background: url('../images/000052090024.jpg') center/cover fixed; }
     <h3>Keyboard shortcuts</h3>
     <table>
       <tr><td><b>Enter</b></td><td>Confirm and advance</td></tr>
-      <tr><td><b>N</b></td><td>No dogs</td></tr>
+      <tr><td><b>N</b></td><td>Not a vase</td></tr>
       <tr><td><b>Z</b></td><td>Undo last box</td></tr>
       <tr><td><b>→</b></td><td>Skip</td></tr>
       <tr><td><b>← / Backspace</b></td><td>Go back</td></tr>
@@ -229,7 +229,7 @@ body { background: url('../images/000052090024.jpg') center/cover fixed; }
     <span id="box-count">No boxes drawn</span>
     <button class="btn-action" id="btn-undo">Undo</button>
     <div class="btn-sep"></div>
-    <button class="btn-action" id="btn-nodog">No dogs (N)</button>
+    <button class="btn-action" id="btn-nodog">Not a vase (N)</button>
     <button class="btn-confirm" id="btn-confirm">Confirm &#8594;</button>
     <button class="btn-skip" id="btn-skip">Skip</button>
   </div>
@@ -655,7 +655,7 @@ function confirmAnnotation() {
 
 function noDogs() {
   currentBoxes = [];
-  doSave('no_dog');
+  doSave('not_a_vase');
 }
 
 function goBack() {
