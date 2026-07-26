@@ -11,6 +11,7 @@ function showSection(id) {
     document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+    window.scrollTo(0, 0);
 }
 
 document.querySelectorAll('[data-tab]').forEach(btn => {
@@ -62,85 +63,199 @@ if (truthsOptions) {
 
 const PROJECTS = [
     {
-        title: 'Deepfake Generation & Detection',
-        tags: ['PyTorch', 'FaceNet', 'OpenCV'],
-        stat: '92% accuracy',
+        title: 'Dogs on Greek Vases',
+        category: 'Machine Learning',
+        tags: ['Python', 'TensorFlow/PyTorch'],
         color: '#b9cba3',
         rotate: -1.2,
         paras: [
-            `<p><strong>Abstract.</strong> This project addresses the growing threat of deepfake videos by building a machine learning pipeline to detect manipulated facial content. It targets the classification of real vs. fake images, contributing to media authentication efforts.</p>`,
-            `<p><strong>Methodology.</strong> Removed background using BiRefNet. Face detection and cropping were performed using MTCNN and facenet-pytorch. Embeddings from a pre-trained FaceNet model were extracted and used to train a classifier. Evaluation included accuracy, confusion matrices, ROC-AUC, and visual inspection of misclassified samples. Currently has a running <a href="https://salad905-space2.hf.space/?__theme=system&deep_link=hVptdHSzaXo" target="_blank" rel="noreferrer">Gradio interface</a>, planning to expand to a Chrome extension.</p>`,
-            `<p><strong>Reflection.</strong> Deepfake images are reaching an eery realness. AI will eventually get to the point of complete indistinguishability from real images to the average human eye. I am aware that I can't shoot for anything groundbreaking with this project, but I at the very least hoped for promotion of media literacy and a sense of caution when approaching faces on the internet.</p>`,
+            `<p><strong>Context.</strong> There is a faculty member at Knox who specializes in research about identifying canine figures on Greek vases. She came to my faculty advisor, and they had discussions about how she thinks most people miscategorize the canine figures because they don't have the biological knowledge of canine behavior. A question was brought up about whether we can train an image classifier on her hand-labeled data to correctly categorize these figures, and I was the student recommended to work on this, given my previous work on CNNs and image classification models.</p>`,
+            `<p><strong>Process.</strong> I started out by vibe-coding <a href="https://salad905.github.io/dogs/vase-dog-labeler.html" target="_blank" rel="noreferrer">a data annotator</a> for this very specific task. I built a data collection pipeline to gather ~1,000 black-figure vase images from the Beazley Archive Pottery Database, and I wanted the faculty member to identify the dogs on the vases. The thing is that this could be very time-consuming, and I was messing with the UI to make the process as efficient for her as possible. That's where the project is at. It's a work in progress.</p>`,
+            `<p><strong>Afterthought(s).</strong> The data annotator is, as you can tell, hosted on my GitHub website. Since I made it before I changed the layout/aesthetic of the website, the annotator has my old CSS, so you can sort of see what the website used to look like. Only thing I kept is the Comic Sans and the green...</p>`,
         ],
     },
     {
-        title: 'Fake News Detector',
-        tags: ['Keras', 'NLTK', 'TF-IDF'],
-        stat: '98% accuracy',
+        title: 'Oh Sheet!',
+        category: 'Software Development',
+        tags: ['React', 'TypeScript', 'OpenSheetMusicDisplay (OSMD)', 'Vite', 'Tailwind CSS', 'Firebase', 'Modal'],
         color: '#9ab97e',
         rotate: 0.8,
         paras: [
-            `<p><strong>Abstract.</strong> Misinformation is an ever-lasting relevant issue. To combat this, we aimed to classify news articles as real or fake using natural language processing and machine learning, aiming to support digital literacy and trust in online information. Full details in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view?usp=sharing" target="_blank" rel="noreferrer">paper</a>.</p>`,
-            `<p><strong>Methodology.</strong> Found a Kaggle dataset with about 40k articles. Preprocessing steps included tokenization, lemmatization, and feature extraction using Bag of Words and TF-IDF. Several classifiers were tested, including Logistic Regression, Naive Bayes, and Random Forest. A <a href="https://salad905-fake-news-detector.hf.space/?__theme=system&deep_link=hF7hJs8eL14" target="_blank" rel="noreferrer">Gradio interface</a> was created for interactive predictions.</p>`,
-            `<p><strong>Reflection.</strong> The lines between "fake" and "real" are ambiguous. As much as this project helped familiarize me with NLP tasks, exploratory data analysis, and building a front-end interface, I found that it's not the most practical.</p>`,
+            `<p><strong>Context.</strong> As part of my Artificial Neural Network class (once again, not needed for my major), my group made a machine-learning-based optimal recognition platform called <a href="https://music-app-924.pages.dev/" target="_blank" rel="noreferrer">Oh Sheet!</a> I knew coming into this group that I would play mostly a support role, since our group has a very prominent character (in the best way possible), which is... not a bad thing by any means, but I definitely did not contribute as much as I could've.</p>`,
+            `<p><strong>Process.</strong> I architected a browser-based music sheet editor with React, TypeScript, OSMD, and Firebase. This allowed users to view, edit, transpose, and play back the generated scores. I also debugged complex synchronization issues involving coordinate mapping, rendering states, and user interactions. I was in charge of the business and monetization model behind the website, and we settled on basing our revenue on Google Ads (running a 30s ad as the scores are being processed since they take a minute anyway). I also... designed the logo... but that's kinda minor lmao.</p>`,
+            `<p><strong>Afterthought(s).</strong> Funnily enough, I learned a lot more about website deployment and sheet music than about... machine learning... but I guess that makes sense since I'm just reapplying knowledge I already have to the project. I also had to figure out music sheet editor UI, which was quite the challenge. At the time of writing, my very prominent groupmate had submitted this to a major music technology conference and would list us as co-authors if it were approved. He plans on continuing working on it (I don't), and I'm excited for him because it is basically his Honors project now.</p>`,
+        ],
+    },
+    {
+        title: 'SVH Pediatric Patient Journey',
+        category: 'Data Analysis',
+        tags: ['Python (numpy, pandas)', 'PowerBI'],
+        color: '#7fa06a',
+        rotate: -0.5,
+        paras: [
+            `<p><strong>Context.</strong> Every year, Knox College has a team at the Central Illinois ASA Datafest. For 2026, Knox had 4 teams, and my roommate and I were one of them. It was interesting because we were the smallest team (they allowed teams of 2-5 members), and this was our first time at a data contest of sorts.</p>`,
+            `<p><strong>Process.</strong> We processed 8.1 million patient encounters across multiple datasets and performed geographic analysis using Census FIPS codes with Python. We spoke to a winner of the previous year's DataFest, and he told us that we should aim for a specific category. We went for Best Visualization and created <a href="https://github.com/salad905/df26submission" target="_blank" rel="noreferrer">dashboards</a> (I used Power BI and my roommate used Tableau) highlighting patient density, growth trends, and transportation-related barriers. We identified a relevant news article that stated that a huge intensive pediatric care unit had shut down in the area, and therefore decided to focus on pediatric care and expected growth.</p>`,
+            `<p><strong>Afterthought(s).</strong> This was both of our first times creating dashboards. I had only taken online courses in Power BI, but had never applied it to a real-world dataset. Originally, we would've both used Power BI, but my roommate uses a Macbook (which doesn't support free Power BI), so we both had to learn a lot as we went. We got Honorable Mention!</p>`,
+        ],
+    },
+    {
+        title: 'bzbee',
+        category: 'Software Development',
+        tags: ['JavaScript', 'HTML', 'CSS', 'Chrome Extension API', 'DOM Manipulation', 'Figma', 'Git'],
+        color: '#4a6741',
+        rotate: 1.3,
+        paras: [
+            `<p><strong>Context.</strong> For my Software Development class (which I did not have to take, but my roommate and I decided to take for fun), my group made a productivity-based study companion Google Extension called <a href="https://chromewebstore.google.com/detail/mnobhlpgjflegmnoimkaikenmngbcjhh?utm_source=item-share-cb" target="_blank" rel="noreferrer">bzbee</a>.</p><p>My group consisted of 3 programmers and 1 graphic designer. We knew right off the bat that we wanted something visually striking so we could make the most of our graphic designer, since most other groups don't really have one. After going through many ideas, we decided on a productivity-based application, but since the project assignment asked for a game made with Godot, we asked our instructor for permission to pivot to a Google Extension.</p>`,
+            `<p><strong>Process.</strong> We had a lot of fun. The art is very quirky, and I absolutely adore it. I was very passionate about working on this extension, and I was happy to apply my prior extension knowledge to this project. We developed a Chrome extension with timers, to-do lists, ambient sounds, and website blocking capabilities. Created dynamic browser overlays through DOM manipulation (oh my god you would never know how much I was stressing about DOM manipulation) (it took me a minute to wrap my head around it) and iterated on user flows through Figma prototypes.</p>`,
+            `<p><strong>Afterthought(s).</strong> This was my first time collaborative coding on GitHub. Before that, I never had to deal with pushing, pulling, version control, commits, branches, or whatever comes with it. There were some hiccups here and there, but nothing we could not recover from.</p><p>I was mostly the CSS person, meaning I was in charge of bringing our graphic designer's vision to code. It was... an experience (she was pretty particular with her vision), but I appreciate that she was firm on her decisions.</p><p>I was also kinda the UI/UX person. Our graphic designer was fluent in Figma, so I was mostly just deciding what would be most intuitive for our users. My goal was for the controls to feel intuitive without needing instructions, and I came to realize that it was not as easy as it seemed.</p><p>We did manage to push it onto the Marketplace, but it took us a few rejections. My previous extensions were never really intense on the permissions required, so it was pretty new to me.</p>`,
+        ],
+    },
+    {
+        title: 'Honor System Statistical Report',
+        category: 'Data Analysis',
+        tags: ['Google Apps Script', 'Google Sheets', 'OCR', 'Excel'],
+        color: '#8f9c5e',
+        rotate: -1.0,
+        paras: [
+            `<p><strong>Context.</strong> For the 2025-2026 academic year (and at the present as I'm writing this), I was the co-chair of Knox's Honor Board. I stepped into the role when the system was slightly dysfunctional and had to work my way through the backlog of cases last year's co-chairs left me. No biggie (yes biggie, but we shall not speak of that). I came to the realization within my first few cases that there is a major distrust from (some of) the faculty members towards the Board for how long some cases can take. My fellow co-chairs, newly appointed advisor (he made this happen if I'm being very honest), and I managed to work through the backlog while making adjustments to our 12-year-old constitution.</p><p>While working on a case, a professor brought up to me how little the Knox community knows about the Board. This is when the idea came to me of releasing an annual statistical report for the community to have a better idea of the Honor System. When we were interviewing for new members, one of them really left an impression on me when they said the Board feels like an ominous, mysterious group that one only remembers when the professor goes through their syllabus on the first day of class and comes across the Honor Code section. After that, I wanted to push for the Board to be more student-facing and transparent with the community. The Honor Board intends to go through major (positive!) changes, and this report is one of them.</p>`,
+            `<p><strong>Process.</strong> I worked with the advisor of the Board (who happens to be the chair of the Data Science department). The Board had never had a system that makes it easy to produce aggregate figures. I figured then that it was time to start. Two issues we had in mind as we started were maintaining student confidentiality in compliance with FERPA and making it so that future (potentially not very technical) co-chairs can maintain the database. I started by running our 10-year data (pdfs, or sometimes .pngs organized clumsily in a Google Folder, with common misspellings) through OCR via Google Scripts and extracted all the data I needed for the report. I then designed a standardized Google Sheet to help make the aggregation of data easy, even for non-technical users. I also wrote a manual to instruct future co-chairs on how to format things and navigate the spreadsheets and pivot tables.</p>`,
+            `<p><strong>Afterthought(s).</strong> I presented at Knox's research symposium. It was actually very fun and fruitful chatting with different Knox community members about the Honor System and seeing their reaction to the figures presented. As funny as it is, before I became the co-chair and was just a member of the Board, we'd have about 1-2 hearings a month, which led me to think "woa! there must not be that many cases of academic dishonesty at Knox!" I was very wrong… but it provokes a feeling in me to think that the rest of the Knox community thought the same. I'm more than happy to change that.</p><a href="images/poster2.png" target="_blank" rel="noreferrer"><img src="images/poster2.png" alt="Knox College Honor Code Violation Report poster"></a>`,
+        ],
+    },
+    {
+        title: 'Fortune Cookie',
+        category: 'Software Development',
+        tags: ['HTML', 'CSS', 'JavaScript', 'Google Extension API'],
+        color: '#b9cba3',
+        rotate: 0.6,
+        paras: [
+            `<p><strong>Context.</strong> After working on Magic 8 Ball, I had the motivation to apply my skills to another extension, leading to <a href="https://chromewebstore.google.com/detail/kkbpacbjblnhhplpeefdgofboifemela?utm_source=item-share-cb" target="_blank" rel="noreferrer">Fortune Cookie</a>.</p>`,
+            `<p><strong>Process.</strong> Same thing, really, except I had to gather a few hundred fortunes online. My plan one day is to write my own quirky fortunes for the extension and to make the fortune cookie icon actually break when the user receives their fortune (this is a Canva asset).</p>`,
+            `<p><strong>Afterthought(s).</strong> This extension does not perform half as well as my 8 ball, which leads me to wonder what went differently. I guess I won't know the answer…</p>`,
         ],
     },
     {
         title: 'Magic 8 Ball',
-        tags: ['HTML', 'CSS', 'JavaScript'],
-        stat: '28+ users',
-        color: '#7fa06a',
-        rotate: -0.5,
+        category: 'Software Development',
+        tags: ['HTML', 'CSS', 'JavaScript', 'Google Extension API'],
+        color: '#9ab97e',
+        rotate: -0.3,
         paras: [
-            `<p><a href="https://chromewebstore.google.com/detail/fdnbiicphhaahkmaclijpbgnjakajlkj?utm_source=item-share-cb" target="_blank" rel="noreferrer">Link to the extension in the Chrome Web Store</a>.</p><img src="images/Magic 8 Ball.png" alt="Magic 8 Ball extension screenshot">`,
-            `<p>This was a fun project I did while trying to gain understanding of how to make a Google extension. I used HTML, CSS, and JavaScript.</p>`,
-            `<p>Ask it a question, and the program randomizes 1 of 20 answers (courtesy of <a href="https://magic-8ball.com/magic-8-ball-answers/" target="_blank" rel="noreferrer">this website</a>).</p>`,
+            `<p><strong>Context.</strong> With my deepfake detection project, one thing I was hoping to do is make it into a Google Extension. That, as we now know, did not happen, but during my attempt to get to know the Google Extension API, I made <a href="https://chromewebstore.google.com/detail/fdnbiicphhaahkmaclijpbgnjakajlkj?utm_source=item-share-cb" target="_blank" rel="noreferrer">this Magic 8 Ball</a>.</p>`,
+            `<p><strong>Process.</strong> It is as simple as it gets. I got 20 magic 8 ball sayings, put them in a randomizer, added a progress bar for dramatic effect, and voila. At the time of writing this, the extension has 35 organic users. Every now and then, I get a scammy email from people wishing to promote my extension. I never intended to monetize off it, so I never cared to look into it.</p><img src="images/Magic 8 Ball.png" alt="Magic 8 Ball extension screenshot">`,
+            `<p><strong>Afterthought(s).</strong> I now know the process of making a Google Extension and publishing it onto the Extension Marketplace. I use it very sparingly whenever I feel lost in life and want a sign from the universe. Most of the time it has been hopeful (and correct!).</p>`,
         ],
     },
     {
-        title: 'Hospital Chairs',
-        tags: ['Java', 'Topologies'],
-        stat: 'Novel topology',
-        color: '#8f9c5e',
-        rotate: 1.0,
+        title: 'Deepfake Generation & Detection',
+        category: 'Machine Learning',
+        tags: ['Python', 'PyTorch', 'FaceNet', 'OpenCV', 'FastAPI'],
+        color: '#7fa06a',
+        rotate: 1.1,
         paras: [
-            `<p>This was my Winter 2024 Collaborative Research Project. We worked in 4 pairs, each tackling a different question. Mine was "Can we come up with a better-performing topology?" The answer is no. But the process is what mattered!</p>`,
-            `<p>We learned how to conduct a proper literature review, brainstorm and propose compelling research questions, and make a research poster. We presented at Horizons, Knox College's on-campus research symposium.</p>`,
-            `<p>Here's our poster (click to view full size):</p><a href="images/poster.jpg" target="_blank" rel="noreferrer"><img src="images/poster.jpg" alt="Winter Collaborative Project Poster"></a>`,
+            `<p><strong>Context.</strong> For my 2025 summer project, I worked with my academic advisor on a deepfake generation & detection machine learning project.</p>`,
+            `<p><strong>Process.</strong> By now, I'm slightly familiar with a machine learning project, so I am quite happy with my work. I generated photos with StyleGAN3, removed photo backgrounds using BiRefNet, and used MTCNN and facenet-pytorch to perform face detection and cropping. Embeddings from a pre-trained FaceNet model were extracted and used to train a classifier. Evaluation included accuracy, confusion matrices, ROC-AUC, and visual inspection of misclassified samples. Currently has a <a href="https://huggingface.co/spaces/salad905/space2" target="_blank" rel="noreferrer">Gradio interface</a>.</p>`,
+            `<p><strong>Afterthought(s).</strong> It was pretty sweet to use the skills I've acquired thus far in my own project. I did have a faculty mentor, but the work was mostly my own. This was my first exposure to neural network architecture and transfer learning. I did come to the realization that deepfake technology was rapidly growing at the time and that whatever I managed to come up with may fall behind before I was even done. Regardless, I <a href="https://docs.google.com/presentation/d/16wrJgu9f2zreRwBTFoj5PWlhl51HZ83MhoY5II38fUM/edit?usp=sharing" target="_blank" rel="noreferrer">presented</a> at Knox's summer research symposium and hoped that this would at least provoke some thought about media literacy and raise awareness about how we consume online content.</p>`,
+        ],
+    },
+    {
+        title: 'Fake News Detector',
+        category: 'Machine Learning',
+        tags: ['Python', 'Scikit-learn', 'Keras', 'TensorFlow', 'NLTK', 'BeautifulSoup', 'Pandas', 'NumPy', 'Gradio', 'TF-IDF'],
+        color: '#4a6741',
+        rotate: -0.8,
+        paras: [
+            `<p><strong>Context.</strong> For my Data Mining class (early 2025), 2 classmates and I decided to work on a fake news detector.</p>`,
+            `<p><strong>Process.</strong> We found a Kaggle dataset with about 40k articles. We preprocessed the dataset with tokenization, lemmatization, and feature extraction using Bag of Words and TF-IDF. Several classifiers were tested, including Logistic Regression, Naive Bayes, and Random Forest. A <a href="https://huggingface.co/spaces/salad905/fake_news_detector" target="_blank" rel="noreferrer">Gradio interface</a> was created for interactive predictions. More information can be found in our <a href="https://drive.google.com/file/d/1EK490I5k3OPS1GW0fnBfoLVexApzETaZ/view" target="_blank" rel="noreferrer">report</a>.</p>`,
+            `<p><strong>Afterthought(s).</strong> At the end of the day, I don't believe we actually made a fake news detector. We didn't even really know what would classify as "fake", and never spent the time to double-check the information in the dataset. A machine learning approach is probably also not the best for fact-checking. However, it was my first machine learning project. I self-taught Python as I was working on the project (I had not used Python before), and my senior groupmate showed us the building blocks of a machine learning project. I got to familiarize myself with NLP tasks, exploratory data analysis, and building a front-end interface.</p>`,
+        ],
+    },
+    {
+        title: 'Waiting Room',
+        category: 'Software Development',
+        tags: ['Java'],
+        color: '#8f9c5e',
+        rotate: 0.9,
+        paras: [
+            `<p><strong>Context.</strong> For my freshman year winter break (2023), I applied to be part of a collaborative research project, where we aimed to find the most efficient supercomputer topology.</p>`,
+            `<p><strong>Process.</strong> We started as a group of 8 students who would read research papers on the topic, then split into 4 pairs to experiment with different approaches. My to-be-roommate and I were paired up, and we would simulate the connectivity of the topology in Java and log our results in an Excel sheet. We also tried it on various sizes and numbers of links per node. In the end, we found a topology that goes through each node, finds the furthest node from it, and connects the two. We found that it performed up to 5% better at smaller sizes than the topologies we read about, which is, to be frank, slightly trivial since most supercomputer systems use quite several machines. We named it Waiting Room after <a href="https://www.codewars.com/kata/542f0c36d002f8cd8a0005e5" target="_blank" rel="noreferrer">a Codewars problem</a> that inspired this approach.</p>`,
+            `<p><strong>Afterthought(s).</strong> Nevertheless, this was my introduction to doing research. It familiarized me with how to conduct a proper literature review, brainstorm and propose compelling research questions, and make a research poster. We presented at Horizons, Knox College's on-campus research symposium. Below is the poster we made.</p><a href="images/poster.jpg" target="_blank" rel="noreferrer"><img src="images/poster.jpg" alt="Winter Collaborative Project Poster"></a>`,
+        ],
+    },
+    {
+        title: 'salad905.github.io',
+        category: 'Software Development',
+        tags: ['HTML', 'CSS', 'JavaScript'],
+        color: '#b9cba3',
+        rotate: -1.1,
+        paras: [
+            `<p><strong>Context.</strong> For my Programming Languages class, we were all asked to make a personal website to be hosted on GitHub. This website looked pretty different when I started, but here we are now.</p>`,
+            `<p><strong>Process &amp; Afterthought(s).</strong> It's still ongoing work. I try to update it every now and then when I have the time. I wanted this to be a thing someone can look at to get to know me, professionally or personally. I hope it's doing a good job at that…</p>`,
         ],
     },
 ];
 
+const PROJECT_CATEGORIES = ['Machine Learning', 'Data Analysis', 'Software Development'];
+let projectCategoryFilter = 'all';
+let currentProjectList = [];
+
+const projectFilter = document.getElementById('project-filter');
+projectFilter.innerHTML = `
+    <button class="project-filter-btn active" data-category="all">All</button>
+    ${PROJECT_CATEGORIES.map(c => `<button class="project-filter-btn" data-category="${c}">${c}</button>`).join('')}
+`;
+projectFilter.addEventListener('click', (e) => {
+    const btn = e.target.closest('.project-filter-btn');
+    if (!btn) return;
+    projectFilter.querySelectorAll('.project-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    projectCategoryFilter = btn.dataset.category;
+    renderProjects();
+});
+
 const projectsGrid = document.getElementById('projects-grid');
-PROJECTS.forEach((p, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'project-card';
-    btn.style.setProperty('--rot', p.rotate + 'deg');
-    btn.innerHTML = `
-        <div class="sketchy" style="--accent:${p.color}">
-            <div class="sketchy-shadow"></div>
-            <div class="sketchy-body">
-                <div class="project-card-body">
-                    <h3>${p.title}</h3>
-                    <div class="project-tags">${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}</div>
-                    <div class="project-cta">read all about it &rarr;</div>
+function renderProjects() {
+    let list = PROJECTS;
+    if (projectCategoryFilter !== 'all') list = list.filter(p => p.category === projectCategoryFilter);
+    currentProjectList = list;
+
+    projectsGrid.innerHTML = '';
+    if (!list.length) {
+        projectsGrid.innerHTML = '<p class="projects-empty">No projects match this filter.</p>';
+        return;
+    }
+    list.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'project-card';
+        btn.style.setProperty('--rot', p.rotate + 'deg');
+        btn.innerHTML = `
+            <div class="sketchy" style="--accent:${p.color}">
+                <div class="sketchy-shadow"></div>
+                <div class="sketchy-body">
+                    <div class="project-card-body">
+                        <span class="project-category-badge" style="--accent:${p.color}">${p.category}</span>
+                        <h3>${p.title}</h3>
+                        <div class="project-tags">${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}</div>
+                        <div class="project-cta">read all about it &rarr;</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-    btn.addEventListener('click', () => openProjectModal(i));
-    projectsGrid.appendChild(btn);
-});
+        `;
+        btn.addEventListener('click', () => openProjectModal(i));
+        projectsGrid.appendChild(btn);
+    });
+}
+renderProjects();
 
 const projectModal = document.getElementById('project-modal');
 function openProjectModal(i) {
-    const p = PROJECTS[i];
+    const p = currentProjectList[i];
     document.getElementById('project-modal-sketchy').style.setProperty('--accent', p.color);
     document.getElementById('modal-title').textContent = p.title;
     document.getElementById('modal-tags').innerHTML = p.tags.map(t => `<span class="project-tag">${t}</span>`).join('');
-    const stat = document.getElementById('modal-stat');
-    stat.textContent = p.stat;
-    stat.style.setProperty('--accent', p.color);
+    const category = document.getElementById('modal-category');
+    category.textContent = p.category;
+    category.style.setProperty('--accent', p.color);
     document.getElementById('modal-paras').innerHTML = p.paras.map(html => `<div class="modal-para">${html}</div>`).join('');
     projectModal.classList.add('open');
 }
