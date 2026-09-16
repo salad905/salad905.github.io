@@ -227,7 +227,6 @@ function renderProjects() {
     list.forEach((p, i) => {
         const btn = document.createElement('button');
         btn.className = 'project-card';
-        btn.style.setProperty('--rot', p.rotate + 'deg');
         btn.innerHTML = `
             <div class="sketchy" style="--accent:${p.color}">
                 <div class="sketchy-shadow"></div>
@@ -426,6 +425,452 @@ document.addEventListener('keydown', (e) => {
         return;
     }
     if (projectModal.classList.contains('open') && e.key === 'Escape') closeProjectModal();
+});
+
+// ── Color analysis ───────────────────────────────────────────────────────────
+
+// The classic 12-season (Sci/ART-derived) personal color analysis system used by
+// professional color analysts: each of the 4 main seasons splits into 3 sub-seasons
+// along its neighboring axes (e.g. Spring splits toward Summer's "light" and
+// Winter's "bright"). Colors below are representative swatches for each sub-season.
+const COLOR_PALETTES = {
+    lightSpring: {
+        label: 'light spring', family: 'spring', desc: 'light, warm & clear',
+        colors: ['#FFF1D6', '#F6B38A', '#FF8F7A', '#F7A6B8', '#F7D86A', '#9FD8B5', '#68C7C1', '#67BDE0', '#C99A5B', '#A8D8EA']
+    },
+    warmSpring: {
+        label: 'warm spring', family: 'spring', desc: 'warm, bright & clear',
+        colors: ['#FFF4D6', '#F5C542', '#F4A51C', '#FF6F61', '#E94B35', '#54A24B', '#28B7A8', '#177E7A', '#B86B2B', '#8A5A2B']
+    },
+    brightSpring: {
+        label: 'bright spring', family: 'spring', desc: 'bright, warm & vivid',
+        colors: ['#FFF7E8', '#FF5A5F', '#FF4F7B', '#F53B2F', '#F4E04D', '#A7D129', '#00A676', '#00B8C8', '#4FA3E3', '#CC5FA3']
+    },
+    lightSummer: {
+        label: 'light summer', family: 'summer', desc: 'light, cool & soft',
+        colors: ['#F2F3F5', '#E9B7C7', '#DFA0B6', '#B7A7D8', '#8FA8D8', '#9EC9E2', '#A6CFC4', '#AEDCD0', '#B7B7B7', '#3D5470']
+    },
+    coolSummer: {
+        label: 'cool summer', family: 'summer', desc: 'cool, soft & muted',
+        colors: ['#F4F5F5', '#C9869A', '#B57B9A', '#B2456E', '#A99AC4', '#667FA3', '#6F9A9A', '#4F7C72', '#8B8F96', '#6F4E73']
+    },
+    softSummer: {
+        label: 'soft summer', family: 'summer', desc: 'soft, cool & muted',
+        colors: ['#B8A99A', '#C894A0', '#9E5F73', '#9B7A8A', '#7E93A8', '#62788F', '#93A58A', '#789486', '#8F8377', '#565B63']
+    },
+    softAutumn: {
+        label: 'soft autumn', family: 'autumn', desc: 'soft, warm & muted',
+        colors: ['#E7D8C3', '#D9A77F', '#C97963', '#B66A58', '#B88957', '#7D7A3E', '#6F7B45', '#4F7F78', '#9A6A3A', '#5B4432']
+    },
+    warmAutumn: {
+        label: 'warm autumn', family: 'autumn', desc: 'warm, deep & muted',
+        colors: ['#F2E1C2', '#C99718', '#C86428', '#A94724', '#B46A32', '#6E6B2F', '#5D6B38', '#356F64', '#5A3825', '#7A2F2F']
+    },
+    deepAutumn: {
+        label: 'deep autumn', family: 'autumn', desc: 'deep, warm & rich',
+        colors: ['#E8D4B0', '#C78319', '#B24A24', '#8E2F27', '#5C2E22', '#4F5426', '#354C2F', '#0A5B5A', '#2F211A', '#4B2E3A']
+    },
+    deepWinter: {
+        label: 'deep winter', family: 'winter', desc: 'deep, cool & rich',
+        colors: ['#FFFFFF', '#000000', '#B00030', '#8A1538', '#5B1235', '#004B3C', '#006B54', '#102A56', '#0F52BA', '#2A2D34']
+    },
+    coolWinter: {
+        label: 'cool winter', family: 'winter', desc: 'cool, bright & clear',
+        colors: ['#FFFFFF', '#000000', '#C4002F', '#C2185B', '#D1008F', '#F4D8E8', '#0047AB', '#D7ECFF', '#008060', '#34363A']
+    },
+    brightWinter: {
+        label: 'bright winter', family: 'winter', desc: 'bright, cool & vivid',
+        colors: ['#FFFFFF', '#000000', '#FF2D95', '#D20F4B', '#0066FF', '#00B7C7', '#B9E600', '#6A00B9', '#7A3EC8', '#001F54']
+    }
+};
+const PALETTE_FAMILIES = ['spring', 'summer', 'autumn', 'winter'];
+
+const FACEAPI_SCRIPT = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js';
+const FACEAPI_MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+const colorsStage = document.getElementById('colors-stage');
+const colorsPhoto = document.getElementById('colors-photo');
+const colorsVideo = document.getElementById('colors-video');
+const colorsDim = document.getElementById('colors-dim');
+const colorsRingSvg = document.getElementById('colors-ring');
+const colorsWorkspace = document.getElementById('colors-workspace');
+const colorsUploadBtn = document.getElementById('colors-upload-btn');
+const colorsFileInput = document.getElementById('colors-file-input');
+const colorsWebcamBtn = document.getElementById('colors-webcam-btn');
+const colorsWebcamBtnRow = document.getElementById('colors-webcam-btnrow');
+const colorsCaptureBtn = document.getElementById('colors-capture-btn');
+const colorsTrackToggleBtn = document.getElementById('colors-track-toggle-btn');
+const colorsHint = document.getElementById('colors-hint');
+const colorsPaletteRow = document.getElementById('colors-palette-row');
+const colorsSizeSlider = document.getElementById('colors-size-slider');
+const colorsRotateSlider = document.getElementById('colors-rotate-slider');
+
+let currentPaletteKey = 'warmSpring';
+let ringState = { cx: 0, cy: 0, r: 0, rot: 0, stageWidthAtSet: 0 };
+let webcamStream = null;
+let faceApiPromise = null;
+let isDraggingRing = false;
+let dragStart = { x: 0, y: 0, cx: 0, cy: 0 };
+let liveTrackingTimer = null;
+let liveTrackingPaused = false;
+let ringTarget = null;
+let smoothRafId = null;
+
+function clampNum(n, min, max) { return Math.min(max, Math.max(min, n)); }
+
+function debounce(fn, wait) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+}
+
+function ensureFaceApiLoaded() {
+    if (faceApiPromise) return faceApiPromise;
+    faceApiPromise = new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = FACEAPI_SCRIPT;
+        script.onload = async () => {
+            try {
+                await faceapi.nets.tinyFaceDetector.loadFromUri(FACEAPI_MODEL_URL);
+                resolve(true);
+            } catch (e) {
+                resolve(false);
+            }
+        };
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+    });
+    return faceApiPromise;
+}
+
+function computeCoverFit(natW, natH) {
+    const rect = colorsStage.getBoundingClientRect();
+    const boxW = rect.width, boxH = rect.height;
+    const scale = Math.max(boxW / natW, boxH / natH);
+    const dispW = natW * scale, dispH = natH * scale;
+    return { scale, dispW, dispH, offX: (boxW - dispW) / 2, offY: (boxH - dispH) / 2, boxW, boxH };
+}
+
+function applyFitToMedia(el, fit) {
+    el.style.left = fit.offX + 'px';
+    el.style.top = fit.offY + 'px';
+    el.style.width = fit.dispW + 'px';
+    el.style.height = fit.dispH + 'px';
+}
+
+function polarToCartesian(cx, cy, r, angleDeg) {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function arcSegmentPath(cx, cy, rOuter, rInner, startDeg, endDeg) {
+    const outerStart = polarToCartesian(cx, cy, rOuter, startDeg);
+    const outerEnd = polarToCartesian(cx, cy, rOuter, endDeg);
+    const innerStart = polarToCartesian(cx, cy, rInner, endDeg);
+    const innerEnd = polarToCartesian(cx, cy, rInner, startDeg);
+    const largeArc = (endDeg - startDeg) % 360 > 180 ? 1 : 0;
+    return `M ${outerStart.x} ${outerStart.y} A ${rOuter} ${rOuter} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y} L ${innerStart.x} ${innerStart.y} A ${rInner} ${rInner} 0 ${largeArc} 0 ${innerEnd.x} ${innerEnd.y} Z`;
+}
+
+function renderRing() {
+    const rect = colorsStage.getBoundingClientRect();
+    colorsRingSvg.setAttribute('width', rect.width);
+    colorsRingSvg.setAttribute('height', rect.height);
+    colorsRingSvg.innerHTML = '';
+
+    const { cx, cy, r, rot } = ringState;
+    const colors = COLOR_PALETTES[currentPaletteKey].colors;
+    const n = colors.length;
+    const seg = 360 / n;
+    const gap = 3;
+    const rInner = r + 3;
+    const rOuter = rInner + clampNum(r * 0.22, 10, 30);
+    const ns = 'http://www.w3.org/2000/svg';
+
+    colors.forEach((color, i) => {
+        const startDeg = rot + i * seg + gap / 2;
+        const endDeg = rot + (i + 1) * seg - gap / 2;
+        const path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', arcSegmentPath(cx, cy, rOuter, rInner, startDeg, endDeg));
+        path.setAttribute('fill', color);
+        colorsRingSvg.appendChild(path);
+    });
+
+    const maskCss = `radial-gradient(circle at ${cx}px ${cy}px, rgba(0,0,0,0) ${Math.max(r - 1, 0)}px, rgba(0,0,0,1) ${r + 1}px)`;
+    colorsDim.style.webkitMaskImage = maskCss;
+    colorsDim.style.maskImage = maskCss;
+}
+
+function setRing(cx, cy, r, rot) {
+    const rect = colorsStage.getBoundingClientRect();
+    ringState.cx = clampNum(cx, 0, rect.width);
+    ringState.cy = clampNum(cy, 0, rect.height);
+    ringState.r = clampNum(r, rect.width * 0.08, rect.width * 0.5);
+    ringState.rot = ((rot % 360) + 360) % 360;
+    ringState.stageWidthAtSet = rect.width;
+    colorsSizeSlider.value = Math.round((ringState.r / rect.width) * 100);
+    colorsRotateSlider.value = Math.round(ringState.rot);
+    renderRing();
+}
+
+function setRingPosition(cx, cy) {
+    const rect = colorsStage.getBoundingClientRect();
+    ringState.cx = clampNum(cx, 0, rect.width);
+    ringState.cy = clampNum(cy, 0, rect.height);
+    renderRing();
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Lightweight per-frame update used by the live-tracking smoother: skips the
+// slider DOM writes setRing() does, since those only need to move a few times
+// a second, not every animation frame.
+function applyRingFrame(cx, cy, r) {
+    const rect = colorsStage.getBoundingClientRect();
+    ringState.cx = clampNum(cx, 0, rect.width);
+    ringState.cy = clampNum(cy, 0, rect.height);
+    ringState.r = clampNum(r, rect.width * 0.08, rect.width * 0.5);
+    ringState.stageWidthAtSet = rect.width;
+    renderRing();
+}
+
+function smoothTrackingLoop() {
+    if (!webcamStream || colorsVideo.style.display === 'none') { smoothRafId = null; return; }
+    if (ringTarget && !liveTrackingPaused && !isDraggingRing) {
+        const closeEnough = Math.abs(ringState.cx - ringTarget.cx) < 0.3
+            && Math.abs(ringState.cy - ringTarget.cy) < 0.3
+            && Math.abs(ringState.r - ringTarget.r) < 0.3;
+        if (!closeEnough) {
+            applyRingFrame(
+                lerp(ringState.cx, ringTarget.cx, 0.22),
+                lerp(ringState.cy, ringTarget.cy, 0.22),
+                lerp(ringState.r, ringTarget.r, 0.22)
+            );
+        }
+    }
+    smoothRafId = requestAnimationFrame(smoothTrackingLoop);
+}
+
+function hasMedia() { return colorsPhoto.style.display !== 'none' || colorsVideo.style.display !== 'none'; }
+
+async function detectAndPlaceRing(imgEl) {
+    colorsHint.textContent = 'finding your face…';
+    const fit = computeCoverFit(imgEl.naturalWidth, imgEl.naturalHeight);
+    applyFitToMedia(colorsPhoto, fit);
+    colorsPhoto.style.display = 'block';
+
+    const ready = await ensureFaceApiLoaded();
+    if (ready) {
+        try {
+            const det = await faceapi.detectSingleFace(imgEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }));
+            if (det) {
+                const box = det.box;
+                const cx = fit.offX + (box.x + box.width / 2) * fit.scale;
+                const cy = fit.offY + (box.y + box.height / 2) * fit.scale;
+                const r = (Math.max(box.width, box.height) / 2) * 1.35 * fit.scale;
+                setRing(cx, cy, r, ringState.rot);
+                colorsHint.textContent = 'found you! not quite right? drag the ring or use the sliders below.';
+                return;
+            }
+        } catch (e) { /* fall through to manual default */ }
+    }
+    colorsHint.textContent = "couldn't auto-detect a face — drag the ring around and resize it to line it up!";
+    setRing(fit.boxW / 2, fit.boxH * 0.42, Math.min(fit.boxW, fit.boxH) * 0.26, ringState.rot);
+}
+
+function showWorkspace() { colorsWorkspace.classList.add('is-active'); }
+
+function setTrackingPaused(paused) {
+    liveTrackingPaused = paused;
+    colorsTrackToggleBtn.textContent = paused ? 'resume live tracking' : 'pause live tracking';
+}
+
+async function startLiveTracking() {
+    const ready = await ensureFaceApiLoaded();
+    if (!ready) {
+        colorsHint.textContent = "couldn't load face detection — drag the ring to line it up manually!";
+        return;
+    }
+    // Detection runs on its own (slower) cadence and just updates a target;
+    // smoothTrackingLoop() eases the visible ring toward that target every
+    // frame, so motion stays fluid even between detection ticks.
+    const tick = async () => {
+        if (!webcamStream || colorsVideo.style.display === 'none') return;
+        if (!liveTrackingPaused) {
+            try {
+                const det = await faceapi.detectSingleFace(colorsVideo, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }));
+                if (det && webcamStream) {
+                    const fit = computeCoverFit(colorsVideo.videoWidth, colorsVideo.videoHeight);
+                    const box = det.box;
+                    const cx = fit.offX + (box.x + box.width / 2) * fit.scale;
+                    const cy = fit.offY + (box.y + box.height / 2) * fit.scale;
+                    const r = (Math.max(box.width, box.height) / 2) * 1.35 * fit.scale;
+                    ringTarget = { cx, cy, r };
+                    colorsSizeSlider.value = Math.round((r / fit.boxW) * 100);
+                    colorsHint.textContent = 'tracking your face live! drag the ring or use the sliders to fine-tune anytime.';
+                }
+            } catch (e) { /* skip this tick */ }
+        }
+        if (webcamStream) liveTrackingTimer = setTimeout(tick, 280);
+    };
+    tick();
+    if (!smoothRafId) smoothRafId = requestAnimationFrame(smoothTrackingLoop);
+}
+
+function stopLiveTracking() {
+    if (liveTrackingTimer) { clearTimeout(liveTrackingTimer); liveTrackingTimer = null; }
+    if (smoothRafId) { cancelAnimationFrame(smoothRafId); smoothRafId = null; }
+    ringTarget = null;
+    setTrackingPaused(false);
+}
+
+function stopWebcam() {
+    if (webcamStream) {
+        webcamStream.getTracks().forEach(t => t.stop());
+        webcamStream = null;
+    }
+    stopLiveTracking();
+    colorsWebcamBtnRow.style.display = 'none';
+}
+
+function loadPhoto(src) {
+    stopWebcam();
+    colorsVideo.style.display = 'none';
+    showWorkspace();
+    colorsPhoto.onload = () => detectAndPlaceRing(colorsPhoto);
+    colorsPhoto.src = src;
+}
+
+colorsUploadBtn.addEventListener('click', () => colorsFileInput.click());
+colorsFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => loadPhoto(ev.target.result);
+    reader.readAsDataURL(file);
+    colorsFileInput.value = '';
+});
+
+colorsWebcamBtn.addEventListener('click', async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        colorsHint.textContent = "your browser doesn't support webcam access here — try uploading a photo instead!";
+        return;
+    }
+    try {
+        webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    } catch (err) {
+        colorsHint.textContent = "couldn't access your webcam — check your browser's camera permissions!";
+        return;
+    }
+    colorsPhoto.style.display = 'none';
+    showWorkspace();
+    colorsVideo.srcObject = webcamStream;
+    colorsWebcamBtnRow.style.display = 'flex';
+    setTrackingPaused(false);
+    colorsHint.textContent = 'finding your face…';
+    colorsVideo.onloadedmetadata = () => {
+        const fit = computeCoverFit(colorsVideo.videoWidth, colorsVideo.videoHeight);
+        applyFitToMedia(colorsVideo, fit);
+        colorsVideo.style.display = 'block';
+        setRing(fit.boxW / 2, fit.boxH * 0.42, Math.min(fit.boxW, fit.boxH) * 0.26, ringState.rot);
+        startLiveTracking();
+    };
+});
+
+colorsTrackToggleBtn.addEventListener('click', () => setTrackingPaused(!liveTrackingPaused));
+
+colorsCaptureBtn.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = colorsVideo.videoWidth;
+    canvas.height = colorsVideo.videoHeight;
+    canvas.getContext('2d').drawImage(colorsVideo, 0, 0);
+    const dataUrl = canvas.toDataURL('image/png');
+    stopWebcam();
+    colorsVideo.style.display = 'none';
+    colorsPhoto.onload = () => detectAndPlaceRing(colorsPhoto);
+    colorsPhoto.src = dataUrl;
+});
+
+colorsStage.addEventListener('pointerdown', (e) => {
+    if (!hasMedia()) return;
+    if (webcamStream && !liveTrackingPaused) setTrackingPaused(true);
+    isDraggingRing = true;
+    colorsStage.setPointerCapture(e.pointerId);
+    const rect = colorsStage.getBoundingClientRect();
+    dragStart = { x: e.clientX - rect.left, y: e.clientY - rect.top, cx: ringState.cx, cy: ringState.cy };
+});
+colorsStage.addEventListener('pointermove', (e) => {
+    if (!isDraggingRing) return;
+    const rect = colorsStage.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    setRingPosition(dragStart.cx + (x - dragStart.x), dragStart.cy + (y - dragStart.y));
+});
+colorsStage.addEventListener('pointerup', () => { isDraggingRing = false; });
+colorsStage.addEventListener('pointercancel', () => { isDraggingRing = false; });
+
+colorsSizeSlider.addEventListener('input', () => {
+    if (webcamStream && !liveTrackingPaused) setTrackingPaused(true);
+    const rect = colorsStage.getBoundingClientRect();
+    ringState.r = clampNum((Number(colorsSizeSlider.value) / 100) * rect.width, rect.width * 0.08, rect.width * 0.5);
+    ringState.stageWidthAtSet = rect.width;
+    renderRing();
+});
+colorsRotateSlider.addEventListener('input', () => {
+    ringState.rot = Number(colorsRotateSlider.value);
+    renderRing();
+});
+
+function selectPalette(key) {
+    currentPaletteKey = key;
+    colorsPaletteRow.querySelectorAll('.colors-palette-btn').forEach(b => b.classList.toggle('active', b.dataset.key === key));
+    renderRing();
+}
+
+function buildPaletteButtons() {
+    colorsPaletteRow.innerHTML = '';
+    PALETTE_FAMILIES.forEach((family) => {
+        const group = document.createElement('div');
+        group.className = 'colors-palette-family';
+        const groupLabel = document.createElement('div');
+        groupLabel.className = 'colors-palette-family-label';
+        groupLabel.textContent = family;
+        group.appendChild(groupLabel);
+
+        const groupBtns = document.createElement('div');
+        groupBtns.className = 'colors-palette-family-btns';
+        Object.entries(COLOR_PALETTES).filter(([, p]) => p.family === family).forEach(([key, palette]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.key = key;
+            btn.className = 'colors-palette-btn' + (key === currentPaletteKey ? ' active' : '');
+            btn.textContent = palette.label.replace(family, '').trim() || palette.label;
+            btn.addEventListener('click', () => selectPalette(key));
+            groupBtns.appendChild(btn);
+        });
+        group.appendChild(groupBtns);
+        colorsPaletteRow.appendChild(group);
+    });
+}
+buildPaletteButtons();
+
+window.addEventListener('resize', debounce(() => {
+    if (!hasMedia() || !ringState.stageWidthAtSet) return;
+    const rect = colorsStage.getBoundingClientRect();
+    if (rect.width === 0) return;
+    const scale = rect.width / ringState.stageWidthAtSet;
+    ringState.cx *= scale; ringState.cy *= scale; ringState.r *= scale;
+    ringState.stageWidthAtSet = rect.width;
+    if (colorsPhoto.style.display !== 'none' && colorsPhoto.naturalWidth) {
+        applyFitToMedia(colorsPhoto, computeCoverFit(colorsPhoto.naturalWidth, colorsPhoto.naturalHeight));
+    } else if (colorsVideo.style.display !== 'none' && colorsVideo.videoWidth) {
+        applyFitToMedia(colorsVideo, computeCoverFit(colorsVideo.videoWidth, colorsVideo.videoHeight));
+    }
+    renderRing();
+}, 150));
+
+document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.dataset.tab !== 'colors') stopWebcam();
+    });
 });
 
 // ── Init ─────────────────────────────────────────────────────────────────────

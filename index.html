@@ -15,6 +15,7 @@
             <button class="tab-btn" data-tab="resume">resume</button>
             <button class="tab-btn" data-tab="projects">projects</button>
             <button class="tab-btn" data-tab="gallery">gallery</button>
+            <button class="tab-btn" data-tab="colors">colors</button>
         </div>
     </nav>
 
@@ -470,6 +471,55 @@ translated outputs into structured reports for both technical and non-technical 
                     <p class="section-sub">film &amp; digital · vietnam, galesburg, and in between. click to enlarge!</p>
                 </div>
                 <div id="gallery-grid" class="gallery-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Analysis -->
+    <div id="colors" class="tab-section">
+        <div class="colors-section">
+            <div class="colors-inner">
+                <div class="section-header">
+                    <h2 class="section-title">color analysis</h2>
+                    <p class="section-sub">upload a photo or turn on your webcam, then try draping different color palettes around your face. everything runs right in your browser, and nothing is ever uploaded anywhere.</p>
+                </div>
+
+                <div class="colors-source-row">
+                    <button class="colors-action-btn" id="colors-upload-btn">upload a photo</button>
+                    <input type="file" id="colors-file-input" accept="image/*" style="display:none">
+                    <button class="colors-action-btn" id="colors-webcam-btn">use webcam</button>
+                </div>
+
+                <div class="colors-workspace" id="colors-workspace">
+                    <div class="colors-stage-wrap">
+                        <div class="colors-stage" id="colors-stage">
+                            <img id="colors-photo" alt="your photo" style="display:none">
+                            <video id="colors-video" autoplay playsinline muted style="display:none"></video>
+                            <div class="colors-dim" id="colors-dim"></div>
+                            <svg id="colors-ring" class="colors-ring-svg"></svg>
+                        </div>
+                        <div class="colors-webcam-btnrow" id="colors-webcam-btnrow" style="display:none">
+                            <button class="colors-small-btn" id="colors-capture-btn">capture photo</button>
+                            <button class="colors-small-btn" id="colors-track-toggle-btn">pause live tracking</button>
+                        </div>
+                        <p class="colors-hint" id="colors-hint"></p>
+                    </div>
+
+                    <div class="colors-controls">
+                        <div class="colors-control-group">
+                            <div class="colors-control-label">palette</div>
+                            <div class="colors-palette-row" id="colors-palette-row"></div>
+                        </div>
+                        <div class="colors-control-group">
+                            <div class="colors-control-label">ring size</div>
+                            <input type="range" id="colors-size-slider" min="10" max="45" value="26">
+                        </div>
+                        <div class="colors-control-group">
+                            <div class="colors-control-label">rotate ring</div>
+                            <input type="range" id="colors-rotate-slider" min="0" max="360" value="0">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
