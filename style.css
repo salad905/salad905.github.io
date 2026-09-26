@@ -543,10 +543,9 @@ a { color: var(--forest); }
 
 .photo-card {
   cursor: pointer;
-  transform: rotate(var(--rot, 0deg));
   transition: transform 0.25s ease;
 }
-.photo-card:hover { transform: rotate(0deg) scale(1.04); }
+.photo-card:hover { transform: scale(1.04); }
 
 .photo-card-inner {
   background: var(--cream);

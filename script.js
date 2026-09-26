@@ -32,8 +32,9 @@ document.querySelectorAll('.resume-toggle-btn').forEach(btn => {
 // ── Two truths and a lie ─────────────────────────────────────────────────────
 
 const TRUTHS = [
-    { text: 'I have a 1100+ day streak on Duolingo.', lie: false },
+    { text: 'I have a 1200+ day streak on Duolingo.', lie: false },
     { text: 'I am lactose intolerant.', lie: false },
+    { text: 'I can say "67" in 5 languages.', lie: false },
     { text: "I currently own 4 cameras.", lie: true },
 ];
 
@@ -300,7 +301,6 @@ const GALLERY = [
 ];
 
 const ACCENTS = ['#b9cba3', '#9ab97e', '#7fa06a', '#4a6741', '#8f9c5e'];
-const ROTATES = [-1.5, 1.2, -0.8, 1.5, -1.2, 0.7, -0.5, 1.0, -1.3];
 
 const galleryGrid = document.getElementById('gallery-grid');
 
@@ -369,10 +369,8 @@ function renderGallery() {
     }
     list.forEach((photo, i) => {
         const color = ACCENTS[i % ACCENTS.length];
-        const rotate = ROTATES[i % ROTATES.length];
         const card = document.createElement('div');
         card.className = 'photo-card';
-        card.style.setProperty('--rot', rotate + 'deg');
         card.style.setProperty('--accent', color);
         card.innerHTML = `
             <div class="photo-card-inner">
