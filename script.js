@@ -580,7 +580,7 @@ function renderRing() {
     const n = colors.length;
     const seg = 360 / n;
     const gap = 3;
-    const rInner = r + 3;
+    const rInner = r;
     const rOuter = rInner + clampNum(r * 0.22, 10, 30);
     const ns = 'http://www.w3.org/2000/svg';
 

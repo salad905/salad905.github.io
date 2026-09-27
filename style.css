@@ -797,9 +797,3 @@ a { color: var(--forest); }
 @media (max-width: 560px) {
   .colors-controls { padding: 16px 18px; }
 }
-
-/* ── Footer ──────────────────────────────────────────────────────── */
-
-.site-footer { background: var(--ink); border-top: 2.5px solid var(--forest); padding: 28px 24px; text-align: center; }
-.footer-made { font-family: var(--cs); font-weight: 700; font-size: 18px; color: var(--sage); margin-bottom: 6px; }
-.footer-copy { font-family: var(--cs); font-size: 13px; color: #7a6a58; }
