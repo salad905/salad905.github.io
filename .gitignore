@@ -1,0 +1,6 @@
+# Plaintext photo/audio originals for the love letter page. The page now
+# only reads from the encrypted hii/media/vault.json (built by a local script
+# from these files) — none of the plaintext source media should ever be
+# pushed to the repo.
+hii/media/photos/
+hii/media/voice.m4a

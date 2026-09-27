@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap');
 
+@font-face {
+  font-family: 'Handwritten';
+  src: url('font/Handwritten-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 130%;
+}
+
 :root {
   --ink: #1a1008;
   --cream: #fdf6e9;
@@ -8,7 +17,7 @@
   --fern: #7fa06a;
   --forest: #4a6741;
   --olive: #8f9c5e;
-  --cs: 'Comic Sans MS', 'Comic Neue', cursive;
+  --cs: 'Handwritten', 'Comic Sans MS', 'Comic Neue', cursive;
 }
 
 * { box-sizing: border-box; }

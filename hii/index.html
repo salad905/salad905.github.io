@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="robots" content="noindex, nofollow">
+    <title>for my cutie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="lock-screen" id="lock-screen">
+        <form class="lock-form" id="lock-form">
+            <div class="lock-icon">🔒</div>
+            <p class="lock-label">for my cutie</p>
+            <input type="password" class="lock-input" id="lock-input" placeholder="password" autocomplete="off">
+            <button type="submit" class="lock-btn">unlock</button>
+            <p class="lock-error" id="lock-error"></p>
+        </form>
+    </div>
+
+    <div class="stage" id="stage">
+
+        <button class="envelope-btn" id="envelope-btn" aria-label="Open the letter">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-flap-bottom"></div>
+                <div class="envelope-flap-top"></div>
+                <div class="envelope-seal"></div>
+            </div>
+            <span class="click-hint" id="click-hint">click to open</span>
+        </button>
+
+        <div class="letter" id="letter">
+            <div class="letter-inner">
+                <div class="letter-audio-row">
+                    <button class="audio-btn" id="audio-btn" type="button" aria-label="Play the reading">
+                        <span class="audio-icon" id="audio-icon">▶</span>
+                    </button>
+                    <audio id="reading-audio" class="reading-audio" preload="none"></audio>
+                </div>
+                <div class="letter-text" id="letter-text"></div>
+            </div>
+        </div>
+
+        <div class="photo-carousel" id="photo-carousel">
+            <div class="carousel-track" id="carousel-track"></div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
