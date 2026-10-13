@@ -3,31 +3,61 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>may's website</title>
+    <title>anh's notebook</title>
     <link rel="icon" href="images/Untitled design (6).png" sizes="32x32" type="image/png">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
-    <nav class="site-nav">
-        <div class="tabs">
-            <button class="tab-btn" data-tab="about">about</button>
-            <button class="tab-btn" data-tab="resume">resume</button>
-            <button class="tab-btn" data-tab="projects">projects</button>
-            <button class="tab-btn" data-tab="gallery">gallery</button>
-            <button class="tab-btn" data-tab="colors">colors</button>
-        </div>
+    <div class="desk">
+    <div class="binder">
+
+    <!-- Divider tabs: order here is the page order of the notebook -->
+    <nav class="site-nav binder-tabs" aria-label="sections">
+        <button class="tab-btn" data-tab="index" style="--tab:#e3e9cf">index</button>
+        <button class="tab-btn" data-tab="about" style="--tab:#b9cba3">about</button>
+        <button class="tab-btn" data-tab="resume" style="--tab:#9ab97e">resume</button>
+        <button class="tab-btn" data-tab="projects" style="--tab:#7fa06a">projects</button>
+        <button class="tab-btn" data-tab="gallery" style="--tab:#8f9c5e">gallery</button>
+        <button class="tab-btn" data-tab="playground" style="--tab:#a9c08a">playground</button>
     </nav>
+
+
+
+    <main class="paper" id="paper">
+        <div class="binder-rings" aria-hidden="true"></div>
+
+    <!-- Index -->
+    <div id="index" class="tab-section">
+        <div class="page"><div class="page-body index-page">
+            <div class="index-label">
+                <div class="index-label-small">this notebook belongs to</div>
+                <div class="index-label-name">anh phan</div>
+                <div class="index-label-small">if found, please return to knox college ☺︎</div>
+            </div>
+
+            <h1 class="index-title">index</h1>
+
+            <ol class="index-list">
+                <li><button data-tab="about"><span class="index-name">about me</span><span class="index-dots"></span><span class="index-pg" data-pg-for="about"></span></button></li>
+                <li><button data-tab="resume"><span class="index-name">resume</span><span class="index-dots"></span><span class="index-pg" data-pg-for="resume"></span></button></li>
+                <li><button data-tab="projects"><span class="index-name">projects</span><span class="index-dots"></span><span class="index-pg" data-pg-for="projects"></span></button></li>
+                <li><button data-tab="gallery"><span class="index-name">gallery</span><span class="index-dots"></span><span class="index-pg" data-pg-for="gallery"></span></button></li>
+                <li><button data-tab="playground"><span class="index-name">playground</span><span class="index-dots"></span><span class="index-pg" data-pg-for="playground"></span></button></li>
+            </ol>
+        </div></div>
+    </div>
 
     <!-- About Me -->
     <div id="about" class="tab-section">
+        <div class="page"><div class="page-body">
         <div class="about-grid">
             <div>
                 <h1 class="about-heading" style="margin-top:0">
                     hello!!
                 </h1>
                 <p class="about-bio">
-                    I'm <strong>Hà Anh (May) Phan</strong>. I'm a Data Science student at Knox College. I like taking naps in my free time... Welcome to my website ☺︎
+                    I'm <strong>Hà Anh Phan</strong>. I'm a Data Science student at Knox College. I like taking naps in my free time... Welcome to my website ☺︎
                 </p>
                 <div class="social-row">
                     <a class="social-btn" style="background:#1a1008; color:#fdf6e9;" href="https://github.com/salad905" target="_blank" rel="noreferrer">GitHub</a>
@@ -40,7 +70,7 @@
             <div class="about-photo-wrap">
                 <div style="position:relative">
                     <div class="about-photo-frame">
-                        <img src="images/389046_499370383412054_602369392_n.jpg" alt="May">
+                        <img src="images/389046_499370383412054_602369392_n.jpg" alt="Anh">
                     </div>
                     <div class="about-star-1">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="#8f9c5e" stroke="#1a1008" stroke-width="1.5"><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9" /></svg>
@@ -56,27 +86,21 @@
                 </div>
             </div>
         </div>
+    </div></div>
     </div>
 
     <!-- My Resume -->
     <div id="resume" class="tab-section">
-        <div class="resume-wrap">
-            <div class="resume-toggle">
-                <button class="resume-toggle-btn active" data-version="short">default</button>
-                <button class="resume-toggle-btn" data-version="extended">extended</button>
-            </div>
-            <div class="resume-card resume-version" data-version="extended">
+        <!-- source content only: script.js splits each version across fixed-size pages -->
+        <div class="resume-source" hidden>
+            <div class="resume-version" data-version="extended">
 
                 <div style="text-align:center; margin-bottom:12px;">
                     <div class="resume-name">Anh Phan</div>
                     <div class="resume-contact">
-                        <span>Galesburg, IL</span>
-                        <span>·</span>
                         <a href="https://github.com/salad905" target="_blank">GitHub</a>
                         <span>·</span>
                         <a href="https://linkedin.com/in/ahphan905/" target="_blank">LinkedIn</a>
-                        <span>·</span>
-                        <a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a>
                     </div>
                 </div>
 
@@ -127,25 +151,20 @@
                     <div class="jake-entry">
                         <div class="jake-entry-head">
                             <span class="jake-entry-left"><span style="font-weight:700">Data Analyst Intern</span>, National STEM Honor Society</span>
-                            <span class="jake-entry-right">June 2026 - Present</span>
+                            <span class="jake-entry-right">June 2026 – October 2026</span>
                         </div>
                         <div class="jake-entry-sub">Remote</div>
                         <ul>
-                            <li>Analyzed a 198,000-row, 72-campaign subscriber engagement dataset using SQL (window functions, CASE logic)
-and Python (pandas), building campaign-level rollups that identified top and bottom-performing campaigns by
-open rate, click rate, and click-to-open conversion.</li>
-                            <li>Classified 12,000+ subscribers into 4 engagement tiers using percentile-based thresholds derived from the data
-distribution, revealing only 2.4% of subscribers were Highly Engaged versus 46% Moderately Engaged, to inform
-targeted retention strategy.</li>
-                            <li>Developed interactive Tableau dashboards visualizing campaign performance trends and subscriber engagement
-segmentation, translating SQL and Python analysis into a stakeholder-ready presentation.</li>
+                            <li>Engineered a bot-detection and data-correction pipeline in Python (pandas) and Node.js using the MailerLite API, restoring the integrity of 800,000+ recipient-activity records across 190 email campaigns and identifying 864 bot/scanner accounts and a link-counting bug that had overstated content volume 2x.</li>
+                            <li>Determined the statistical drivers of email engagement across 127 campaigns by engineering 17 features from subject and body content, isolating a single subject-line pattern as the strongest predictor of open rate (r = -0.60).</li>
+                            <li>Created interactive Tableau dashboards across 185 campaigns, fed by a reusable Jupyter/Google Colab notebook that automated the SQL and Python analysis and exported clean datasets for stakeholder reporting.</li>
                         </ul>
                     </div>
 
                     <div class="jake-entry">
                         <div class="jake-entry-head">
                             <span class="jake-entry-left"><span style="font-weight:700">Data Analyst</span>, Center for Teaching and Learning, Knox College</span>
-                            <span class="jake-entry-right">Sep 2025 – Present</span>
+                            <span class="jake-entry-right">September 2024 – June 2026</span>
                         </div>
                         <div class="jake-entry-sub">Galesburg, IL</div>
                         <ul>
@@ -155,6 +174,7 @@ across 10,000+ records using Excel pivot tables and structured formulas, informi
 leadership discussions on service allocation.</li>
                             <li>Presented reports on tutor participation metrics and time-based trends to administrative leadership, directly
 informing a staffing restructure that reallocated resources from 1-on-1 appointments to drop-in service hours.</li>
+                            <li>Validated and cleaned operational dataset entries before delivery to administrative supervisors, achieving zero reporting errors across 4 term reports.</li>
                         </ul>
                     </div>
 
@@ -261,14 +281,12 @@ informing a staffing restructure that reallocated resources from 1-on-1 appointm
                             <span class="jake-entry-left"><a href="https://github.com/salad905/df26submission" target="_blank" style="font-weight:700">Healthcare Access & Patient Journey Analysis</a> | <em>Python (numpy, pandas), PowerBI</em></span>
                         </div>
                         <ul>
-                            <li>Analyzed 8.1 million patient encounters across seven linked datasets using Python, pinpointing pediatric access
-gaps and creating geographic distribution maps by joining US Census FIPS codes to records, informing capacity
-planning.</li>
+                            <li>Examined 8.1M+ patient encounters from Stormont Vail Health across 7 linked datasets using Python (NumPy, pandas) to identify pediatric care access gaps, engineering geographic distribution analysis by joining US Census FIPS codes to patient records to inform capacity planning recommendations.</li>
                             <li>Developed an interactive PowerBI dashboard visualizing pediatric patient density across Kansas census blocks,
 year-over-year growth trends, and transportation barrier impact, presented to a panel of judges.</li>
                             <li>Synthesized findings into 3 actionable recommendations for SVH leadership targeting address collection gaps,
 corridor city capacity expansion, and transportation screening at intake, contributing to an Honorable Mention
-award among competing teams.
+award among competing teams.</li>
                         </ul>
                     </div>
                     <div class="jake-entry">
@@ -287,8 +305,8 @@ award among competing teams.
                         </div>
                         <ul>
                             <li>Designed a centralized database that digitized and standardized multi-year Honor Code case records, replacing fragmented documentation with a searchable dataset for longitudinal analysis.</li>
-                            <li>Automated historical case extraction and data cleaning using OCR and Google Apps Script, reducing manual record processing and improving data consistency across semesters.</li>
-                            <li>Initiated the Honor Board's first annual statistical report, synthesizing trends in case volume, violation types, and sanctions to improve transparency and support evidence-informed policy discussions across the college community.</li>
+                            <li>Extracted and cleaned historical case records using OCR and Google Apps Script, reducing manual record processing and improving data consistency across semesters.</li>
+                            <li>Initiated the Honor Board&#39;s first annual statistical report, synthesizing 51 cases across 15 departments by class year, violation type, and sanction to support evidence-informed policy discussions.</li>
                         </ul>
                     </div>
                     <div class="jake-entry">
@@ -357,25 +375,21 @@ Language Processing (NLP), Predictive Modeling</div>
                 </div>
 
                 <div class="jake-section">
-                    <div class="jake-section-title">Campus Involvement</div>
+                    <div class="jake-section-title">Campus Involvements</div>
                     <div class="jake-rule"></div>
-                    <p class="resume-profile" style="margin:0">Vietnamese Club Executive Member – Treasurer and Public Relations, Honor Board Co-Chair, Tea House Manager, Knox Ultimate Frisbee, Badminton Club</p>
+                    <p class="resume-profile" style="margin:0">Vietnamese Club Treasurer and Public Relations, Honor Board Co-Chair, Tea House Manager, Knox Ultimate Frisbee, Badminton Club</p>
                 </div>
 
             </div>
 
-            <div class="resume-card resume-version active" data-version="short">
+            <div class="resume-version" data-version="short">
 
                 <div style="text-align:center; margin-bottom:12px;">
                     <div class="resume-name">Anh Phan</div>
                     <div class="resume-contact">
-                        <span>Galesburg, IL</span>
-                        <span>·</span>
                         <a href="https://github.com/salad905" target="_blank">GitHub</a>
                         <span>·</span>
                         <a href="https://linkedin.com/in/ahphan905/" target="_blank">LinkedIn</a>
-                        <span>·</span>
-                        <a href="https://www.kaggle.com/anhhaphan" target="_blank">Kaggle</a>
                     </div>
                 </div>
 
@@ -386,80 +400,13 @@ Language Processing (NLP), Predictive Modeling</div>
                     <div class="jake-rule"></div>
                     <div class="jake-entry">
                         <div class="jake-entry-head">
-                            <span class="jake-entry-left"><span style="font-weight:700">Knox College</span> — Galesburg, IL 61401</span>
-                            <span class="jake-entry-right">Spring 2027</span>
+                            <span class="jake-entry-left"><span style="font-weight:700">Knox College</span></span>
+                            <span class="jake-entry-right">Galesburg, IL</span>
                         </div>
-                        <div class="jake-entry-sub">Bachelor of Arts in Data Science &nbsp;|&nbsp; GPA: 3.94 / 4.0</div>
-                        <div class="jake-entry-sub">Relevant coursework: Mathematical Statistics, Data Mining, Machine Learning</div>
-                    </div>
-                </div>
-
-                <div class="jake-section">
-                    <div class="jake-section-title">Professional Experience</div>
-                    <div class="jake-rule"></div>
-                    <div class="jake-entry">
-                        <div class="jake-entry-head">
-                            <span class="jake-entry-left"><span style="font-weight:700">Data Analyst Intern</span>, National STEM Honor Society</span>
-                            <span class="jake-entry-right">June 2026 - Present</span>
+                        <div class="jake-subhead">
+                            <span>Bachelor of Arts in Data Science &nbsp;|&nbsp; GPA 3.94</span>
+                            <span>Expected June 2027</span>
                         </div>
-                        <div class="jake-entry-sub">Remote</div>
-                        <ul>
-                            <li>Analyzed a 198,000-row, 72-campaign subscriber engagement dataset using SQL (window functions, CASE logic)
-and Python (pandas), building campaign-level rollups that identified top and bottom-performing campaigns by
-open rate, click rate, and click-to-open conversion.</li>
-                            <li>Classified 12,000+ subscribers into 4 engagement tiers using percentile-based thresholds derived from the data
-distribution, revealing only 2.4% of subscribers were Highly Engaged versus 46% Moderately Engaged, to inform
-targeted retention strategy.</li>
-                            <li>Developed interactive Tableau dashboards visualizing campaign performance trends and subscriber engagement
-segmentation, translating SQL and Python analysis into a stakeholder-ready presentation.</li>
-                        </ul>
-                    </div>
-                    <div class="jake-entry">
-                        <div class="jake-entry-head">
-                            <span class="jake-entry-left"><span style="font-weight:700">Data Analyst</span>, Center for Teaching and Learning, Knox College</span>
-                            <span class="jake-entry-right">Sep 2024 – Present</span>
-                        </div>
-                        <div class="jake-entry-sub">Galesburg, IL</div>
-                        <ul>
-                            <li>Identified peak demand periods and recurring engagement trends by analyzing 3 years of tutor utilization data
-across 10,000+ records using Excel pivot tables and structured formulas, informing term scheduling decisions.</li>
-                            <li>Built visualizations of 1,000+ tutoring hours across 100 tutors to surface staffing patterns, directly supporting
-leadership discussions on service allocation.</li>
-                            <li>Presented reports on tutor participation metrics and time-based trends to administrative leadership, directly
-informing a staffing restructure that reallocated resources from 1-on-1 appointments to drop-in service hours.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="jake-section">
-                    <div class="jake-section-title">Technical Projects</div>
-                    <div class="jake-rule"></div>
-                    <div class="jake-entry">
-                        <div class="jake-entry-head">
-                            <span class="jake-entry-left"><a href="https://github.com/salad905/df26submission" target="_blank" style="font-weight:700">Healthcare Access & Patient Journey Analysis</a> | <em>Python (numpy, pandas), PowerBI</em></span>
-                        </div>
-                        <ul>
-                            <li>Analyzed 8.1 million patient encounters across seven linked datasets using Python, pinpointing pediatric access
-gaps and creating geographic distribution maps by joining US Census FIPS codes to records, informing capacity
-planning.</li>
-                            <li>Developed an interactive PowerBI dashboard visualizing pediatric patient density across Kansas census blocks,
-year-over-year growth trends, and transportation barrier impact, presented to a panel of judges.</li>
-                            <li>Synthesized findings into 3 actionable recommendations for SVH leadership targeting address collection gaps,
-corridor city capacity expansion, and transportation screening at intake, contributing to an Honorable Mention
-award among competing teams.    
-                        </ul>
-                    </div>
-                    <div class="jake-entry">
-                        <div class="jake-entry-head">
-                            <span class="jake-entry-left"><a href="https://huggingface.co/spaces/salad905/space2" target="_blank" style="font-weight:700">Deepfake Generation &amp; Detection</a> | <em>Python, PyTorch, FaceNet, OpenCV, FastAPI</em></span>
-                            <span class="jake-entry-right">Mar 2025 – May 2025</span>
-                        </div>
-                        <ul>
-                            <li>Deployed a PyTorch-based deepfake detection system, processing 20,000+ images with 92% accuracy, incorporating
-OpenCV/MTCNN preprocessing and a FastAPI deployment layer.</li>
-                            <li>Evaluated model robustness using precision, recall, F1, and ROC-AUC, achieving 86% F1 and 0.94 AUC, and
-translated outputs into structured reports for both technical and non-technical audiences.</li>
-                        </ul>
                     </div>
                 </div>
 
@@ -467,59 +414,114 @@ translated outputs into structured reports for both technical and non-technical 
                     <div class="jake-section-title">Technical Skills</div>
                     <div class="jake-rule"></div>
                     <div class="skills-block">
-                        <div><span style="font-weight:700">Programming Languages:</span> Java, Python, SQL, R, HTML, CSS, JavaScript, C#, Haskell, LaTeX, Scala</div>
-                        <div><span style="font-weight:700">Machine Learning & AI:</span> scikit-learn, PyTorch, TensorFlow, Keras, Large Language Models (LLMs), Natural 
-                            Language Processing (NLP), Predictive Modeling</div>
-                        <div><span style="font-weight:700">Data & Visualization:</span> PowerBI, pandas, NumPy, Matplotlib, Tableau, PostgreSQL, Data Modeling</div>
-                        <div><span style="font-weight:700">Development & Deployment:</span> Git, FastAPI, Jupyter, Google Colab, VSCode, Figma, Cloudflare Pages, Gradio, Linux</div>                    
+                        <div><span style="font-weight:700">Data Analysis:</span> SQL, Python (pandas, NumPy), Excel (pivot tables, formulas), Node.js</div>
+                        <div><span style="font-weight:700">Visualization &amp; BI:</span> PowerBI, Tableau</div>
+                        <div><span style="font-weight:700">Statistics:</span> Correlation Analysis, Feature Engineering, Data Validation &amp; Cleaning</div>
+                        <div><span style="font-weight:700">Tools:</span> Jupyter, Google Colab, Google Sheets, Google Apps Script, OCR, MailerLite API, Java</div>
                     </div>
                 </div>
 
                 <div class="jake-section">
-                    <div class="jake-section-title">Campus Involvement</div>
+                    <div class="jake-section-title">Experience</div>
                     <div class="jake-rule"></div>
-                    <p class="resume-profile" style="margin:0">Vietnamese Club Executive Member – Treasurer and Public Relations, Honor Board Co-Chair, Tea House Manager, Knox Ultimate Frisbee, Badminton Club</p>
+                    <div class="jake-entry">
+                        <div class="jake-entry-head">
+                            <span class="jake-entry-left"><span style="font-weight:700">Data Analyst Intern</span></span>
+                            <span class="jake-entry-right">June 2026 – October 2026</span>
+                        </div>
+                        <div class="jake-subhead">
+                            <span>National STEM Honor Society</span>
+                            <span>Remote</span>
+                        </div>
+                        <ul>
+                            <li>Engineered a bot-detection and data-correction pipeline in Python (pandas) and Node.js using the MailerLite API, restoring the integrity of 800,000+ recipient-activity records across 190 email campaigns and identifying 864 bot/scanner accounts and a link-counting bug that had overstated content volume 2x.</li>
+                            <li>Determined the statistical drivers of email engagement across 127 campaigns by engineering 17 features from subject and body content, isolating a single subject-line pattern as the strongest predictor of open rate (r = -0.60).</li>
+                            <li>Created interactive Tableau dashboards across 185 campaigns, fed by a reusable Jupyter/Google Colab notebook that automated the SQL and Python analysis and exported clean datasets for stakeholder reporting.</li>
+                        </ul>
+                    </div>
+                    <div class="jake-entry">
+                        <div class="jake-entry-head">
+                            <span class="jake-entry-left"><span style="font-weight:700">Data Analyst</span></span>
+                            <span class="jake-entry-right">September 2024 – June 2026</span>
+                        </div>
+                        <div class="jake-subhead">
+                            <span>Center for Teaching and Learning (Knox College)</span>
+                            <span>Galesburg, IL</span>
+                        </div>
+                        <ul>
+                            <li>Identified peak demand periods and recurring engagement trends by analyzing 3 years of tutor utilization data across 10,000+ records using Excel pivot tables and structured formulas, informing term scheduling decisions.</li>
+                            <li>Presented reports on tutor participation metrics and time-based trends to administrative leadership, directly informing a staffing restructure that reallocated resources from 1-on-1 appointments to drop-in service hours.</li>
+                            <li>Validated and cleaned operational dataset entries before delivery to administrative supervisors, achieving zero reporting errors across 4 term reports.</li>
+                        </ul>
+                    </div>
+                    <div class="jake-entry">
+                        <div class="jake-entry-head">
+                            <span class="jake-entry-left"><span style="font-weight:700">Computer Science &amp; Mathematics Teaching Assistant</span></span>
+                            <span class="jake-entry-right">January 2025 – Present</span>
+                        </div>
+                        <div class="jake-subhead">
+                            <span>Knox College</span>
+                            <span>Galesburg, IL</span>
+                        </div>
+                        <ul>
+                            <li>Guided 100+ students across lab sessions and weekly office hours in Java and Python, resolving assignment blockers and debugging errors to reinforce core programming concepts.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="jake-section">
+                    <div class="jake-section-title">Projects</div>
+                    <div class="jake-rule"></div>
+                    <div class="jake-entry">
+                        <div class="jake-entry-head">
+                            <span class="jake-entry-left"><a href="https://github.com/salad905/df26submission" target="_blank" style="font-weight:700">Healthcare Access &amp; Patient Journey Analysis</a> | <em>Python (NumPy, pandas), PowerBI</em></span>
+                        </div>
+                        <ul>
+                            <li>Examined 8.1M+ patient encounters from Stormont Vail Health across 7 linked datasets using Python (NumPy, pandas) to identify pediatric care access gaps, engineering geographic distribution analysis by joining US Census FIPS codes to patient records to inform capacity planning recommendations.</li>
+                            <li>Developed an interactive PowerBI dashboard visualizing pediatric patient density across Kansas census blocks, year-over-year growth trends, and transportation barrier impact, presented to a panel of judges.</li>
+                            <li>Synthesized findings into 3 actionable recommendations for SVH leadership targeting address collection gaps, corridor city capacity expansion, and transportation screening at intake, contributing to an Honorable Mention award among competing teams.</li>
+                        </ul>
+                    </div>
+                    <div class="jake-entry">
+                        <div class="jake-entry-head">
+                            <span class="jake-entry-left"><a href="https://docs.google.com/document/d/13m1PBu8pa427gVfKWJu8JTcSariXliEBitpyn0JnG8M/edit?usp=sharing" target="_blank" style="font-weight:700">Honor System Statistical Report</a> | <em>Google Apps Script, Google Sheets, OCR, Excel</em></span>
+                        </div>
+                        <ul>
+                            <li>Designed a centralized database that digitized and standardized multi-year Honor Code case records, replacing fragmented documentation with a searchable dataset for longitudinal analysis.</li>
+                            <li>Extracted and cleaned historical case records using OCR and Google Apps Script, reducing manual record processing and improving data consistency across semesters.</li>
+                            <li>Initiated the Honor Board&#39;s first annual statistical report, synthesizing 51 cases across 15 departments by class year, violation type, and sanction to support evidence-informed policy discussions.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="jake-section">
+                    <div class="jake-section-title">Campus Involvements</div>
+                    <div class="jake-rule"></div>
+                    <p class="resume-profile" style="margin:0">Vietnamese Club Treasurer and Public Relations, Honor Board Co-Chair, Tea House Manager, Knox Ultimate Frisbee, Badminton Club</p>
                 </div>
 
             </div>
         </div>
     </div>
 
-    <!-- My Projects -->
-    <div id="projects" class="tab-section">
-        <div class="projects-section">
-            <div class="projects-inner">
-                <div class="section-header">
-                    <h2 class="section-title">projects</h2>
-                    <p class="section-sub">click a project for more info</p>
-                </div>
-                <div id="project-filter" class="project-filter"></div>
-                <div id="projects-grid" class="projects-grid"></div>
-            </div>
-        </div>
-    </div>
+    <!-- Projects & Gallery: pages are built by script.js (overview pages + one page per item) -->
+    <div id="projects" class="tab-section"></div>
 
-    <!-- Gallery -->
-    <div id="gallery" class="tab-section">
-        <div class="gallery-section">
-            <div class="gallery-inner">
-                <div class="section-header">
-                    <h2 class="section-title">gallery</h2>
-                    <p class="section-sub">film &amp; digital · vietnam, galesburg, and in between. click to enlarge!</p>
-                </div>
-                <div id="gallery-grid" class="gallery-grid"></div>
-            </div>
-        </div>
-    </div>
+    <div id="gallery" class="tab-section"></div>
 
-    <!-- Color Analysis -->
-    <div id="colors" class="tab-section">
-        <div class="colors-section">
-            <div class="colors-inner">
-                <div class="section-header">
-                    <h2 class="section-title">color analysis</h2>
-                    <p class="section-sub">upload a photo or turn on your webcam, then try draping different color palettes around your face. everything runs right in your browser, and nothing is ever uploaded anywhere.</p>
+    <!-- Playground: the toys, one page each -->
+    <div id="playground" class="tab-section">
+        <div class="page" data-toy="colors"><div class="page-body colors-page">
+                <div class="page-head">
+                    <h2 class="page-title">color analysis</h2>
+                    <div class="page-tools">
+                        <div class="switch toy-switch">
+                        <button data-toy="colors" class="active">colors</button>
+                        <button data-toy="photobooth">photobooth</button>
+                    </div>
+                    </div>
                 </div>
+                <p class="page-sub">drape color palettes around your face. everything runs in your browser; nothing gets uploaded.</p>
 
                 <div class="colors-source-row">
                     <button class="colors-action-btn" id="colors-upload-btn">upload a photo</button>
@@ -557,52 +559,67 @@ translated outputs into structured reports for both technical and non-technical 
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Project modal -->
-    <div id="project-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="sketchy" id="project-modal-sketchy">
-                <div class="sketchy-shadow"></div>
-                <div class="sketchy-body">
-                    <div class="modal-inner">
-                        <div class="modal-head">
-                            <div class="modal-head-left">
-                                <div>
-                                    <h2 class="modal-title" id="modal-title"></h2>
-                                    <div class="project-tags" id="modal-tags"></div>
-                                </div>
-                            </div>
-                            <button class="modal-close" id="modal-close">&times;</button>
-                        </div>
-                        <div class="modal-category" id="modal-category"></div>
-                        <div class="modal-body-row">
-                            <div class="modal-avatar"><img src="images/389046_499370383412054_602369392_n.jpg" alt="May"></div>
-                            <div class="modal-paras" id="modal-paras"></div>
-                        </div>
+        </div></div>
+        <div class="page" data-toy="photobooth"><div class="page-body booth-page">
+            <div class="page-head">
+                <h2 class="page-title">photobooth</h2>
+                <div class="page-tools">
+                    <div class="switch toy-switch">
+                        <button data-toy="colors">colors</button>
+                        <button data-toy="photobooth" class="active">photobooth</button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Gallery lightbox -->
-    <div id="lightbox" class="lightbox-overlay">
-        <div class="lightbox-box" id="lightbox-box">
-            <img id="lightbox-img" src="" alt="">
-            <p class="lightbox-caption" id="lightbox-caption"></p>
-            <p class="lightbox-meta" id="lightbox-meta"></p>
-            <p class="lightbox-desc" id="lightbox-desc"></p>
-            <div class="lightbox-controls">
-                <button id="lightbox-prev">prev</button>
-                <button id="lightbox-close">&times; close</button>
-                <button id="lightbox-next">next</button>
+            <div class="booth-controls">
+                <div class="booth-group">
+                    <span class="booth-group-label">layout</span>
+                    <div class="chip-row" id="booth-layouts"></div>
+                </div>
+                <div class="booth-group">
+                    <span class="booth-group-label">filter</span>
+                    <div class="chip-row" id="booth-filters"></div>
+                </div>
+                <div class="booth-group">
+                    <span class="booth-group-label">paper</span>
+                    <div class="chip-row" id="booth-backdrops"></div>
+                </div>
             </div>
-        </div>
+
+            <div class="booth">
+                <div class="booth-stage">
+                    <div class="booth-frame" id="booth-frame">
+                        <canvas id="booth-preview"></canvas>
+                        <div class="booth-flash" id="booth-flash"></div>
+                        <div class="booth-count" id="booth-count"></div>
+                        <div class="booth-placeholder" id="booth-placeholder">camera off</div>
+                    </div>
+                </div>
+
+                <div class="booth-side">
+                    <div class="booth-strip-wrap">
+                        <canvas id="booth-strip"></canvas>
+                        <p class="booth-strip-empty">your strip shows up here</p>
+                    </div>
+                    <div class="booth-buttons">
+                        <button class="tool-btn" id="booth-start">turn on camera</button>
+                        <button class="tool-btn" id="booth-shoot" disabled>start</button>
+                        <a class="tool-btn" id="booth-save" hidden download>save</a>
+                        <button class="tool-btn" id="booth-again" hidden>clear</button>
+                    </div>
+                    <p class="booth-hint" id="booth-hint"></p>
+                </div>
+            </div>
+
+            <!-- the camera feed itself: drawn onto the canvases, never shown directly -->
+            <video id="booth-video" class="booth-src" autoplay playsinline muted></video>
+        </div></div>
     </div>
 
-    <script src="script.js?v=2"></script>
+    </main>
+    </div>
+    </div>
+
+    <script src="script.js?v=5"></script>
 </body>
 </html>
