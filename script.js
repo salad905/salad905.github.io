@@ -10,9 +10,10 @@ const siteNav = document.querySelector('.binder-tabs');
 const tabBtns = [...document.querySelectorAll('.tab-btn')];
 const SECTIONS = tabBtns.map(b => b.dataset.tab); // tab order = page order
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const TURN_MS = 550; // keep in step with the page-turn animations in style.css
 
-// projects and gallery can be flipped through as an overview, or one item per page
-const sectionView = { projects: 'overview', gallery: 'overview' };
+// these sections open on an overview; picking an item opens its own page
+const sectionView = { projects: 'overview', gallery: 'overview', playground: 'overview' };
 
 const FOOT_HTML = `
     <div class="page-foot">
@@ -81,12 +82,9 @@ function el(tag, className, html) {
     return node;
 }
 
-// overview / one-by-one switch shown on every projects & gallery page
-function viewSwitch(active) {
-    return `<div class="switch">
-        <button data-view="overview" class="${active === 'overview' ? 'active' : ''}">overview</button>
-        <button data-view="detail" class="${active === 'detail' ? 'active' : ''}">one by one</button>
-    </div>`;
+// every item page gets one of these; the overview itself needs no control
+function backButton() {
+    return '<button class="tool-btn back-btn" data-back>&larr; back to overview</button>';
 }
 
 function refreshPageNumbers() {
@@ -148,13 +146,22 @@ function showPage(page, { animate = true } = {}) {
         const turning = forward ? from : page;
         from.classList.add(forward ? 'turn-away' : 'under');
         if (!forward) page.classList.add('turn-back');
+
+        // Cleanup runs on animationend, but never trusts it alone: if the event is
+        // missed — an interrupted turn, a hidden tab, a browser that skips it — a
+        // timer still restores everything, so nothing can stay stuck mid-flip.
+        let cleaned = false;
         const done = () => {
+            if (cleaned) return;
+            cleaned = true;
+            clearTimeout(timer);
             from.classList.remove('turn-away', 'under');
             page.classList.remove('turn-back');
             turning.removeEventListener('animationend', onEnd);
-            finishTurn = null;
+            if (finishTurn === done) finishTurn = null;
         };
         const onEnd = (e) => { if (e.target === turning) done(); };
+        const timer = setTimeout(done, TURN_MS + 80);
         turning.addEventListener('animationend', onEnd);
         finishTurn = done;
     }
@@ -172,13 +179,13 @@ function hashFor(page) {
 function pageForHash(hash) {
     const [id, n] = hash.slice(1).split('/');
     if (!SECTIONS.includes(id)) return allPages()[0];
-    if (sectionView[id]) {
-        setView(id, n ? 'detail' : 'overview');
-        if (n) return sectionPages(id).find(p => p.dataset.item === String(n - 1)) || sectionPages(id)[0];
-    }
+    // a section with an overview shows it unless the link points at one item
+    if (sectionView[id]) setView(id, n ? 'detail' : 'overview');
     const pages = sectionPages(id);
-    if (n && isNaN(+n)) return pages.find(p => p.dataset.toy === n) || pages[0];
-    return pages[(+n || 1) - 1] || pages[0];
+    if (!n) return pages[0];
+    if (isNaN(+n)) return pages.find(p => p.dataset.toy === n) || pages[0];         // #playground/photobooth
+    if (sectionView[id]) return pages.find(p => p.dataset.item === String(n - 1)) || pages[0];  // #gallery/12
+    return pages[+n - 1] || pages[0];                                              // #resume/2
 }
 
 function goTo(page) {
@@ -194,15 +201,21 @@ function flip(step) {
     goTo(pages[pages.indexOf(currentPage) + step]);
 }
 
-// switching views keeps your place: the item you were on, or the first one on the overview page
-function switchView(id, view) {
-    const item = currentPage.dataset.item ?? currentPage.querySelector('[data-jump]')?.dataset.jump;
-    setView(id, view);
+// Back to the wall you came from. The overview page isn't rebuilt on the way
+// out, so it still holds the scroll position you left it at.
+function backToOverview(id) {
+    const item = currentPage.dataset.item;
+    setView(id, 'overview');
     const pages = sectionPages(id);
-    const match = view === 'detail'
-        ? pages.find(p => p.dataset.item === item)
-        : pages.find(p => p.querySelector(`[data-jump="${item}"]`));
-    goTo(match || pages[0]);
+    const page = pages.find(p => p.querySelector(`[data-jump="${item}"]`)) || pages[0];
+    goTo(page);
+    page.querySelector(`[data-jump="${item}"]`)?.scrollIntoView({ block: 'nearest' });
+}
+
+// a divider tab always opens its section at the front, not wherever you last were
+function goToSection(id) {
+    if (sectionView[id]) setView(id, 'overview');
+    goTo(sectionPages(id)[0]);
 }
 
 function jumpTo(id, item) {
@@ -213,12 +226,11 @@ function jumpTo(id, item) {
 window.addEventListener('popstate', () => showPage(pageForHash(location.hash)));
 
 document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-tab], [data-go], [data-view], [data-jump], [data-resume], [data-toy]');
+    const btn = e.target.closest('[data-tab], [data-go], [data-back], [data-jump], [data-resume]');
     if (!btn) return;
-    if (btn.dataset.toy) goTo(sectionPages(sectionOf(btn.closest('.page'))).find(p => p.dataset.toy === btn.dataset.toy));
-    else if (btn.dataset.tab) goTo(sectionPages(btn.dataset.tab)[0]);
+    if ('back' in btn.dataset) backToOverview(sectionOf(btn.closest('.page')));
+    else if (btn.dataset.tab) goToSection(btn.dataset.tab);
     else if (btn.dataset.go) flip(+btn.dataset.go);
-    else if (btn.dataset.view) switchView(sectionOf(btn.closest('.page')), btn.dataset.view);
     else if (btn.dataset.jump) jumpTo(sectionOf(btn.closest('.page')), btn.dataset.jump);
     else if (btn.dataset.resume) setResumeVersion(btn.dataset.resume);
 });
@@ -339,8 +351,9 @@ const PROJECTS = [
         tags: ['PowerBI'],
         color: '#7fa06a',
         paras: [
-            // TODO: write-up goes here
-            `<p><em>Write-up coming soon.</em> August 2026.</p><a href="images/hinge.png" target="_blank" rel="noreferrer"><img src="images/hinge.png" alt="Power BI dashboard of Hinge matches and chats, December 2025 to May 2026"></a>`,
+            `<p><strong>Context.</strong> My roommate informed me that Hinge lets you export all your data on Hinge as a giant JSON. At the moment of writing this, I am currently in a relationship with one of the people I met on there(!!), and it took me about half a year. I was just curious about the journey, so I <em>had</em> to make a Power BI dashboard.</p>`,
+            `<p><strong>Process.</strong> I took a lot of help from Claude to transform the JSON into csv's I can work with. I also racked Claude's brain for drafting layouts for my dashboard. The rest was just questions I wanted to know: how many people did I match with, what were the outcomes, etc. I knew there had to be a flowchart. It was very fun getting to look at the bigger picture of my Hinge journey.</p><a href="images/hinge.png" target="_blank" rel="noreferrer"><img src="images/hinge.png" alt="Power BI dashboard of Hinge matches and chats, December 2025 to May 2026"></a>`,
+            `<p><strong>Afterthought(s).</strong> My most unique project thus far?</p>`,
         ],
     },
     {
@@ -490,19 +503,24 @@ function buildProjects() {
         <option value="all">all categories</option>
         ${PROJECT_CATEGORIES.map(c => `<option value="${c}" ${c === projectCategory ? 'selected' : ''}>${c.toLowerCase()}</option>`).join('')}
     </select>`;
-    let firstOverview = true;
-    paginate(cards, () => {
-        const body = makePage('projects', { mode: 'overview' }).querySelector('.page-body');
-        body.innerHTML = `
-            <div class="page-head">
-                <h2 class="page-title">projects${firstOverview ? '' : ' <span class="page-title-cont">(cont.)</span>'}</h2>
-                <div class="page-tools">${firstOverview ? categorySelect : ''}${viewSwitch('overview')}</div>
-            </div>
-            <div class="projects-grid"></div>`;
-        firstOverview = false;
-        return body.querySelector('.projects-grid');
-    });
-    if (!list.length) sectionPages('projects')[0]?.querySelector('.projects-grid').append(el('p', '', 'no projects match this filter.'));
+    // the whole wall of notes lives on one page and scrolls, so a note keeps its place
+    const body = makePage('projects', { mode: 'overview' }).querySelector('.page-body');
+    body.classList.add('projects-body');
+    body.innerHTML = `
+        <div class="page-head">
+            <h2 class="page-title">projects</h2>
+            <div class="page-tools">${categorySelect}</div>
+        </div>
+        <div class="projects-grid"></div>`;
+    const grid = body.querySelector('.projects-grid');
+    if (list.length) grid.append(...cards);
+    else grid.append(el('p', 'grid-empty', 'no projects match this filter.'));
+
+    // every note the same size: as tall as the one with the most tags needs,
+    // measured rather than guessed so nothing inside ever gets cut off
+    grid.style.gridAutoRows = 'min-content';
+    const tallest = cards.reduce((h, c) => Math.max(h, c.firstElementChild.scrollHeight), 0);
+    grid.style.gridAutoRows = Math.max(tallest, 130) + 'px';
 
     // one by one: each project gets one page; a long story scrolls inside it
     list.forEach(p => {
@@ -515,7 +533,7 @@ function buildProjects() {
                     <h2 class="page-title">${p.title}</h2>
                     <div class="project-tags">${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}</div>
                 </div>
-                ${viewSwitch('detail')}
+                ${backButton()}
             </div>
             <div class="project-paras">${p.paras.map(html => `<div class="project-para">${html}</div>`).join('')}</div>`;
     });
@@ -594,7 +612,7 @@ function buildGallery() {
     body.innerHTML = `
         <div class="page-head">
             <h2 class="page-title">gallery</h2>
-            <div class="page-tools">${tools}${viewSwitch('overview')}</div>
+            <div class="page-tools">${tools}</div>
         </div>
         <p class="page-sub">film &amp; digital · hanoi, galesburg, and in between</p>
         <div class="gallery-grid"></div>`;
@@ -606,7 +624,7 @@ function buildGallery() {
         body.classList.add('photo-body');
         body.innerHTML = `
             <div class="page-head">
-                ${viewSwitch('detail')}
+                ${backButton()}
             </div>
             <div class="photo-page">
                 <div class="photo-page-frame" style="--accent:${ACCENTS[i % ACCENTS.length]}">
@@ -1422,6 +1440,258 @@ boothAgainBtn.addEventListener('click', () => { if (!boothBusy) resetStrip(); })
 
 // show the empty layout straight away, so the strip isn't a blank gap
 resetStrip();
+
+// ── Paint ────────────────────────────────────────────────────────────────────
+//
+// A blank page to scribble on. Shapes preview live by stashing the canvas before
+// the drag and repainting it on each move, so nothing is committed until you let
+// go. Undo keeps a short stack of snapshots.
+
+const PAINT_TOOLS = [
+    { key: 'pencil', label: 'pencil' },
+    { key: 'marker', label: 'marker' },
+    { key: 'line', label: 'line' },
+    { key: 'rect', label: 'box' },
+    { key: 'ellipse', label: 'ellipse' },
+    { key: 'fill', label: 'fill' },
+    { key: 'eraser', label: 'eraser' },
+];
+
+const PAINT_COLORS = [
+    '#1a1008', '#4a6741', '#7fa06a', '#9ab97e', '#b9cba3', '#8f9c5e',
+    '#d9c47e', '#e3b9a6', '#c2554a', '#2f6f8f', '#6b4a8f', '#fffdf6',
+];
+
+const PAINT_PAPER = '#fffdf6';
+const PAINT_UNDO_LIMIT = 24;
+
+const paintCanvas = document.getElementById('paint-canvas');
+const paintCtx = paintCanvas.getContext('2d', { willReadFrequently: true });
+const paintSize = document.getElementById('paint-size');
+const paintSizeDot = document.getElementById('paint-size-dot');
+const paintCustom = document.getElementById('paint-custom');
+
+let paintTool = PAINT_TOOLS[0];
+let paintColor = '#1a1008';
+let paintUndo = [];
+let paintDrawing = false;
+let paintStart = null;
+let paintSnapshot = null;   // canvas as it was before the current drag
+
+function paintChips() {
+    const row = document.getElementById('paint-tools');
+    row.innerHTML = '';
+    PAINT_TOOLS.forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'chip' + (t.key === paintTool.key ? ' active' : '');
+        b.textContent = t.label;
+        b.addEventListener('click', () => {
+            paintTool = t;
+            row.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x === b));
+        });
+        row.appendChild(b);
+    });
+
+    const sw = document.getElementById('paint-swatches');
+    sw.innerHTML = '';
+    PAINT_COLORS.forEach(c => {
+        const b = document.createElement('button');
+        b.className = 'swatch' + (c === paintColor ? ' active' : '');
+        b.style.background = c;
+        b.title = c;
+        b.addEventListener('click', () => {
+            paintColor = c;
+            paintCustom.value = c;
+            sw.querySelectorAll('.swatch').forEach(x => x.classList.toggle('active', x === b));
+        });
+        sw.appendChild(b);
+    });
+}
+paintChips();
+
+paintCustom.addEventListener('input', () => {
+    paintColor = paintCustom.value;
+    document.querySelectorAll('#paint-swatches .swatch').forEach(x => x.classList.remove('active'));
+});
+
+function paintBrushSize() { return +paintSize.value; }
+function showSizeDot() {
+    const d = Math.max(3, Math.min(paintBrushSize(), 34));
+    paintSizeDot.style.width = paintSizeDot.style.height = d + 'px';
+    paintSizeDot.style.background = paintTool.key === 'eraser' ? PAINT_PAPER : paintColor;
+}
+paintSize.addEventListener('input', showSizeDot);
+
+// ── the sheet ──
+
+function paintResize() {
+    const stage = paintCanvas.parentElement;
+    const r = stage.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+    if (paintCanvas.width === w && paintCanvas.height === h) return;
+    // keep what's already drawn when the sheet changes size
+    const old = paintCanvas.width ? document.createElement('canvas') : null;
+    if (old) {
+        old.width = paintCanvas.width;
+        old.height = paintCanvas.height;
+        old.getContext('2d').drawImage(paintCanvas, 0, 0);
+    }
+    paintCanvas.width = w;
+    paintCanvas.height = h;
+    paintCtx.fillStyle = PAINT_PAPER;
+    paintCtx.fillRect(0, 0, w, h);
+    if (old) paintCtx.drawImage(old, 0, 0, old.width, old.height, 0, 0, w, h);
+    paintCtx.lineCap = 'round';
+    paintCtx.lineJoin = 'round';
+}
+
+function paintPoint(e) {
+    const r = paintCanvas.getBoundingClientRect();
+    return {
+        x: (e.clientX - r.left) * (paintCanvas.width / r.width),
+        y: (e.clientY - r.top) * (paintCanvas.height / r.height),
+    };
+}
+
+function pushUndo() {
+    try {
+        paintUndo.push(paintCtx.getImageData(0, 0, paintCanvas.width, paintCanvas.height));
+        if (paintUndo.length > PAINT_UNDO_LIMIT) paintUndo.shift();
+    } catch (err) { /* nothing to undo to is better than breaking the tool */ }
+}
+
+function strokeStyleFor() {
+    const dpr = paintCanvas.width / paintCanvas.getBoundingClientRect().width || 1;
+    paintCtx.lineWidth = paintBrushSize() * dpr;
+    paintCtx.strokeStyle = paintTool.key === 'eraser' ? PAINT_PAPER : paintColor;
+    paintCtx.fillStyle = paintCtx.strokeStyle;
+    paintCtx.globalAlpha = paintTool.key === 'marker' ? 0.35 : 1;
+}
+
+// flood fill from a point, four-way, with a small tolerance
+function floodFill(x, y, hex) {
+    const { width: w, height: h } = paintCanvas;
+    x = Math.floor(x); y = Math.floor(y);
+    if (x < 0 || y < 0 || x >= w || y >= h) return;
+    const img = paintCtx.getImageData(0, 0, w, h);
+    const px = img.data;
+    const at = (i, j) => (j * w + i) * 4;
+    const start = at(x, y);
+    const target = [px[start], px[start + 1], px[start + 2], px[start + 3]];
+    const m = hex.replace('#', '');
+    const fill = [parseInt(m.slice(0, 2), 16), parseInt(m.slice(2, 4), 16), parseInt(m.slice(4, 6), 16), 255];
+    const same = (p, q) => Math.abs(px[p] - q[0]) < 24 && Math.abs(px[p + 1] - q[1]) < 24 &&
+                           Math.abs(px[p + 2] - q[2]) < 24 && Math.abs(px[p + 3] - q[3]) < 24;
+    if (same(start, fill)) return;
+    const stack = [[x, y]];
+    while (stack.length) {
+        const [i, j] = stack.pop();
+        if (i < 0 || j < 0 || i >= w || j >= h) continue;
+        const p = at(i, j);
+        if (!same(p, target)) continue;
+        px[p] = fill[0]; px[p + 1] = fill[1]; px[p + 2] = fill[2]; px[p + 3] = 255;
+        stack.push([i + 1, j], [i - 1, j], [i, j + 1], [i, j - 1]);
+    }
+    paintCtx.putImageData(img, 0, 0);
+}
+
+function drawShape(from, to) {
+    strokeStyleFor();
+    paintCtx.beginPath();
+    if (paintTool.key === 'line') {
+        paintCtx.moveTo(from.x, from.y);
+        paintCtx.lineTo(to.x, to.y);
+    } else if (paintTool.key === 'rect') {
+        paintCtx.rect(from.x, from.y, to.x - from.x, to.y - from.y);
+    } else if (paintTool.key === 'ellipse') {
+        paintCtx.ellipse((from.x + to.x) / 2, (from.y + to.y) / 2,
+            Math.abs(to.x - from.x) / 2, Math.abs(to.y - from.y) / 2, 0, 0, Math.PI * 2);
+    }
+    paintCtx.stroke();
+    paintCtx.globalAlpha = 1;
+}
+
+paintCanvas.addEventListener('pointerdown', (e) => {
+    paintResize();
+    const p = paintPoint(e);
+    pushUndo();
+    if (paintTool.key === 'fill') {
+        floodFill(p.x, p.y, paintTool.key === 'eraser' ? PAINT_PAPER : paintColor);
+        return;
+    }
+    paintDrawing = true;
+    paintStart = p;
+    try { paintCanvas.setPointerCapture(e.pointerId); } catch (err) { /* keep drawing without capture */ }
+    if (paintTool.key === 'pencil' || paintTool.key === 'marker' || paintTool.key === 'eraser') {
+        strokeStyleFor();
+        paintCtx.beginPath();
+        paintCtx.moveTo(p.x, p.y);
+        paintCtx.lineTo(p.x + 0.01, p.y); // a click alone still leaves a dot
+        paintCtx.stroke();
+        paintCtx.globalAlpha = 1;
+    } else {
+        paintSnapshot = paintCtx.getImageData(0, 0, paintCanvas.width, paintCanvas.height);
+    }
+});
+
+paintCanvas.addEventListener('pointermove', (e) => {
+    if (!paintDrawing) return;
+    const p = paintPoint(e);
+    if (paintTool.key === 'pencil' || paintTool.key === 'marker' || paintTool.key === 'eraser') {
+        strokeStyleFor();
+        paintCtx.lineTo(p.x, p.y);
+        paintCtx.stroke();
+        paintCtx.globalAlpha = 1;
+    } else if (paintSnapshot) {
+        paintCtx.putImageData(paintSnapshot, 0, 0); // live preview, not yet committed
+        drawShape(paintStart, p);
+    }
+});
+
+function endStroke(e) {
+    if (!paintDrawing) return;
+    if (paintSnapshot && e) {
+        paintCtx.putImageData(paintSnapshot, 0, 0);
+        drawShape(paintStart, paintPoint(e));
+    }
+    paintDrawing = false;
+    paintSnapshot = null;
+    paintCtx.globalAlpha = 1;
+}
+paintCanvas.addEventListener('pointerup', endStroke);
+paintCanvas.addEventListener('pointercancel', () => { paintDrawing = false; paintSnapshot = null; });
+
+document.getElementById('paint-undo').addEventListener('click', () => {
+    const last = paintUndo.pop();
+    if (last) paintCtx.putImageData(last, 0, 0);
+});
+
+document.getElementById('paint-clear').addEventListener('click', () => {
+    pushUndo();
+    paintCtx.fillStyle = PAINT_PAPER;
+    paintCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
+});
+
+document.getElementById('paint-save').addEventListener('click', (e) => {
+    e.currentTarget.href = paintCanvas.toDataURL('image/png');
+});
+
+// the sheet only has a size once its page is open
+document.addEventListener('pagechange', (e) => {
+    if (e.detail.toy === 'paint') afterLayout(() => { paintResize(); showSizeDot(); });
+});
+if (window.ResizeObserver) new ResizeObserver(() => paintResize()).observe(paintCanvas.parentElement);
+
+// toy cards can carry a drawing; until one exists, drop the slot so the card
+// doesn't show a broken image. Images load while the HTML parses, so one may
+// already have failed by the time this runs — check as well as listen.
+document.querySelectorAll('.toy-art img').forEach(img => {
+    const drop = () => img.closest('.toy-art')?.remove();
+    if (img.complete && !img.naturalWidth) drop();
+    else img.addEventListener('error', drop);
+});
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 

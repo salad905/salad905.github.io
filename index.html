@@ -26,6 +26,8 @@
 
     <main class="paper" id="paper">
         <div class="binder-rings" aria-hidden="true"></div>
+        <!-- pages turn inside here, so a turn never spills over the divider tabs -->
+        <div class="pages">
 
     <!-- Index -->
     <div id="index" class="tab-section">
@@ -68,7 +70,7 @@
                 </div>
             </div>
             <div class="about-photo-wrap">
-                <div style="position:relative">
+                <div class="about-photo">
                     <div class="about-photo-frame">
                         <img src="images/389046_499370383412054_602369392_n.jpg" alt="Anh">
                     </div>
@@ -511,14 +513,38 @@ Language Processing (NLP), Predictive Modeling</div>
 
     <!-- Playground: the toys, one page each -->
     <div id="playground" class="tab-section">
-        <div class="page" data-toy="colors"><div class="page-body colors-page">
+        <div class="page" data-mode="overview"><div class="page-body playground-body">
+            <div class="page-head">
+                <h2 class="page-title">playground</h2>
+            </div>
+            <p class="page-sub">things to poke at — all of them run in your browser, nothing gets uploaded.</p>
+            <div class="toy-grid">
+                <button class="toy-card" data-jump="colors" style="--note:#cfe0b4">
+                    <span class="toy-art"><img src="images/toys/colors.png" alt=""></span>
+                    <span class="toy-text">
+                        <span class="toy-name">color analysis</span>
+                        <span class="toy-blurb">drape colour palettes around your face</span>
+                    </span></button>
+                <button class="toy-card" data-jump="photobooth" style="--note:#e7eecf">
+                    <span class="toy-art"><img src="images/toys/photobooth.png" alt=""></span>
+                    <span class="toy-text">
+                        <span class="toy-name">photobooth</span>
+                        <span class="toy-blurb">shots on a countdown, printed onto a strip</span>
+                    </span></button>
+                <button class="toy-card" data-jump="paint" style="--note:#bcd4af">
+                    <span class="toy-art"><img src="images/toys/paint.png" alt=""></span>
+                    <span class="toy-text">
+                        <span class="toy-name">paint</span>
+                        <span class="toy-blurb">scribble on a blank page and save it</span>
+                    </span></button>
+            </div>
+        </div></div>
+
+        <div class="page" data-mode="detail" data-toy="colors" data-item="colors"><div class="page-body colors-page">
                 <div class="page-head">
                     <h2 class="page-title">color analysis</h2>
                     <div class="page-tools">
-                        <div class="switch toy-switch">
-                        <button data-toy="colors" class="active">colors</button>
-                        <button data-toy="photobooth">photobooth</button>
-                    </div>
+                    <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
                     </div>
                 </div>
                 <p class="page-sub">drape color palettes around your face. everything runs in your browser; nothing gets uploaded.</p>
@@ -560,14 +586,11 @@ Language Processing (NLP), Predictive Modeling</div>
                     </div>
                 </div>
         </div></div>
-        <div class="page" data-toy="photobooth"><div class="page-body booth-page">
+        <div class="page" data-mode="detail" data-toy="photobooth" data-item="photobooth"><div class="page-body booth-page">
             <div class="page-head">
                 <h2 class="page-title">photobooth</h2>
                 <div class="page-tools">
-                    <div class="switch toy-switch">
-                        <button data-toy="colors">colors</button>
-                        <button data-toy="photobooth" class="active">photobooth</button>
-                    </div>
+                    <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
                 </div>
             </div>
 
@@ -614,8 +637,44 @@ Language Processing (NLP), Predictive Modeling</div>
             <!-- the camera feed itself: drawn onto the canvases, never shown directly -->
             <video id="booth-video" class="booth-src" autoplay playsinline muted></video>
         </div></div>
+        <div class="page" data-mode="detail" data-toy="paint" data-item="paint"><div class="page-body paint-page">
+            <div class="page-head">
+                <h2 class="page-title">paint</h2>
+                <div class="page-tools">
+                    <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
+                </div>
+            </div>
+
+            <div class="paint-controls">
+                <div class="paint-group">
+                    <span class="paint-label">tool</span>
+                    <div class="chip-row" id="paint-tools"></div>
+                </div>
+                <div class="paint-group">
+                    <span class="paint-label">size</span>
+                    <input type="range" id="paint-size" min="1" max="40" value="6" aria-label="brush size">
+                    <span class="paint-size-dot" id="paint-size-dot"></span>
+                </div>
+                <div class="paint-group">
+                    <span class="paint-label">colour</span>
+                    <div class="paint-swatches" id="paint-swatches"></div>
+                    <input type="color" id="paint-custom" value="#4a6741" aria-label="pick a colour">
+                </div>
+                <div class="paint-group paint-actions">
+                    <button class="tool-btn" id="paint-undo">undo</button>
+                    <button class="tool-btn" id="paint-clear">clear</button>
+                    <a class="tool-btn" id="paint-save" download="scribble.png">save</a>
+                </div>
+            </div>
+
+            <div class="paint-stage">
+                <canvas id="paint-canvas"></canvas>
+            </div>
+        </div></div>
+
     </div>
 
+        </div>
     </main>
     </div>
     </div>

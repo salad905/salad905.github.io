@@ -14,9 +14,9 @@ The notebook is always exactly one screen tall and the page itself never scrolls
 
 - **index, about** are single pages written directly in `index.html`, as are the two **playground** pages.
 - **resume** is written once in `index.html` (inside the hidden `.resume-source`, both default and extended versions). It sits on one page as a taped-on sheet that scrolls. The "download pdf" button links to `Anh_Phan_Resume.pdf`, the real typeset resume that the page content is kept in sync with. (A print stylesheet still produces a clean page if you hit Ctrl+P.)
-- **projects** and **gallery** are built from the `PROJECTS` / `GALLERY` arrays in `script.js`. Each has two views: an **overview** to jump from — sticky notes for projects (paginated), and for the gallery one wall of polaroids that scrolls inside its page and **one by one** (each project/photo on its own page; a long project story scrolls inside its page).
+- **projects** and **gallery** are built from the `PROJECTS` / `GALLERY` arrays in `script.js`. Each opens on an **overview** — sticky notes for projects, polaroids for the gallery — which lives on one page and scrolls inside it. Clicking an item opens its own page, and the "all of them" button there takes you back to the overview at the scroll position you left it (the overview page is never rebuilt, so it keeps its place). A long project story scrolls inside its page.
 
-Overview pages are re-split whenever the window size changes, so they always fit. Flip with the tabs, the prev/next links at the bottom, the ← → keys, or by swiping on a phone. Each page has a URL (`#resume`, `#gallery/12` for photo 12) and the browser back button works.
+Flip with the tabs, the prev/next links at the bottom, the ← → keys, or by swiping on a phone. Pages turn inside `.pages`, which holds the shared 3D perspective. It is deliberately not clipped, so a page sweeps out past the edge of the notebook as it turns. Each page has a URL (`#resume`, `#gallery/12` for photo 12) and the browser back button works.
 
 ## Running locally
 
@@ -29,7 +29,13 @@ python3 -m http.server 8000
 
 ## Playground
 
-The "playground" tab holds the interactive toys, one page each, picked with the switch in the page header (`data-toy`, so each has its own URL: `#playground/colors`, `#playground/photobooth`). Adding another toy means adding another `.page` with a `data-toy` and a line in each switch.
+The "playground" tab works the same way: an overview listing the toys, each opening its own page with a way back. Every toy has its own URL (`#playground/colors`, `#playground/photobooth`, `#playground/paint`). Adding one means another `.page` with `data-mode="detail"`, a `data-toy` and a matching `data-item`, plus a card on the overview whose `data-jump` matches.
+
+Each toy card can carry a drawing at `images/toys/<toy>.png` (portrait, 2:3). If the file isn't there the slot removes itself and the card falls back to text, so cards without art still look right.
+
+### Paint
+
+A blank sheet with pencil, marker (translucent), line, box, ellipse, flood fill and eraser, a size slider, swatches plus a colour picker, undo, clear and save-as-PNG. Shapes preview live by stashing the canvas before the drag and repainting it each move, so nothing is committed until you let go; undo keeps a short stack of snapshots. The canvas is redrawn at the new size when the page changes shape, so a resize doesn't wipe what you drew.
 
 ### Photobooth
 

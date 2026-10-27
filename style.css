@@ -62,24 +62,23 @@ a { color: var(--forest); }
   max-width: 1120px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .paper {
   position: relative;
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 1;
   border: 2.5px solid var(--ink);
-  border-top: 7px solid var(--active-tab, var(--sage));
-  border-radius: 3px 3px 10px 10px;
+  border-right: 8px solid var(--active-tab, var(--sage));
+  border-radius: 4px 10px 10px 4px;
   background: var(--paper);
   box-shadow:
     /* the stack of pages underneath */
     3px 3px 0 -1px var(--paper), 3px 3px 0 1px var(--ink),
     7px 7px 0 -1px var(--paper), 7px 7px 0 1px var(--ink),
     12px 14px 0 rgba(26, 16, 8, 0.35);
-  perspective: 3000px;
 }
 
 /* sections just group pages; the pages themselves are stacked inside .paper */
@@ -165,38 +164,48 @@ a { color: var(--forest); }
 /* ── Divider tabs ────────────────────────────────── */
 
 .binder-tabs {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   z-index: 6;
   display: flex;
-  align-items: flex-end;
-  flex-wrap: wrap;           /* more dividers than fit start a second row */
-  gap: 3px 4px;
-  padding: 0 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;           /* more dividers than fit start a second column */
+  align-content: flex-start;
+  max-height: 100%;
+  gap: 5px 3px;
+  padding: 34px 0 0;
+}
+
+/* Holds the 3D space the pages turn in. Deliberately not clipped: a page
+   swinging out past the edge of the notebook is the good part. */
+.pages {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  perspective: 3000px;
 }
 
 .tab-btn {
   font-family: var(--cs);
   font-weight: 700;
-  font-size: clamp(12.5px, 1.25vw, 15px);
+  font-size: clamp(12.5px, 1.1vw, 15px);
   white-space: nowrap;
-  flex: 0 1 auto;
-  min-width: 0;
-  padding: 8px clamp(9px, 1.5vw, 18px) 10px;
-  margin-bottom: -2.5px; /* tuck under the page's top border */
+  flex: 0 0 auto;
+  padding: 8px 14px 9px 11px;
+  margin-left: -2.5px; /* tuck behind the page's right border */
   border: 2.5px solid var(--ink);
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
   background: var(--tab);
   cursor: pointer;
   color: var(--ink);
   filter: brightness(0.93);
   transition: transform 0.15s ease, filter 0.15s ease;
-  transform: translateY(5px);
+  transform: translateX(0);
 }
-.tab-btn:hover { transform: translateY(2px); filter: none; }
-.tab-btn.active { transform: translateY(0); filter: none; }
-.tab-btn:focus-visible { outline: 2.5px dashed var(--ink); outline-offset: 3px; }
+.tab-btn:hover { transform: translateX(3px); filter: none; }
+.tab-btn.active { transform: translateX(7px); filter: none; }
 
 /* ── Page furniture: heading row, view switch, footer ────────────── */
 
@@ -362,8 +371,10 @@ a { color: var(--forest); }
   margin: 0 auto;
   padding: 56px 0 20px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 56px;
+  /* collapses on the page's own width, not the window's — the divider tabs
+     take a slice of the window, so the two don't match */
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 40px 48px;
   align-items: center;
 }
 
@@ -404,11 +415,15 @@ a { color: var(--forest); }
 }
 .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
 
-.about-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+/* padding leaves room for the stars, which sit just outside the photo frame */
+.about-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 14px 16px; }
+/* the wrapper carries the width so the photo centres over the truths block;
+   letting it size to its contents left the photo sitting off to one side */
+.about-photo { position: relative; width: min(220px, 100%); }
 .about-photo-frame {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 100%;
+  aspect-ratio: 1;
   border: 3px solid var(--ink);
   border-radius: 63% 37% 54% 46% / 55% 45% 55% 45%;
   background: var(--sage);
@@ -454,10 +469,6 @@ a { color: var(--forest); }
   text-align: center;
   margin: 10px 0 0;
   min-height: 18px;
-}
-
-@media (max-width: 680px) {
-  .about-grid { grid-template-columns: 1fr; }
 }
 
 
@@ -602,16 +613,22 @@ a { color: var(--forest); }
   border-radius: 10px;
 }
 
-/* overview: small cards you can jump from */
+/* overview: a wall of sticky notes that scrolls inside its page */
+.projects-body { display: flex; flex-direction: column; overflow: hidden; }
 .projects-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sage) transparent;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-  /* every note the same size, however many tags it carries */
-  grid-auto-rows: 1fr;
+  /* row height is set in script.js from the tallest note, so they match */
   gap: 14px;
   align-content: start;
-  padding: 4px 8px 8px 2px;
+  padding: 4px 10px 10px 2px;
 }
+.grid-empty { font-family: var(--cs); font-size: 14px; color: #5a4a38; grid-column: 1 / -1; }
 .project-card {
   display: flex;
   background: none;
@@ -1109,6 +1126,135 @@ a { color: var(--forest); }
   .booth-strip-wrap { max-height: 30vh; }
 }
 
+/* ── Playground shelf ────────────────────────────────────────────── */
+
+.playground-body { display: flex; flex-direction: column; }
+.toy-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sage) transparent;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-auto-rows: min-content;
+  gap: 14px;
+  align-content: start;
+  padding: 4px 10px 10px 2px;
+}
+.toy-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px 15px 16px;
+  text-align: left;
+  cursor: pointer;
+  background: var(--note);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.toy-card:hover { transform: translateY(-3px); box-shadow: 5px 5px 0 var(--ink); }
+/* A standing drawing at the top of each card. If the file isn't there yet the
+   slot is removed in script.js and the card falls back to text alone. */
+.toy-art { display: block; width: 100%; aspect-ratio: 2 / 3; margin-bottom: 2px; }
+.toy-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.toy-text { display: flex; flex-direction: column; gap: 5px; }
+
+/* Standing cards need the width for one row of them. Below that the shelf would
+   wrap to two rows and have to scroll, so the drawing moves beside the words and
+   all of them stay on screen. */
+@media (max-width: 940px) {
+  .toy-grid { grid-template-columns: 1fr; gap: 10px; }
+  .toy-card { flex-direction: row; align-items: center; gap: 14px; padding: 12px 15px; }
+  .toy-art { flex: 0 0 96px; width: 96px; margin-bottom: 0; }
+}
+
+.toy-name { font-family: var(--cs); font-weight: 700; font-size: 19px; color: var(--ink); }
+.toy-blurb { font-family: var(--cs); font-size: 13px; line-height: 1.4; color: #4f5c3a; }
+
+.back-btn { white-space: nowrap; }
+
+/* ── Paint ───────────────────────────────────────────────────────── */
+
+.paint-page { display: flex; flex-direction: column; }
+
+.paint-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  margin: 2px 0 10px;
+  flex-shrink: 0;
+}
+.paint-group { display: flex; align-items: center; gap: 7px; }
+.paint-label {
+  font-family: var(--cs);
+  font-weight: 700;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6b5c48;
+}
+.paint-group input[type="range"] { width: 92px; accent-color: var(--forest); }
+.paint-size-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: var(--ink);
+  flex-shrink: 0;
+}
+
+.paint-swatches { display: flex; flex-wrap: wrap; gap: 3px; max-width: 320px; }
+.swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.swatch.active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink); }
+#paint-custom {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+}
+.paint-actions { margin-left: auto; gap: 6px; }
+
+/* the sheet, taped onto the notebook page */
+.paint-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-bottom: 4px;
+  background: #fffdf6;
+  border: 2.5px solid var(--ink);
+  box-shadow: 4px 5px 0 var(--ink);
+  overflow: hidden;
+}
+#paint-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* so dragging draws instead of scrolling the page */
+  cursor: crosshair;
+}
+
+@media (max-width: 760px) {
+  .paint-controls { gap: 4px 12px; margin-bottom: 6px; }
+  .paint-group input[type="range"] { width: 70px; }
+  .paint-swatches { max-width: 200px; }
+  .paint-actions { margin-left: 0; }
+}
+
 /* ── Small screens: tabs move to the top edge ────────────────────── */
 
 @media (max-width: 760px) {
@@ -1116,7 +1262,34 @@ a { color: var(--forest); }
   .desk { padding: 0 8px 10px; }
   .binder-rings { left: -10px; width: calc(var(--rings-w) / 2 + 12px); }
   .page { padding: 16px 14px 0 calc(var(--rings-w) + 14px); }
-  .binder-tabs { padding: 0 8px; }
+
+  .binder { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .paper {
+    grid-row: 2;
+    border-right-width: 2.5px;
+    border-top: 6px solid var(--active-tab, var(--sage));
+    border-radius: 3px 3px 10px 10px;
+  }
+  .binder-tabs {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+    align-items: flex-end;
+    align-content: flex-end;
+    max-height: none;
+    gap: 3px 4px;
+    padding: 0 8px;
+  }
+  .tab-btn {
+    padding: 8px clamp(9px, 1.5vw, 16px) 10px;
+    margin: 0 0 -2.5px;
+    border: 2.5px solid var(--ink);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    transform: translateY(5px);
+  }
+  .tab-btn:hover { transform: translateY(2px); }
+  .tab-btn.active { transform: translateY(0); }
 
   .index-page { padding-top: 6px; }
   .index-label-name { font-size: 28px; }
@@ -1125,9 +1298,9 @@ a { color: var(--forest); }
   .about-heading { font-size: 40px; margin-top: 0; }
   .about-bio { font-size: 16px; line-height: 1.6; margin-top: 10px; }
   .social-row { margin-top: 14px; gap: 8px; }
-  .about-grid { gap: 16px; padding: 0; }
-  .about-photo-wrap { gap: 12px; }
-  .about-photo-frame { width: 130px; height: 130px; }
+  .about-grid { gap: 10px; padding: 0; }
+  .about-photo-wrap { gap: 8px; padding: 8px 10px; }
+  .about-photo { width: 112px; }
   .truths-options { gap: 6px; }
   .truth-option { padding: 6px 10px; }
 
