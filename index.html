@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>anh's notebook</title>
     <link rel="icon" href="images/Untitled design (6).png" sizes="32x32" type="image/png">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="paint.css?v=3">
 </head>
 <body>
 
@@ -82,7 +83,7 @@
                     </div>
                 </div>
                 <div class="truths-game" id="truths-game">
-                    <p class="truths-prompt">three truths and a lie.. can you spot the lie?</p>
+                    <p class="truths-prompt">four truths and a lie.. can you spot the lie?</p>
                     <div class="truths-options" id="truths-options"></div>
                     <p class="truths-result" id="truths-result"></p>
                 </div>
@@ -517,26 +518,28 @@ Language Processing (NLP), Predictive Modeling</div>
             <div class="page-head">
                 <h2 class="page-title">playground</h2>
             </div>
-            <p class="page-sub">things to poke at — all of them run in your browser, nothing gets uploaded.</p>
+            <p class="page-sub">things to poke at, all in your browser, no data collected.</p>
             <div class="toy-grid">
+                <div class="toy-row">
                 <button class="toy-card" data-jump="colors" style="--note:#cfe0b4">
                     <span class="toy-art"><img src="images/toys/colors.png" alt=""></span>
                     <span class="toy-text">
                         <span class="toy-name">color analysis</span>
-                        <span class="toy-blurb">drape colour palettes around your face</span>
+                        <span class="toy-blurb">find your color palette</span>
                     </span></button>
                 <button class="toy-card" data-jump="photobooth" style="--note:#e7eecf">
                     <span class="toy-art"><img src="images/toys/photobooth.png" alt=""></span>
                     <span class="toy-text">
                         <span class="toy-name">photobooth</span>
-                        <span class="toy-blurb">shots on a countdown, printed onto a strip</span>
+                        <span class="toy-blurb">for funky photos only</span>
                     </span></button>
                 <button class="toy-card" data-jump="paint" style="--note:#bcd4af">
                     <span class="toy-art"><img src="images/toys/paint.png" alt=""></span>
                     <span class="toy-text">
                         <span class="toy-name">paint</span>
-                        <span class="toy-blurb">scribble on a blank page and save it</span>
+                        <span class="toy-blurb">scribbles!</span>
                     </span></button>
+                </div>
             </div>
         </div></div>
 
@@ -547,7 +550,7 @@ Language Processing (NLP), Predictive Modeling</div>
                     <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
                     </div>
                 </div>
-                <p class="page-sub">drape color palettes around your face. everything runs in your browser; nothing gets uploaded.</p>
+                <p class="page-sub">drape color palettes around your face. find your match!</p>
 
                 <div class="colors-source-row">
                     <button class="colors-action-btn" id="colors-upload-btn">upload a photo</button>
@@ -594,19 +597,50 @@ Language Processing (NLP), Predictive Modeling</div>
                 </div>
             </div>
 
-            <div class="booth-controls">
-                <div class="booth-group">
-                    <span class="booth-group-label">layout</span>
-                    <div class="chip-row" id="booth-layouts"></div>
-                </div>
-                <div class="booth-group">
-                    <span class="booth-group-label">filter</span>
+            <div class="booth-topbar">
+                <div class="booth-group booth-filtergroup" data-sec="filter">
+                    <span class="booth-group-label lbl-warp">mirror</span>
+                    <span class="booth-group-label lbl-color">colour</span>
                     <div class="chip-row" id="booth-filters"></div>
                 </div>
-                <div class="booth-group">
-                    <span class="booth-group-label">paper</span>
-                    <div class="chip-row" id="booth-backdrops"></div>
+                <div class="booth-secbar" id="booth-secbar" aria-label="what to edit"></div>
+                <div class="switch" id="booth-tabs">
+                    <button type="button" data-pane="shoot" class="active">shoot</button>
+                    <button type="button" data-pane="edit">edit</button>
                 </div>
+            </div>
+            <p class="booth-lockhint" id="booth-lockhint" hidden></p>
+
+            <div class="booth-pane" data-pane="shoot">
+                <div class="booth-group" data-sec="layout"><span class="booth-group-label">layout</span><div class="chip-row" id="booth-layouts"></div></div>
+                <div class="booth-group" data-sec="shots"><span class="booth-group-label">shots</span><div class="chip-row" id="booth-modes"></div></div>
+                <div class="booth-group" data-sec="timer"><span class="booth-group-label">timer</span><div class="chip-row" id="booth-timers"></div></div>
+            </div>
+            <div class="booth-pane" data-pane="edit" hidden>
+                <div class="booth-group" data-sec="paper"><span class="booth-group-label">paper</span><div class="chip-row" id="booth-backdrops"></div></div>
+                <div class="booth-group" data-sec="background">
+                    <span class="booth-group-label">background</span>
+                    <button type="button" class="tool-btn mini" id="booth-bg-upload">upload photo</button>
+                    <button type="button" class="tool-btn mini" id="booth-bg-adjust" hidden>crop</button>
+                    <button type="button" class="tool-btn mini" id="booth-bg-remove" hidden>remove</button>
+                    <input type="file" id="booth-bg-file" accept="image/*" hidden>
+                </div>
+                <div class="booth-group" data-sec="caption">
+                    <span class="booth-group-label">caption</span>
+                    <input type="text" id="booth-caption" class="booth-input" maxlength="24" placeholder="(none)" autocomplete="off" spellcheck="false" aria-label="strip caption">
+                    <span class="booth-count-mini" id="booth-capcount"></span>
+                    <label class="booth-check"><input type="checkbox" id="booth-showdate" checked> date</label>
+                </div>
+                <div class="booth-group" data-sec="stickers">
+                    <span class="booth-group-label">smiley</span>
+                    <div class="chip-row" id="booth-stickers"></div>
+                    <button type="button" class="tool-btn mini" id="booth-sticker-undo">undo</button>
+                </div>
+                <div class="booth-group" data-sec="photo">
+                    <span class="booth-group-label">photo</span>
+                    <button type="button" class="tool-btn mini" id="booth-retake">retake</button>
+                </div>
+                <span class="booth-pickinfo" id="booth-pickinfo"></span>
             </div>
 
             <div class="booth">
@@ -615,19 +649,20 @@ Language Processing (NLP), Predictive Modeling</div>
                         <canvas id="booth-preview"></canvas>
                         <div class="booth-flash" id="booth-flash"></div>
                         <div class="booth-count" id="booth-count"></div>
-                        <div class="booth-placeholder" id="booth-placeholder">camera off</div>
+                        <button type="button" class="booth-placeholder" id="booth-placeholder">tap to turn on the camera</button>
                     </div>
                 </div>
 
                 <div class="booth-side">
                     <div class="booth-strip-wrap">
                         <canvas id="booth-strip"></canvas>
+                        <div class="booth-pick" id="booth-pick" hidden></div>
                         <p class="booth-strip-empty">your strip shows up here</p>
                     </div>
                     <div class="booth-buttons">
                         <button class="tool-btn" id="booth-start">turn on camera</button>
                         <button class="tool-btn" id="booth-shoot" disabled>start</button>
-                        <a class="tool-btn" id="booth-save" hidden download>save</a>
+                        <button class="tool-btn" id="booth-save" hidden>save</button>
                         <button class="tool-btn" id="booth-again" hidden>clear</button>
                     </div>
                     <p class="booth-hint" id="booth-hint"></p>
@@ -636,40 +671,31 @@ Language Processing (NLP), Predictive Modeling</div>
 
             <!-- the camera feed itself: drawn onto the canvases, never shown directly -->
             <video id="booth-video" class="booth-src" autoplay playsinline muted></video>
+
+            <div class="booth-crop" id="booth-crop" hidden>
+                <div class="booth-crop-card" role="dialog" aria-label="crop background">
+                    <div class="booth-crop-title">crop your background</div>
+                    <canvas id="bgc-canvas"></canvas>
+                    <div class="booth-crop-row"><span>zoom</span><input type="range" id="bgc-zoom" min="100" max="400" value="100" aria-label="zoom"></div>
+                    <div class="booth-crop-row">
+                        <span>tilt</span><input type="range" id="bgc-angle" min="-45" max="45" value="0" aria-label="tilt">
+                        <button type="button" class="tool-btn mini" id="bgc-left" title="rotate left">&#8634;</button>
+                        <button type="button" class="tool-btn mini" id="bgc-right" title="rotate right">&#8635;</button>
+                    </div>
+                    <p class="booth-crop-hint">drag to move. dashed boxes are where your photos go.</p>
+                    <div class="booth-crop-btns">
+                        <button type="button" class="tool-btn" id="bgc-apply">use this</button>
+                        <button type="button" class="tool-btn" id="bgc-cancel">cancel</button>
+                    </div>
+                </div>
+            </div>
         </div></div>
         <div class="page" data-mode="detail" data-toy="paint" data-item="paint"><div class="page-body paint-page">
-            <div class="page-head">
-                <h2 class="page-title">paint</h2>
-                <div class="page-tools">
-                    <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
-                </div>
+            <div class="page-head paint-head">
+                <button class="tool-btn back-btn" data-back>&larr; back to overview</button>
             </div>
-
-            <div class="paint-controls">
-                <div class="paint-group">
-                    <span class="paint-label">tool</span>
-                    <div class="chip-row" id="paint-tools"></div>
-                </div>
-                <div class="paint-group">
-                    <span class="paint-label">size</span>
-                    <input type="range" id="paint-size" min="1" max="40" value="6" aria-label="brush size">
-                    <span class="paint-size-dot" id="paint-size-dot"></span>
-                </div>
-                <div class="paint-group">
-                    <span class="paint-label">colour</span>
-                    <div class="paint-swatches" id="paint-swatches"></div>
-                    <input type="color" id="paint-custom" value="#4a6741" aria-label="pick a colour">
-                </div>
-                <div class="paint-group paint-actions">
-                    <button class="tool-btn" id="paint-undo">undo</button>
-                    <button class="tool-btn" id="paint-clear">clear</button>
-                    <a class="tool-btn" id="paint-save" download="scribble.png">save</a>
-                </div>
-            </div>
-
-            <div class="paint-stage">
-                <canvas id="paint-canvas"></canvas>
-            </div>
+            <!-- the Paint window is built here by paint.js -->
+            <div id="mspaint" class="mp-root"></div>
         </div></div>
 
     </div>
@@ -679,6 +705,7 @@ Language Processing (NLP), Predictive Modeling</div>
     </div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=12"></script>
+    <script src="paint.js?v=2"></script>
 </body>
 </html>

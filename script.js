@@ -10,6 +10,16 @@ const siteNav = document.querySelector('.binder-tabs');
 const tabBtns = [...document.querySelectorAll('.tab-btn')];
 const SECTIONS = tabBtns.map(b => b.dataset.tab); // tab order = page order
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+// Runs fn once layout has settled. rAF is the good path, but it's paused in
+// background tabs — without the timer, a page opened in one would never build.
+const afterLayout = (fn) => {
+    let ran = false;
+    const once = () => { if (!ran) { ran = true; fn(); } };
+    requestAnimationFrame(() => requestAnimationFrame(once));
+    setTimeout(once, 150);
+};
+
 const TURN_MS = 550; // keep in step with the page-turn animations in style.css
 
 // these sections open on an overview; picking an item opens its own page
@@ -253,24 +263,11 @@ document.addEventListener('change', (e) => {
 document.addEventListener('keydown', (e) => {
     // arrow keys flip pages, unless you're typing / dragging a slider / picking from a dropdown
     if (e.target.closest?.('input, textarea, select') || e.altKey || e.ctrlKey || e.metaKey) return;
+    const crop = document.getElementById('booth-crop');
+    if (crop && !crop.hidden) return;
     if (e.key === 'ArrowRight') flip(1);
     if (e.key === 'ArrowLeft') flip(-1);
 });
-
-// swipe left/right on phones to flip pages
-let swipeStart = null;
-document.addEventListener('touchstart', (e) => {
-    const t = e.touches[0];
-    const ignore = e.touches.length > 1 || e.target.closest('.colors-stage, input, select, .binder-tabs');
-    swipeStart = ignore ? null : { x: t.clientX, y: t.clientY };
-}, { passive: true });
-document.addEventListener('touchend', (e) => {
-    if (!swipeStart) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - swipeStart.x, dy = t.clientY - swipeStart.y;
-    swipeStart = null;
-    if (Math.abs(dx) > 60 && Math.abs(dy) < Math.abs(dx) / 2) flip(dx < 0 ? 1 : -1);
-}, { passive: true });
 
 // ── Resume (one page; the sheet taped to it scrolls) ────────────────────────
 //
@@ -311,31 +308,41 @@ function setResumeVersion(version) {
     history.replaceState(null, '', hashFor(currentPage));
 }
 
-// ── Two truths and a lie ─────────────────────────────────────────────────────
+// ── Truths and a lie ─────────────────────────────────────────────────────
 
+// The streak was 1230 on 27 Oct 2026 and counts up a day at a time from there
+// (as long as it holds, which is the plan).
+const STREAK_ANCHOR = { date: new Date(2026, 9, 27), days: 1230 };
+function streakToday() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return STREAK_ANCHOR.days + Math.max(0, Math.round((today - STREAK_ANCHOR.date) / 86400000));
+}
+
+// each statement answers back differently; `reply` can be text or a function
 const TRUTHS = [
-    { text: 'I have a 1200+ day streak on Duolingo.', lie: false },
-    { text: 'I am lactose intolerant.', lie: false },
-    { text: 'I can say "67" in 5 languages.', lie: false },
-    { text: "I currently own 4 cameras.", lie: true },
+    { text: 'I created the font used in this website.', reply: 'this is all (technically) my handwriting!' },
+    { text: 'I am lactose intolerant.', reply: 'would never stop me from some ice cream...' },
+    { text: 'I have a 1200+ day streak on Duolingo.', reply: () => `specifically ${streakToday()} days!` },
+    { text: 'I can say "67" in 5 languages.', reply: 'sechs sieben!!!' },
+    { text: 'I currently own 4 cameras.', reply: 'i own 5 cameras!', lie: true },
 ];
 
 const truthsOptions = document.getElementById('truths-options');
 const truthsResult = document.getElementById('truths-result');
 if (truthsOptions) {
-    TRUTHS.forEach((t, i) => {
+    TRUTHS.forEach((t) => {
         const btn = document.createElement('button');
         btn.className = 'truth-option';
         btn.textContent = t.text;
         btn.addEventListener('click', () => {
+            truthsResult.textContent = typeof t.reply === 'function' ? t.reply() : t.reply;
             if (t.lie) {
                 truthsOptions.querySelectorAll('.truth-option').forEach(b => (b.disabled = true));
                 btn.classList.add('is-lie');
-                truthsResult.textContent = "i own 5 cameras!";
             } else {
                 btn.disabled = true;
                 btn.classList.add('is-wrong-pick');
-                truthsResult.textContent = 'nope, try again';
             }
         });
         truthsOptions.appendChild(btn);
@@ -914,7 +921,9 @@ async function startLiveTracking() {
                 if (det && webcamStream) {
                     const fit = computeCoverFit(colorsVideo.videoWidth, colorsVideo.videoHeight);
                     const box = det.box;
-                    const cx = fit.offX + (box.x + box.width / 2) * fit.scale;
+                    // the picture is shown mirrored, so the ring has to be too: flip the face's x
+                    const mirroredX = colorsVideo.videoWidth - (box.x + box.width / 2);
+                    const cx = fit.offX + mirroredX * fit.scale;
                     const cy = fit.offY + (box.y + box.height / 2) * fit.scale;
                     const r = (Math.max(box.width, box.height) / 2) * 1.35 * fit.scale;
                     ringTarget = { cx, cy, r };
@@ -995,7 +1004,9 @@ colorsCaptureBtn.addEventListener('click', () => {
     const canvas = document.createElement('canvas');
     canvas.width = colorsVideo.videoWidth;
     canvas.height = colorsVideo.videoHeight;
-    canvas.getContext('2d').drawImage(colorsVideo, 0, 0);
+    const cctx = canvas.getContext('2d');
+    cctx.translate(canvas.width, 0); cctx.scale(-1, 1);   // keep the capture mirrored, like the live view
+    cctx.drawImage(colorsVideo, 0, 0);
     const dataUrl = canvas.toDataURL('image/png');
     stopWebcam();
     colorsVideo.style.display = 'none';
@@ -1089,10 +1100,13 @@ document.addEventListener('pagechange', (e) => {
 
 // ── Photobooth ───────────────────────────────────────────────────────────────
 //
-// The camera feed is drawn onto a canvas rather than shown directly, so the
-// funhouse filters can bend the live preview exactly the way they bend the
-// photo. Shots land on the strip as they're taken, so you can see the ones
-// you've already got while you pose for the next. Nothing leaves the browser.
+// The camera is drawn onto a canvas rather than shown directly, so the funhouse
+// filters bend the live view exactly the way they bend the photo. Each shot is
+// kept as the raw camera frame plus its look (a colour filter and, maybe, a
+// warp); the strip is re-rendered from those whenever something changes. That is
+// what makes editing afterwards possible, within limits: a finished strip can
+// have its colour filters changed, a photo retaken, a background and stickers
+// added. Warps only apply while shooting. Nothing leaves the browser.
 
 // Add a layout by adding a row: shots = cols × rows.
 const BOOTH_LAYOUTS = [
@@ -1103,7 +1117,8 @@ const BOOTH_LAYOUTS = [
     { key: 'single', label: '1×1', cols: 1, rows: 1 },
 ];
 
-// `css` is a plain canvas/CSS filter; `warp` bends the picture itself.
+// `css` is a plain canvas/CSS filter; `warp` bends the picture itself. Filters
+// without a warp are "colour" filters, the only kind that can be changed later.
 const BOOTH_FILTERS = [
     { key: 'none', label: 'as is', css: 'none' },
     { key: 'bw', label: 'b&w', css: 'grayscale(1) contrast(1.08)' },
@@ -1116,6 +1131,13 @@ const BOOTH_FILTERS = [
     { key: 'tall', label: 'tall', css: 'none', warp: 'tall' },
     { key: 'twin', label: 'twins', css: 'none', warp: 'twin' },
 ];
+const BOOTH_COLORS = BOOTH_FILTERS.filter(f => !f.warp);
+// Mirrors are picked while shooting; colours are picked afterwards, on the edit tab. Each only
+// ever shows on its own tab. "normal" is the no-mirror choice.
+const BOOTH_WARPS = [{ key: 'none', label: 'normal', css: 'none' }, ...BOOTH_FILTERS.filter(f => f.warp)];
+const colorFilter = (key) => BOOTH_COLORS.find(f => f.key === key) || BOOTH_COLORS[0];
+// what a shot looks like right now: its colour filter, plus its warp if it has one
+const lookOf = (shot) => ({ css: colorFilter(shot.color).css, warp: shot.warp || null });
 
 // Add a paper by adding a row. `grid` draws graph-paper lines over the fill.
 const BOOTH_PAPERS = [
@@ -1124,6 +1146,15 @@ const BOOTH_PAPERS = [
     { key: 'sage', label: 'sage', fill: '#b9cba3', ink: '#1a1008' },
     { key: 'night', label: 'night', fill: '#1a1008', ink: '#fdf6e9' },
 ];
+
+const BOOTH_MODES = [
+    { key: 'auto', label: 'all at once', help: 'one shot straight after another' },
+    { key: 'step', label: 'one at a time', help: 'pause after each shot, so you can change the filter' },
+];
+const BOOTH_TIMERS = [{ key: '3', label: '3s', secs: 3 }, { key: '5', label: '5s', secs: 5 }, { key: '10', label: '10s', secs: 10 }];
+const BOOTH_STICKERS = [{ key: 'smile', label: 'add ☺' }];
+const BOOTH_CAPTION_MAX = 24;
+const BOOTH_BG_MAX = 2200;   // longest side kept of an uploaded background, in pixels
 
 const boothVideo = document.getElementById('booth-video');
 const boothPreview = document.getElementById('booth-preview');
@@ -1136,31 +1167,55 @@ const boothStartBtn = document.getElementById('booth-start');
 const boothShootBtn = document.getElementById('booth-shoot');
 const boothSaveBtn = document.getElementById('booth-save');
 const boothAgainBtn = document.getElementById('booth-again');
+const boothPick = document.getElementById('booth-pick');
+const boothLockHint = document.getElementById('booth-lockhint');
+const boothPickInfo = document.getElementById('booth-pickinfo');
+const boothCaptionInput = document.getElementById('booth-caption');
+const boothCapCount = document.getElementById('booth-capcount');
+const boothDateBox = document.getElementById('booth-showdate');
 
 let boothStream = null;
 let boothLayout = BOOTH_LAYOUTS[0];
-let boothFilter = BOOTH_FILTERS[0];
+let boothFilter = BOOTH_WARPS[0];     // the mirror the next shot is taken with
 let boothPaper = BOOTH_PAPERS[0];
-let boothShots = [];
-let boothBusy = false;
+let boothMode = BOOTH_MODES[0];
+let boothTimer = BOOTH_TIMERS[0];
+let boothCaption = "anh's notebook";
+let boothShowDate = true;
+let boothBg = null;             // { img, quarter, fine, zoom, cx, cy }: an uploaded background and how it's cropped
+let boothShots = [];            // [{ raw, color, warp, t }]; raw = the unfiltered camera frame
+let boothStickers = [];         // [{ key, x, y, size }] in strip pixels
+let boothSticker = null;        // the sticker armed for placing, if any
+let boothSel = -1;              // the photo picked for editing
+let boothBusy = false;          // a series is in progress
+let boothPaused = false;        // ...and it's waiting between shots ("one at a time")
+let boothResume = null;
+let boothProgress = { n: 0, total: 0 };
 let boothRaf = null;
 let boothSession = 0;
-let boothObjectUrl = null;
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const boothSlots = () => boothLayout.cols * boothLayout.rows;
+const boothComplete = () => { const n = boothSlots(); for (let i = 0; i < n; i++) if (!boothShots[i]) return false; return true; };
+const boothAny = () => boothShots.some(Boolean);
+const boothReviewing = () => !boothBusy && boothComplete();
+// Filters can change while idle, and between shots in "one at a time" mode, but
+// not in the middle of an "all at once" run.
+const boothFilterLocked = () => boothBusy && !boothPaused;
 
-// `lockWhileShooting` is for choices that can't change once a strip is under way.
-// Filter and paper can: swapping the filter between shots gives the strip a
-// different look per frame, which is half the fun.
-function chipRow(id, items, current, onPick, lockWhileShooting) {
+// ── chips ──
+
+function chipRow(id, items, current, onPick, isLocked, onLocked) {
     const row = document.getElementById(id);
     row.innerHTML = '';
     items.forEach(item => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'chip' + (item.key === current().key ? ' active' : '');
         btn.textContent = item.label;
+        if (item.help) btn.title = item.help;
         btn.addEventListener('click', () => {
-            if (lockWhileShooting && boothBusy) return;
+            if (isLocked && isLocked()) { if (onLocked) onLocked(); return; }
             onPick(item);
             row.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b === btn));
         });
@@ -1168,15 +1223,61 @@ function chipRow(id, items, current, onPick, lockWhileShooting) {
     });
 }
 
-chipRow('booth-layouts', BOOTH_LAYOUTS, () => boothLayout, (l) => {
-    boothLayout = l;
-    resetStrip();
-}, true);
-chipRow('booth-filters', BOOTH_FILTERS, () => boothFilter, (f) => { boothFilter = f; });
-chipRow('booth-backdrops', BOOTH_PAPERS, () => boothPaper, (p) => {
-    boothPaper = p;
-    applyPaper();
-    drawStrip();
+chipRow('booth-layouts', BOOTH_LAYOUTS, () => boothLayout, (l) => { boothLayout = l; resetStrip(); }, () => boothBusy);
+chipRow('booth-modes', BOOTH_MODES, () => boothMode, (m) => { boothMode = m; refreshBooth(); }, () => boothBusy);
+chipRow('booth-timers', BOOTH_TIMERS, () => boothTimer, (t) => { boothTimer = t; }, () => boothBusy);
+chipRow('booth-backdrops', BOOTH_PAPERS, () => boothPaper, (p) => { boothPaper = p; applyPaper(); drawStrip(); });
+
+// The filter row holds two sets that are picked at different times and only ever show on their own tab:
+//   mirrors (+ "normal"): chosen while shooting, for the next shot; locked during an all-at-once run
+//   colours: chosen afterwards on the edit tab, for the picked photo (or every photo if none is picked)
+const filterRow = document.getElementById('booth-filters');
+BOOTH_WARPS.forEach((f) => {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'chip f-warp'; btn.textContent = f.label; btn.dataset.key = f.key;
+    btn.addEventListener('click', () => {
+        if (boothFilterLocked()) { boothHint.textContent = 'mirrors are locked while shooting. pick "one at a time" to change them between shots.'; return; }
+        boothFilter = f;
+        refreshBooth();
+    });
+    filterRow.appendChild(btn);
+});
+BOOTH_COLORS.forEach((f) => {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'chip f-color'; btn.textContent = f.label; btn.dataset.key = f.key;
+    btn.addEventListener('click', () => {
+        if (!boothReviewing()) { boothHint.textContent = 'take your photos first, then pick a colour here.'; return; }
+        const targets = boothSel >= 0 ? [boothSel] : boothShots.map((_, i) => i);
+        targets.forEach(i => { if (boothShots[i]) boothShots[i].color = f.key; });
+        drawStrip(); refreshBooth();
+    });
+    filterRow.appendChild(btn);
+});
+
+function refreshFilterChips() {
+    const reviewing = boothReviewing();
+    // the colour of the picked photo, or the shared one if every photo matches
+    const colors = reviewing ? (boothSel >= 0 ? [boothShots[boothSel]] : boothShots).filter(Boolean).map(s => s.color) : [];
+    const shared = colors.length && colors.every(c => c === colors[0]) ? colors[0] : null;
+    filterRow.querySelectorAll('.chip').forEach((b) => {
+        if (b.classList.contains('f-warp')) { b.classList.toggle('active', b.dataset.key === boothFilter.key); return; }
+        b.classList.toggle('active', b.dataset.key === shared);
+        b.classList.toggle('is-off', !reviewing);
+    });
+}
+
+const stickerRow = document.getElementById('booth-stickers');
+BOOTH_STICKERS.forEach((s) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip sticker-chip'; b.textContent = s.label; b.dataset.key = s.key; b.title = 'add a smiley to the strip';
+    b.addEventListener('click', () => {
+        if (!boothReviewing()) return;
+        boothSticker = boothSticker && boothSticker.key === s.key ? null : s;
+        stickerRow.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', !!boothSticker && x.dataset.key === boothSticker.key));
+        boothStrip.classList.toggle('is-placing', !!boothSticker);
+        boothHint.textContent = boothSticker ? 'click the strip to place the smiley.' : '';
+    });
+    stickerRow.appendChild(b);
 });
 
 // the preview's mat shows the paper you picked
@@ -1185,41 +1286,96 @@ function applyPaper() {
 }
 applyPaper();
 
+// tabs: shoot / edit
+// On a phone the edit tab shows one section at a time (a row of buttons picks which), so the
+// strip you're editing keeps most of the screen. On the very shortest phones the shoot tab
+// does the same. Taller screens and desktop show everything at once.
+const BOOTH_SECTIONS = {
+    shoot: [['filter', 'filter'], ['layout', 'layout'], ['shots', 'shots'], ['timer', 'timer']],
+    edit: [['filter', 'colour'], ['paper', 'paper'], ['background', 'background'], ['caption', 'caption'], ['stickers', 'smiley'], ['photo', 'retake']],
+};
+const tinyPhone = window.matchMedia('(max-height: 480px), (max-width: 760px) and (max-height: 600px)');
+const secBar = document.getElementById('booth-secbar');
+const boothSecFor = { shoot: 'layout', edit: null };
+let boothPane = 'shoot';
+function openSection(key) {
+    boothSecFor[boothPane] = key;
+    document.querySelector('.booth-page').dataset.sec = key;
+    secBar.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.secbtn === key));
+    document.querySelectorAll('.booth-page [data-sec]').forEach(g => g.classList.toggle('is-open-sec', g.dataset.sec === key));
+    afterLayout(positionPick);
+}
+function renderSecBar(pane) {
+    secBar.innerHTML = '';
+    BOOTH_SECTIONS[pane].forEach(([key, label]) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = label; b.dataset.secbtn = key;   // (not data-sec: that marks the sections themselves)
+        b.addEventListener('click', () => openSection(key));
+        secBar.appendChild(b);
+    });
+}
+
+function showBoothPane(name) {
+    boothPane = name;
+    document.querySelectorAll('#booth-tabs button').forEach(x => x.classList.toggle('active', x.dataset.pane === name));
+    document.querySelectorAll('.booth-pane').forEach(p => { p.hidden = p.dataset.pane !== name; });
+    document.querySelector('.booth-page').dataset.pane = name;   // lets the phone layout give the strip the room
+    renderSecBar(name);
+    openSection(boothSecFor[name] || (boothReviewing() ? 'filter' : 'paper'));
+    // the layout under the strip just changed shape, so the picked-photo highlight has to follow it
+    afterLayout(positionPick);   // (rAF plus a timer fallback: rAF alone can be throttled)
+}
+document.querySelectorAll('#booth-tabs button').forEach((b) => b.addEventListener('click', () => showBoothPane(b.dataset.pane)));
+showBoothPane('shoot');
+
+// caption: limited length, optional, and the date can go too
+boothCaptionInput.maxLength = BOOTH_CAPTION_MAX;
+boothCaptionInput.value = boothCaption;
+const syncCaption = () => {
+    boothCaption = boothCaptionInput.value.slice(0, BOOTH_CAPTION_MAX);
+    boothCapCount.textContent = `${boothCaption.length}/${BOOTH_CAPTION_MAX}`;
+    drawStrip();
+};
+boothCaptionInput.addEventListener('input', syncCaption);
+boothDateBox.addEventListener('change', () => { boothShowDate = boothDateBox.checked; drawStrip(); });
+boothCapCount.textContent = `${boothCaption.length}/${BOOTH_CAPTION_MAX}`;
+
 // ── drawing the live picture ──
 
-// Paints one frame of the camera into ctx at dw×dh, mirrored like a real booth,
-// with the chosen filter and warp applied. Used for both preview and capture.
-function paintFrame(ctx, dw, dh, t) {
-    const v = boothVideo;
-    if (!v.videoWidth) return false;
-    const warp = boothFilter.warp;
+// Paints one frame of `src` (the live camera, or a stored raw frame) into ctx at
+// dw×dh, mirrored like a real booth, with the filter ({css, warp}) applied. The
+// same routine draws the preview, the shot, and every re-render of a shot.
+function paintFrame(ctx, dw, dh, t, src = boothVideo, filter = boothFilter) {
+    const vw = src.videoWidth || src.width, vh = src.videoHeight || src.height;
+    if (!vw) return false;
+    const warp = filter.warp;
 
     // Crop the camera to the output shape. The bending warps sample the camera
     // differently per slice rather than moving the slices around, so the frame
-    // always stays full — no gaps at the edges.
+    // always stays full, with no gaps at the edges.
     let aspect = dw / dh;
     if (warp === 'wide') aspect *= 0.68;
     if (warp === 'tall') aspect /= 0.68;
     const bends = warp === 'wave' || warp === 'bulge' || warp === 'pinch';
     const margin = bends ? 0.84 : 1; // room to sample outside the base crop
-    const sw = Math.min(v.videoWidth, v.videoHeight * aspect) * margin;
+    const sw = Math.min(vw, vh * aspect) * margin;
     const sh = (sw / aspect);
-    const sx = (v.videoWidth - sw) / 2;
-    const sy = (v.videoHeight - sh) / 2;
+    const sx = (vw - sw) / 2;
+    const sy = (vh - sh) / 2;
 
     ctx.save();
     ctx.clearRect(0, 0, dw, dh);
-    ctx.filter = boothFilter.css || 'none';
+    ctx.filter = filter.css || 'none';
     ctx.translate(dw, 0);
     ctx.scale(-1, 1); // selfie mirror
 
     if (warp === 'twin') {
         // one half of you, mirrored onto the other
-        ctx.drawImage(v, sx, sy, sw / 2, sh, 0, 0, dw / 2, dh);
+        ctx.drawImage(src, sx, sy, sw / 2, sh, 0, 0, dw / 2, dh);
         ctx.save();
         ctx.translate(dw, 0);
         ctx.scale(-1, 1);
-        ctx.drawImage(v, sx, sy, sw / 2, sh, 0, 0, dw / 2, dh);
+        ctx.drawImage(src, sx, sy, sw / 2, sh, 0, 0, dw / 2, dh);
         ctx.restore();
     } else if (bends) {
         const N = 80;
@@ -1230,14 +1386,14 @@ function paintFrame(ctx, dw, dh, t) {
             if (warp === 'wave') srcX = sx + Math.sin(p * Math.PI * 3 + t) * sw * 0.06;
             if (warp === 'bulge') srcW = sw * (1 - 0.26 * Math.sin(p * Math.PI)); // middle magnified
             if (warp === 'pinch') srcW = sw * (1 + 0.30 * Math.sin(p * Math.PI)); // middle squeezed
-            srcW = clamp(srcW, 8, v.videoWidth);
+            srcW = clamp(srcW, 8, vw);
             if (warp !== 'wave') srcX = sx + (sw - srcW) / 2;
-            srcX = clamp(srcX, 0, v.videoWidth - srcW);
+            srcX = clamp(srcX, 0, vw - srcW);
             // each slice fills the full output width, so nothing is left blank
-            ctx.drawImage(v, srcX, sy + p * sh, srcW, sh / N, 0, p * dh, dw, dh / N + 1);
+            ctx.drawImage(src, srcX, sy + p * sh, srcW, sh / N, 0, p * dh, dw, dh / N + 1);
         }
     } else {
-        ctx.drawImage(v, sx, sy, sw, sh, 0, 0, dw, dh);
+        ctx.drawImage(src, sx, sy, sw, sh, 0, 0, dw, dh);
     }
     ctx.restore();
     return true;
@@ -1253,36 +1409,114 @@ function sizePreview() {
 
 function boothLoop(ts) {
     if (!boothStream) return;
-    sizePreview();
-    paintFrame(boothPreview.getContext('2d'), boothPreview.width, boothPreview.height, ts / 380);
+    if (boothFrame.offsetParent) {   // no point painting a view nobody can see
+        sizePreview();
+        paintFrame(boothPreview.getContext('2d'), boothPreview.width, boothPreview.height, ts / 380);
+    }
     boothRaf = requestAnimationFrame(boothLoop);
+}
+
+// ── an uploaded background: cropped, zoomed and rotated ──
+//
+// The crop is stored independently of the strip's size (a zoom relative to the
+// least that covers it, a centre point in the picture's own pixels, and a
+// rotation), so it keeps covering the strip when the layout or caption changes.
+
+function bgGeom(w, h, bg) {
+    const th = (bg.quarter * 90 + bg.fine) * Math.PI / 180;
+    const c = Math.abs(Math.cos(th)), s = Math.abs(Math.sin(th));
+    // half-extents of the w×h window, measured along the picture's own axes
+    const hx = (w / 2) * c + (h / 2) * s, hy = (w / 2) * s + (h / 2) * c;
+    const iw = bg.img.width, ih = bg.img.height;
+    const base = Math.max(2 * hx / iw, 2 * hy / ih);       // the smallest scale that still covers
+    const sc = base * bg.zoom;
+    return { th, sc, iw, ih, maxX: Math.max(0, iw / 2 - hx / sc), maxY: Math.max(0, ih / 2 - hy / sc) };
+}
+function clampBg(bg, w, h) {
+    const g = bgGeom(w, h, bg);
+    bg.cx = Math.min(g.maxX, Math.max(-g.maxX, bg.cx));
+    bg.cy = Math.min(g.maxY, Math.max(-g.maxY, bg.cy));
+}
+function paintBg(ctx, w, h, bg) {
+    const g = bgGeom(w, h, bg);
+    const cx = Math.min(g.maxX, Math.max(-g.maxX, bg.cx)), cy = Math.min(g.maxY, Math.max(-g.maxY, bg.cy));
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(g.th);
+    ctx.scale(g.sc, g.sc);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bg.img, -g.iw / 2 - cx, -g.ih / 2 - cy);
+    ctx.restore();
 }
 
 // ── the strip ──
 
 function stripGeometry() {
-    const pad = 26, gap = 18, footer = 84;
+    const pad = 26, gap = 18;
     const frameW = boothLayout.cols === 1 ? 560 : 352;
     const frameH = Math.round(frameW * 3 / 4);
+    const caption = boothCaption.trim(), date = boothShowDate;
+    const footer = (caption || date) ? (caption ? 42 : 0) + (date ? 30 : 0) + 16 : 0;
     return {
-        pad, gap, footer, frameW, frameH,
+        pad, gap, footer, frameW, frameH, caption, date,
         w: pad * 2 + boothLayout.cols * frameW + gap * (boothLayout.cols - 1),
         h: pad * 2 + boothLayout.rows * frameH + gap * (boothLayout.rows - 1) + footer,
     };
 }
 
+function slotRect(i, g) {
+    const col = i % boothLayout.cols, row = Math.floor(i / boothLayout.cols);
+    return { x: g.pad + col * (g.frameW + g.gap), y: g.pad + row * (g.frameH + g.gap) };
+}
+
+// each shot is re-rendered from its raw frame, and cached until something about it changes
+function renderShot(shot, g) {
+    const key = [shot.color, shot.warp || '-', g.frameW, g.frameH, Math.round(shot.t * 10)].join('|');
+    if (shot.cache && shot.cache.key === key) return shot.cache.canvas;
+    const c = document.createElement('canvas');
+    c.width = g.frameW; c.height = g.frameH;
+    paintFrame(c.getContext('2d'), g.frameW, g.frameH, shot.t, shot.raw, lookOf(shot));
+    shot.cache = { key, canvas: c };
+    return c;
+}
+
+function roundedPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+
+// The smiley is the handwriting font's own ☺, drawn with a paper-coloured halo so it reads on any
+// background (a photo behind the strip, a dark paper) and looks the same on every device.
+function drawSticker(ctx, key, x, y, size, ink, halo) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.font = `${size}px 'Handwritten', 'Segoe UI Symbol', 'Apple Symbols', sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineWidth = Math.max(6, size * 0.12); ctx.strokeStyle = halo; ctx.strokeText('\u263a', 0, 0);
+    ctx.fillStyle = ink; ctx.fillText('\u263a', 0, 0);
+    ctx.restore();
+}
+
 function drawStrip() {
     const g = stripGeometry();
+    const slots = boothSlots();
     // a 2-up strip is landscape, so give the strip panel more room
     boothStrip.closest('.booth').classList.toggle('is-wide', boothLayout.cols > 1);
-    const slots = boothLayout.cols * boothLayout.rows;
     boothStrip.width = g.w;
     boothStrip.height = g.h;
     const ctx = boothStrip.getContext('2d');
 
     ctx.fillStyle = boothPaper.fill;
     ctx.fillRect(0, 0, g.w, g.h);
-    if (boothPaper.grid) {
+    if (boothBg) {
+        paintBg(ctx, g.w, g.h, boothBg);
+    } else if (boothPaper.grid) {
         ctx.strokeStyle = boothPaper.grid;
         ctx.lineWidth = 1;
         for (let x = 0; x < g.w; x += 22) { ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, g.h); ctx.stroke(); }
@@ -1290,19 +1524,16 @@ function drawStrip() {
     }
 
     for (let i = 0; i < slots; i++) {
-        const col = i % boothLayout.cols, row = Math.floor(i / boothLayout.cols);
-        const x = g.pad + col * (g.frameW + g.gap);
-        const y = g.pad + row * (g.frameH + g.gap);
-        ctx.strokeStyle = boothPaper.ink;
-        if (boothShots[i]) {
-            ctx.drawImage(boothShots[i], x, y, g.frameW, g.frameH);
-            ctx.setLineDash([]);
-            ctx.lineWidth = 3;
-            ctx.strokeRect(x + 1.5, y + 1.5, g.frameW - 3, g.frameH - 3);
+        const { x, y } = slotRect(i, g);
+        const shot = boothShots[i];
+        if (shot) {
+            ctx.drawImage(renderShot(shot, g), x, y);   // no frame: the photo is the photo
         } else {
             // an empty slot waiting for its shot
             ctx.save();
-            ctx.globalAlpha = 0.4;
+            if (boothBg) { ctx.globalAlpha = 0.6; ctx.fillStyle = boothPaper.fill; ctx.fillRect(x, y, g.frameW, g.frameH); }
+            ctx.globalAlpha = 0.45;
+            ctx.strokeStyle = boothPaper.ink;
             ctx.setLineDash([9, 7]);
             ctx.lineWidth = 2;
             ctx.strokeRect(x + 1, y + 1, g.frameW - 2, g.frameH - 2);
@@ -1314,42 +1545,132 @@ function drawStrip() {
         }
     }
 
-    const footY = g.h - g.footer;
-    ctx.fillStyle = boothPaper.ink;
-    ctx.textAlign = 'center';
-    ctx.setLineDash([]);
-    ctx.font = "700 30px 'Handwritten', 'Comic Sans MS', cursive";
-    ctx.fillText("anh's notebook", g.w / 2, footY + 34);
-    ctx.globalAlpha = 0.75;
-    ctx.font = "400 21px 'Handwritten', 'Comic Sans MS', cursive";
-    ctx.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }), g.w / 2, footY + 62);
-    ctx.globalAlpha = 1;
+    // footer: a caption and/or the date, each optional
+    if (g.footer) {
+        if (boothBg) {   // a picture behind the words would swallow them, so they get a paper label
+            ctx.save(); ctx.globalAlpha = 0.84; ctx.fillStyle = boothPaper.fill;
+            roundedPath(ctx, g.pad, g.h - g.footer - 2, g.w - g.pad * 2, g.footer - 8, 14); ctx.fill(); ctx.restore();
+        }
+        let y = g.h - g.footer + 6;
+        ctx.fillStyle = boothPaper.ink;
+        ctx.textAlign = 'center';
+        ctx.setLineDash([]);
+        if (g.caption) {
+            let size = 30;
+            ctx.font = `700 ${size}px 'Handwritten', 'Comic Sans MS', cursive`;
+            while (size > 14 && ctx.measureText(g.caption).width > g.w - g.pad * 2 - 20) { size -= 1; ctx.font = `700 ${size}px 'Handwritten', 'Comic Sans MS', cursive`; }
+            ctx.fillText(g.caption, g.w / 2, y + 28);
+            y += 42;
+        }
+        if (g.date) {
+            ctx.globalAlpha = 0.75;
+            ctx.font = "400 21px 'Handwritten', 'Comic Sans MS', cursive";
+            ctx.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }), g.w / 2, y + 20);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    // stickers go on top of everything, each with a paper-coloured halo so it reads on any background
+    boothStickers.forEach((s) => drawSticker(ctx, s.key, s.x, s.y, s.size, boothPaper.ink, boothPaper.fill));
 
     boothStrip.classList.add('is-ready');
+    positionPick();
 }
+
+// the highlight on the picked photo is part of the page, not of the saved image
+function positionPick() {
+    if (!boothPick) return;
+    if (boothSel < 0 || !boothReviewing() || !boothShots[boothSel]) { boothPick.hidden = true; return; }
+    const g = stripGeometry(), { x, y } = slotRect(boothSel, g);
+    const cr = boothStrip.getBoundingClientRect(), wr = boothPick.parentElement.getBoundingClientRect();
+    if (!cr.width) { boothPick.hidden = true; return; }
+    const k = cr.width / boothStrip.width;
+    boothPick.hidden = false;
+    boothPick.style.left = (cr.left - wr.left + x * k) + 'px';
+    boothPick.style.top = (cr.top - wr.top + y * k) + 'px';
+    boothPick.style.width = (g.frameW * k) + 'px';
+    boothPick.style.height = (g.frameH * k) + 'px';
+}
+window.addEventListener('resize', () => positionPick());
+if (window.ResizeObserver) new ResizeObserver(() => positionPick()).observe(document.querySelector('.booth-strip-wrap'));
+
+function slotAt(px, py) {
+    const g = stripGeometry();
+    for (let i = 0; i < boothSlots(); i++) {
+        const { x, y } = slotRect(i, g);
+        if (px >= x && px < x + g.frameW && py >= y && py < y + g.frameH) return i;
+    }
+    return -1;
+}
+
+boothStrip.addEventListener('click', (e) => {
+    if (!boothReviewing()) return;
+    const r = boothStrip.getBoundingClientRect();
+    const px = (e.clientX - r.left) * boothStrip.width / r.width, py = (e.clientY - r.top) * boothStrip.height / r.height;
+    if (boothSticker) {
+        boothStickers.push({ key: boothSticker.key, x: px, y: py, size: 84 });
+        drawStrip(); refreshBooth();
+        return;
+    }
+    const i = slotAt(px, py);
+    boothSel = i === boothSel ? -1 : i;
+    refreshBooth();
+});
 
 function resetStrip() {
-    boothShots = [];
-    boothSaveBtn.hidden = true;
-    boothAgainBtn.hidden = true;
+    boothShots = []; boothStickers = []; boothSel = -1; boothSticker = null;
+    stickerRow.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    boothStrip.classList.remove('is-placing');
     drawStrip(); // the empty slots double as a preview of the layout
-    boothShootBtn.textContent = 'start';
+    refreshBooth();
 }
 
-function grab() {
-    const g = stripGeometry();
-    const canvas = document.createElement('canvas');
-    canvas.width = g.frameW;
-    canvas.height = g.frameH;
-    paintFrame(canvas.getContext('2d'), g.frameW, g.frameH, performance.now() / 380);
-    return canvas;
+// ── buttons, locks, and what's enabled when ──
+
+function refreshBooth() {
+    const live = !!boothStream, complete = boothComplete(), reviewing = boothReviewing();
+    boothStartBtn.hidden = false;
+    boothStartBtn.disabled = boothBusy;                       // switching the camera off mid-run would throw the run away
+    boothStartBtn.textContent = live ? 'turn off camera' : 'turn on camera';
+    boothStartBtn.classList.toggle('is-on', live);
+    boothShootBtn.disabled = boothBusy && !boothPaused;       // (it switches the camera on itself if needed)
+    boothShootBtn.textContent = boothPaused ? `next shot ▶ ${boothProgress.n + 1}/${boothProgress.total}` : (complete ? 'take again' : 'take photos');
+    boothSaveBtn.hidden = !reviewing;
+    boothAgainBtn.hidden = !(boothAny() || boothBusy);
+    boothAgainBtn.textContent = boothBusy ? 'stop' : 'clear';
+
+    const lock = (id, on) => document.getElementById(id).classList.toggle('is-locked', on);
+    lock('booth-layouts', boothBusy); lock('booth-modes', boothBusy); lock('booth-timers', boothBusy);
+    lock('booth-filters', boothFilterLocked());
+    boothLockHint.hidden = !boothFilterLocked();
+    if (!boothLockHint.hidden) boothLockHint.textContent = 'filters are locked while shooting. choose "one at a time" to change them between shots.';
+    refreshFilterChips();
+
+    // the edit tab: a few things work any time, the rest need a finished strip
+    stickerRow.classList.toggle('is-locked', !reviewing);
+    document.getElementById('booth-sticker-undo').disabled = !reviewing || !boothStickers.length;
+    document.getElementById('booth-retake').disabled = !reviewing || boothSel < 0;   // (retaking switches the camera back on)
+    document.getElementById('booth-bg-adjust').hidden = !boothBg;
+    document.getElementById('booth-bg-remove').hidden = !boothBg;
+    document.getElementById('booth-bg-upload').textContent = boothBg ? 'change photo' : 'upload photo';
+    boothPickInfo.textContent = !reviewing ? 'take your photos first, then come back here to colour and decorate them.'
+        : boothSel >= 0 ? `photo ${boothSel + 1}: the colour you pick changes just this one.${live ? '' : ' retaking turns the camera back on.'}`
+        : 'the colour you pick changes every photo. click a photo to pick just one.';
+    positionPick();
 }
 
 // ── running the booth ──
 
+function grabRaw() {
+    const c = document.createElement('canvas');
+    c.width = boothVideo.videoWidth; c.height = boothVideo.videoHeight;
+    c.getContext('2d').drawImage(boothVideo, 0, 0);
+    return c;
+}
+
 function stopBooth() {
     boothSession++;
-    document.getElementById('booth-layouts').classList.remove('is-locked');
+    if (boothResume) { boothResume(false); boothResume = null; }
     if (boothRaf) { cancelAnimationFrame(boothRaf); boothRaf = null; }
     if (boothStream) {
         boothStream.getTracks().forEach(t => t.stop());
@@ -1358,15 +1679,18 @@ function stopBooth() {
     boothVideo.srcObject = null;
     boothFrame.classList.remove('is-live');
     boothCount.classList.remove('is-on');
-    boothBusy = false;
-    boothShootBtn.disabled = true;
+    boothBusy = false; boothPaused = false;
     boothStartBtn.hidden = false;
+    closeCrop(false);
+    refreshBooth();
 }
 
-boothStartBtn.addEventListener('click', async () => {
+// Switches the camera on (a no-op if it already is). Returns whether there is a camera now.
+async function ensureCamera() {
+    if (boothStream) return true;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         boothHint.textContent = "your browser won't let a page use the camera here.";
-        return;
+        return false;
     }
     boothStartBtn.disabled = true;
     boothHint.textContent = 'asking for your camera…';
@@ -1374,36 +1698,45 @@ boothStartBtn.addEventListener('click', async () => {
         boothStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } } });
     } catch (err) {
         boothHint.textContent = "couldn't get to your camera — check this site's camera permission.";
-        boothStartBtn.disabled = false;
-        return;
+        refreshBooth();
+        return false;
     }
     boothVideo.srcObject = boothStream;
     boothFrame.classList.add('is-live');
-    boothStartBtn.disabled = false;
-    boothStartBtn.hidden = true;
-    boothShootBtn.disabled = false;
-    boothHint.textContent = 'looking good — hit start when you’re ready!';
+    boothHint.textContent = 'looking good — tap "take photos" when you’re ready!';
     boothRaf = requestAnimationFrame(boothLoop);
-});
+    refreshBooth();
+    return true;
+}
 
-boothShootBtn.addEventListener('click', async () => {
+// one button, both ways: switch the camera on, or off whenever you like (your strip stays put)
+boothStartBtn.addEventListener('click', async () => {
+    if (!boothStream) { await ensureCamera(); return; }
+    if (boothBusy) return;
+    stopBooth();
+    boothHint.textContent = 'camera off. turn it back on whenever you like.';
+});
+document.getElementById('booth-placeholder').addEventListener('click', () => { if (!boothStream) ensureCamera(); });
+
+// Takes the shots for the given slots, in order. In "one at a time" mode it
+// stops after each one until you hit "next shot". `look` fixes the look of the
+// shots (a retake keeps the photo's own filter and warp).
+async function takeShots(indices, look) {
     if (boothBusy || !boothStream) return;
-    const slots = boothLayout.cols * boothLayout.rows;
-    boothBusy = true;
-    boothShootBtn.disabled = true;
-    document.getElementById('booth-layouts').classList.add('is-locked');
-    boothSaveBtn.hidden = true;
-    boothAgainBtn.hidden = true;
-    boothShots = [];
-    drawStrip();
+    boothBusy = true; boothPaused = false; boothSticker = null;
+    boothStrip.classList.remove('is-placing');
+    stickerRow.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    boothProgress = { n: 0, total: indices.length };
+    refreshBooth();
 
     const session = boothSession;
     const alive = () => session === boothSession && boothStream;
 
-    for (let n = 0; n < slots; n++) {
-        boothHint.textContent = `shot ${n + 1} of ${slots}…`;
+    for (let k = 0; k < indices.length; k++) {
+        boothProgress.n = k;
+        boothHint.textContent = indices.length > 1 ? `shot ${k + 1} of ${indices.length}…` : 'get ready…';
         boothCount.classList.add('is-on');
-        for (let c = 3; c > 0; c--) {
+        for (let c = boothTimer.secs; c > 0; c--) {
             boothCount.textContent = c;
             await wait(900);
             if (!alive()) return;
@@ -1413,276 +1746,194 @@ boothShootBtn.addEventListener('click', async () => {
         boothFlash.classList.remove('is-firing');
         void boothFlash.offsetWidth; // restart the animation
         boothFlash.classList.add('is-firing');
-        boothShots.push(grab());
+        const own = look || { color: boothFilter.warp ? 'none' : boothFilter.key, warp: boothFilter.warp || null };
+        boothShots[indices[k]] = { raw: grabRaw(), color: own.color, warp: own.warp, t: performance.now() / 380 };
         drawStrip(); // the strip fills in as you go
-        await wait(700);
+        await wait(600);
         if (!alive()) return;
+
+        if (k < indices.length - 1) {
+            if (boothMode.key === 'step' && indices.length > 1) {
+                boothPaused = true; refreshBooth();
+                boothHint.textContent = 'paused. change the filter if you like, then hit "next shot".';
+                if (tinyPhone.matches && boothPane === 'shoot') openSection('filter');
+                const go = await new Promise((res) => { boothResume = res; });
+                boothResume = null; boothPaused = false;
+                if (!go || !alive()) return;
+                refreshBooth();
+            } else {
+                await wait(300);
+                if (!alive()) return;
+            }
+        }
     }
 
-    boothStrip.toBlob((blob) => {
-        if (!blob) return;
-        if (boothObjectUrl) URL.revokeObjectURL(boothObjectUrl);
-        boothObjectUrl = URL.createObjectURL(blob);
-        boothSaveBtn.href = boothObjectUrl;
-        boothSaveBtn.download = `photobooth-${new Date().toISOString().slice(0, 10)}.png`;
-        boothSaveBtn.hidden = false;
-    }, 'image/png');
+    boothBusy = false; boothPaused = false;
+    if (indices.length > 1) {
+        boothHint.textContent = 'cute! now pick a colour, add touches, or save it.';
+        boothSecFor.edit = 'filter';      // colour comes first
+        showBoothPane('edit');
+    } else {
+        boothHint.textContent = 'retaken!';
+    }
+    refreshBooth();
+}
 
-    document.getElementById('booth-layouts').classList.remove('is-locked');
-    boothAgainBtn.hidden = false;
-    boothShootBtn.disabled = false;
-    boothShootBtn.textContent = 'again';
-    boothBusy = false;
-    boothHint.textContent = 'cute! save it, or go again.';
+boothShootBtn.addEventListener('click', async () => {
+    if (boothPaused && boothResume) { boothResume(true); return; }
+    if (boothBusy) return;
+    if (!(await ensureCamera())) return;
+    showBoothPane('shoot');                   // you need to see yourself
+    const n = boothSlots();
+    boothShots = []; boothStickers = []; boothSel = -1;   // a new run starts a fresh strip
+    drawStrip();
+    takeShots(Array.from({ length: n }, (_, i) => i));
 });
 
-boothAgainBtn.addEventListener('click', () => { if (!boothBusy) resetStrip(); });
+boothAgainBtn.addEventListener('click', () => {
+    if (boothBusy) {                      // "stop": abandon this run
+        boothSession++;
+        if (boothResume) { boothResume(false); boothResume = null; }
+        boothCount.classList.remove('is-on'); boothCount.textContent = '';
+        boothBusy = false; boothPaused = false;
+        boothHint.textContent = 'stopped.';
+        resetStrip();
+        return;
+    }
+    resetStrip();
+    boothHint.textContent = 'ready when you are.';
+});
+
+boothSaveBtn.addEventListener('click', () => {
+    boothStrip.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `photobooth-${new Date().toISOString().slice(0, 10)}.png`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }, 'image/png');
+});
+
+// ── editing a finished strip ──
+
+document.getElementById('booth-retake').addEventListener('click', async () => {
+    if (boothSel < 0 || !boothReviewing()) return;
+    // decide which photo and what it looked like *now*: turning the camera on can sit at a
+    // permission prompt for a while, and a tap on another photo in the meantime must not change the target
+    const i = boothSel, old = boothShots[i];
+    if (!old) return;
+    if (!(await ensureCamera())) return;
+    if (!boothShots[i]) return;               // the strip was cleared while we waited
+    const away = getComputedStyle(document.querySelector('.booth-stage')).display === 'none';
+    if (away) showBoothPane('shoot');               // you need to see yourself to retake
+    takeShots([i], { color: old.color, warp: old.warp }).then(() => { boothSel = i; if (away) showBoothPane('edit'); refreshBooth(); });
+});
+document.getElementById('booth-sticker-undo').addEventListener('click', () => { boothStickers.pop(); drawStrip(); refreshBooth(); });
+
+// ── background photo: upload, then crop / rotate ──
+
+const cropEl = document.getElementById('booth-crop');
+const cropCv = document.getElementById('bgc-canvas');
+const cropZoom = document.getElementById('bgc-zoom');
+const cropAngle = document.getElementById('bgc-angle');
+const bgFile = document.getElementById('booth-bg-file');
+let cropDraft = null, cropIsNew = false, cropDrag = null;
+
+document.getElementById('booth-bg-upload').addEventListener('click', () => { bgFile.value = ''; bgFile.click(); });
+bgFile.addEventListener('change', () => {
+    const file = bgFile.files && bgFile.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+        URL.revokeObjectURL(url);
+        const k = Math.min(1, BOOTH_BG_MAX / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement('canvas');   // keep it a sensible size: a phone photo can be enormous
+        c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        openCrop({ img: c, quarter: 0, fine: 0, zoom: 1, cx: 0, cy: 0 }, true);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); boothHint.textContent = "couldn't open that file as a picture."; };
+    img.src = url;
+});
+document.getElementById('booth-bg-adjust').addEventListener('click', () => { if (boothBg) openCrop({ ...boothBg }, false); });
+document.getElementById('booth-bg-remove').addEventListener('click', () => { boothBg = null; drawStrip(); refreshBooth(); });
+
+function openCrop(bg, isNew) {
+    cropDraft = bg; cropIsNew = isNew;
+    cropEl.hidden = false;
+    // fit the preview to whatever room the page has, at the strip's own proportions
+    const g = stripGeometry(), room = document.querySelector('.booth-page');
+    const short = window.matchMedia('(max-height: 480px)').matches;   // sideways phone: the controls sit beside the picture
+    const availW = short ? Math.min(300, room.clientWidth - 290) : Math.min(420, room.clientWidth - 56);
+    const availH = short ? Math.max(100, room.clientHeight - 80) : Math.max(110, room.clientHeight - 238);
+    const k = Math.min(availW / g.w, availH / g.h);
+    cropCv.width = Math.max(48, Math.round(g.w * k)); cropCv.height = Math.max(48, Math.round(g.h * k));
+    cropZoom.value = Math.round(bg.zoom * 100); cropAngle.value = bg.fine;
+    clampBg(cropDraft, cropCv.width, cropCv.height);
+    drawCrop();
+    document.getElementById('bgc-apply').focus();
+}
+function closeCrop(apply) {
+    if (cropEl.hidden) return;
+    if (apply && cropDraft) { boothBg = cropDraft; clampBg(boothBg, cropCv.width, cropCv.height); drawStrip(); }
+    cropEl.hidden = true; cropDraft = null; cropDrag = null;
+    refreshBooth();
+}
+function drawCrop() {
+    if (!cropDraft) return;
+    const W = cropCv.width, H = cropCv.height, g = stripGeometry(), k = W / g.w, ctx = cropCv.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    paintBg(ctx, W, H, cropDraft);
+    // where the photos will land
+    ctx.save();
+    for (let i = 0; i < boothSlots(); i++) {
+        const { x, y } = slotRect(i, g);
+        ctx.fillStyle = 'rgba(255,255,255,0.28)'; ctx.fillRect(x * k, y * k, g.frameW * k, g.frameH * k);
+        ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#fff'; ctx.strokeRect(x * k + 0.5, y * k + 0.5, g.frameW * k - 1, g.frameH * k - 1);
+        ctx.lineDashOffset = 4.5; ctx.strokeStyle = '#1a1008'; ctx.strokeRect(x * k + 0.5, y * k + 0.5, g.frameW * k - 1, g.frameH * k - 1); ctx.lineDashOffset = 0;
+    }
+    ctx.restore();
+}
+cropCv.addEventListener('pointerdown', (e) => {
+    if (!cropDraft) return;
+    cropDrag = { x: e.clientX, y: e.clientY };
+    try { cropCv.setPointerCapture(e.pointerId); } catch (err) { /* works without it */ }
+});
+cropCv.addEventListener('pointermove', (e) => {
+    if (!cropDrag || !cropDraft) return;
+    const r = cropCv.getBoundingClientRect();
+    const dx = (e.clientX - cropDrag.x) * cropCv.width / r.width, dy = (e.clientY - cropDrag.y) * cropCv.height / r.height;
+    cropDrag = { x: e.clientX, y: e.clientY };
+    // the picture moves with the pointer: undo the rotation, then the scale
+    const g = bgGeom(cropCv.width, cropCv.height, cropDraft), c = Math.cos(g.th), s = Math.sin(g.th);
+    cropDraft.cx -= (dx * c + dy * s) / g.sc;
+    cropDraft.cy -= (-dx * s + dy * c) / g.sc;
+    clampBg(cropDraft, cropCv.width, cropCv.height);
+    drawCrop();
+});
+const endCropDrag = () => { cropDrag = null; };
+cropCv.addEventListener('pointerup', endCropDrag);
+cropCv.addEventListener('pointercancel', endCropDrag);
+cropCv.addEventListener('wheel', (e) => {
+    if (!cropDraft) return;
+    e.preventDefault();
+    cropZoom.value = Math.min(400, Math.max(100, +cropZoom.value + (e.deltaY < 0 ? 12 : -12)));
+    cropZoom.dispatchEvent(new Event('input'));
+}, { passive: false });
+cropZoom.addEventListener('input', () => { if (!cropDraft) return; cropDraft.zoom = +cropZoom.value / 100; clampBg(cropDraft, cropCv.width, cropCv.height); drawCrop(); });
+cropAngle.addEventListener('input', () => { if (!cropDraft) return; cropDraft.fine = +cropAngle.value; clampBg(cropDraft, cropCv.width, cropCv.height); drawCrop(); });
+const turnQuarter = (d) => { if (!cropDraft) return; cropDraft.quarter = (cropDraft.quarter + d + 4) % 4; clampBg(cropDraft, cropCv.width, cropCv.height); drawCrop(); };
+document.getElementById('bgc-left').addEventListener('click', () => turnQuarter(-1));
+document.getElementById('bgc-right').addEventListener('click', () => turnQuarter(1));
+document.getElementById('bgc-apply').addEventListener('click', () => closeCrop(true));
+document.getElementById('bgc-cancel').addEventListener('click', () => closeCrop(false));
+document.addEventListener('keydown', (e) => { if (!cropEl.hidden && e.key === 'Escape') closeCrop(false); });
 
 // show the empty layout straight away, so the strip isn't a blank gap
 resetStrip();
-
-// ── Paint ────────────────────────────────────────────────────────────────────
-//
-// A blank page to scribble on. Shapes preview live by stashing the canvas before
-// the drag and repainting it on each move, so nothing is committed until you let
-// go. Undo keeps a short stack of snapshots.
-
-const PAINT_TOOLS = [
-    { key: 'pencil', label: 'pencil' },
-    { key: 'marker', label: 'marker' },
-    { key: 'line', label: 'line' },
-    { key: 'rect', label: 'box' },
-    { key: 'ellipse', label: 'ellipse' },
-    { key: 'fill', label: 'fill' },
-    { key: 'eraser', label: 'eraser' },
-];
-
-const PAINT_COLORS = [
-    '#1a1008', '#4a6741', '#7fa06a', '#9ab97e', '#b9cba3', '#8f9c5e',
-    '#d9c47e', '#e3b9a6', '#c2554a', '#2f6f8f', '#6b4a8f', '#fffdf6',
-];
-
-const PAINT_PAPER = '#fffdf6';
-const PAINT_UNDO_LIMIT = 24;
-
-const paintCanvas = document.getElementById('paint-canvas');
-const paintCtx = paintCanvas.getContext('2d', { willReadFrequently: true });
-const paintSize = document.getElementById('paint-size');
-const paintSizeDot = document.getElementById('paint-size-dot');
-const paintCustom = document.getElementById('paint-custom');
-
-let paintTool = PAINT_TOOLS[0];
-let paintColor = '#1a1008';
-let paintUndo = [];
-let paintDrawing = false;
-let paintStart = null;
-let paintSnapshot = null;   // canvas as it was before the current drag
-
-function paintChips() {
-    const row = document.getElementById('paint-tools');
-    row.innerHTML = '';
-    PAINT_TOOLS.forEach(t => {
-        const b = document.createElement('button');
-        b.className = 'chip' + (t.key === paintTool.key ? ' active' : '');
-        b.textContent = t.label;
-        b.addEventListener('click', () => {
-            paintTool = t;
-            row.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x === b));
-        });
-        row.appendChild(b);
-    });
-
-    const sw = document.getElementById('paint-swatches');
-    sw.innerHTML = '';
-    PAINT_COLORS.forEach(c => {
-        const b = document.createElement('button');
-        b.className = 'swatch' + (c === paintColor ? ' active' : '');
-        b.style.background = c;
-        b.title = c;
-        b.addEventListener('click', () => {
-            paintColor = c;
-            paintCustom.value = c;
-            sw.querySelectorAll('.swatch').forEach(x => x.classList.toggle('active', x === b));
-        });
-        sw.appendChild(b);
-    });
-}
-paintChips();
-
-paintCustom.addEventListener('input', () => {
-    paintColor = paintCustom.value;
-    document.querySelectorAll('#paint-swatches .swatch').forEach(x => x.classList.remove('active'));
-});
-
-function paintBrushSize() { return +paintSize.value; }
-function showSizeDot() {
-    const d = Math.max(3, Math.min(paintBrushSize(), 34));
-    paintSizeDot.style.width = paintSizeDot.style.height = d + 'px';
-    paintSizeDot.style.background = paintTool.key === 'eraser' ? PAINT_PAPER : paintColor;
-}
-paintSize.addEventListener('input', showSizeDot);
-
-// ── the sheet ──
-
-function paintResize() {
-    const stage = paintCanvas.parentElement;
-    const r = stage.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
-    if (paintCanvas.width === w && paintCanvas.height === h) return;
-    // keep what's already drawn when the sheet changes size
-    const old = paintCanvas.width ? document.createElement('canvas') : null;
-    if (old) {
-        old.width = paintCanvas.width;
-        old.height = paintCanvas.height;
-        old.getContext('2d').drawImage(paintCanvas, 0, 0);
-    }
-    paintCanvas.width = w;
-    paintCanvas.height = h;
-    paintCtx.fillStyle = PAINT_PAPER;
-    paintCtx.fillRect(0, 0, w, h);
-    if (old) paintCtx.drawImage(old, 0, 0, old.width, old.height, 0, 0, w, h);
-    paintCtx.lineCap = 'round';
-    paintCtx.lineJoin = 'round';
-}
-
-function paintPoint(e) {
-    const r = paintCanvas.getBoundingClientRect();
-    return {
-        x: (e.clientX - r.left) * (paintCanvas.width / r.width),
-        y: (e.clientY - r.top) * (paintCanvas.height / r.height),
-    };
-}
-
-function pushUndo() {
-    try {
-        paintUndo.push(paintCtx.getImageData(0, 0, paintCanvas.width, paintCanvas.height));
-        if (paintUndo.length > PAINT_UNDO_LIMIT) paintUndo.shift();
-    } catch (err) { /* nothing to undo to is better than breaking the tool */ }
-}
-
-function strokeStyleFor() {
-    const dpr = paintCanvas.width / paintCanvas.getBoundingClientRect().width || 1;
-    paintCtx.lineWidth = paintBrushSize() * dpr;
-    paintCtx.strokeStyle = paintTool.key === 'eraser' ? PAINT_PAPER : paintColor;
-    paintCtx.fillStyle = paintCtx.strokeStyle;
-    paintCtx.globalAlpha = paintTool.key === 'marker' ? 0.35 : 1;
-}
-
-// flood fill from a point, four-way, with a small tolerance
-function floodFill(x, y, hex) {
-    const { width: w, height: h } = paintCanvas;
-    x = Math.floor(x); y = Math.floor(y);
-    if (x < 0 || y < 0 || x >= w || y >= h) return;
-    const img = paintCtx.getImageData(0, 0, w, h);
-    const px = img.data;
-    const at = (i, j) => (j * w + i) * 4;
-    const start = at(x, y);
-    const target = [px[start], px[start + 1], px[start + 2], px[start + 3]];
-    const m = hex.replace('#', '');
-    const fill = [parseInt(m.slice(0, 2), 16), parseInt(m.slice(2, 4), 16), parseInt(m.slice(4, 6), 16), 255];
-    const same = (p, q) => Math.abs(px[p] - q[0]) < 24 && Math.abs(px[p + 1] - q[1]) < 24 &&
-                           Math.abs(px[p + 2] - q[2]) < 24 && Math.abs(px[p + 3] - q[3]) < 24;
-    if (same(start, fill)) return;
-    const stack = [[x, y]];
-    while (stack.length) {
-        const [i, j] = stack.pop();
-        if (i < 0 || j < 0 || i >= w || j >= h) continue;
-        const p = at(i, j);
-        if (!same(p, target)) continue;
-        px[p] = fill[0]; px[p + 1] = fill[1]; px[p + 2] = fill[2]; px[p + 3] = 255;
-        stack.push([i + 1, j], [i - 1, j], [i, j + 1], [i, j - 1]);
-    }
-    paintCtx.putImageData(img, 0, 0);
-}
-
-function drawShape(from, to) {
-    strokeStyleFor();
-    paintCtx.beginPath();
-    if (paintTool.key === 'line') {
-        paintCtx.moveTo(from.x, from.y);
-        paintCtx.lineTo(to.x, to.y);
-    } else if (paintTool.key === 'rect') {
-        paintCtx.rect(from.x, from.y, to.x - from.x, to.y - from.y);
-    } else if (paintTool.key === 'ellipse') {
-        paintCtx.ellipse((from.x + to.x) / 2, (from.y + to.y) / 2,
-            Math.abs(to.x - from.x) / 2, Math.abs(to.y - from.y) / 2, 0, 0, Math.PI * 2);
-    }
-    paintCtx.stroke();
-    paintCtx.globalAlpha = 1;
-}
-
-paintCanvas.addEventListener('pointerdown', (e) => {
-    paintResize();
-    const p = paintPoint(e);
-    pushUndo();
-    if (paintTool.key === 'fill') {
-        floodFill(p.x, p.y, paintTool.key === 'eraser' ? PAINT_PAPER : paintColor);
-        return;
-    }
-    paintDrawing = true;
-    paintStart = p;
-    try { paintCanvas.setPointerCapture(e.pointerId); } catch (err) { /* keep drawing without capture */ }
-    if (paintTool.key === 'pencil' || paintTool.key === 'marker' || paintTool.key === 'eraser') {
-        strokeStyleFor();
-        paintCtx.beginPath();
-        paintCtx.moveTo(p.x, p.y);
-        paintCtx.lineTo(p.x + 0.01, p.y); // a click alone still leaves a dot
-        paintCtx.stroke();
-        paintCtx.globalAlpha = 1;
-    } else {
-        paintSnapshot = paintCtx.getImageData(0, 0, paintCanvas.width, paintCanvas.height);
-    }
-});
-
-paintCanvas.addEventListener('pointermove', (e) => {
-    if (!paintDrawing) return;
-    const p = paintPoint(e);
-    if (paintTool.key === 'pencil' || paintTool.key === 'marker' || paintTool.key === 'eraser') {
-        strokeStyleFor();
-        paintCtx.lineTo(p.x, p.y);
-        paintCtx.stroke();
-        paintCtx.globalAlpha = 1;
-    } else if (paintSnapshot) {
-        paintCtx.putImageData(paintSnapshot, 0, 0); // live preview, not yet committed
-        drawShape(paintStart, p);
-    }
-});
-
-function endStroke(e) {
-    if (!paintDrawing) return;
-    if (paintSnapshot && e) {
-        paintCtx.putImageData(paintSnapshot, 0, 0);
-        drawShape(paintStart, paintPoint(e));
-    }
-    paintDrawing = false;
-    paintSnapshot = null;
-    paintCtx.globalAlpha = 1;
-}
-paintCanvas.addEventListener('pointerup', endStroke);
-paintCanvas.addEventListener('pointercancel', () => { paintDrawing = false; paintSnapshot = null; });
-
-document.getElementById('paint-undo').addEventListener('click', () => {
-    const last = paintUndo.pop();
-    if (last) paintCtx.putImageData(last, 0, 0);
-});
-
-document.getElementById('paint-clear').addEventListener('click', () => {
-    pushUndo();
-    paintCtx.fillStyle = PAINT_PAPER;
-    paintCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
-});
-
-document.getElementById('paint-save').addEventListener('click', (e) => {
-    e.currentTarget.href = paintCanvas.toDataURL('image/png');
-});
-
-// the sheet only has a size once its page is open
-document.addEventListener('pagechange', (e) => {
-    if (e.detail.toy === 'paint') afterLayout(() => { paintResize(); showSizeDot(); });
-});
-if (window.ResizeObserver) new ResizeObserver(() => paintResize()).observe(paintCanvas.parentElement);
+boothHint.textContent = 'turn on your camera to begin.';
 
 // toy cards can carry a drawing; until one exists, drop the slot so the card
 // doesn't show a broken image. Images load while the HTML parses, so one may
@@ -1704,15 +1955,6 @@ function buildAll() {
     buildGallery();
     refreshPageNumbers();
 }
-
-// Runs fn once layout has settled. rAF is the good path, but it's paused in
-// background tabs — without the timer, a page opened in one would never build.
-const afterLayout = (fn) => {
-    let ran = false;
-    const once = () => { if (!ran) { ran = true; fn(); } };
-    requestAnimationFrame(() => requestAnimationFrame(once));
-    setTimeout(once, 150);
-};
 
 // rebuilds the generated pages, keeping you on the same item / page.
 // `verify` re-runs the build once layout has settled: the first pass can measure

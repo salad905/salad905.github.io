@@ -1,0 +1,244 @@
+/* Paint: a replica of the classic Windows 98 Paint, for the playground tab.
+   Everything below is scoped to .mp-* / #mspaint so it can't leak into the notebook. */
+
+/* the notebook page that holds the window: a slim header, then the window fills the rest */
+.paint-page { display: flex; flex-direction: column; overflow: hidden; }
+.paint-head { justify-content: flex-end; margin-bottom: 8px; flex-shrink: 0; }
+.mp-root { flex: 1 1 auto; min-height: 0; display: flex; padding: 0 5px 5px 0; }
+
+.mp-window {
+  --face: #c0c0c0; --hi: #ffffff; --light: #dfdfdf; --shade: #808080; --dark: #0a0a0a; --navy: #000080;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  background: var(--face);
+  color: #000;
+  font: 11px/1.25 Tahoma, "MS Sans Serif", "Segoe UI", Verdana, Arial, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  box-shadow:
+    inset -1px -1px var(--dark), inset 1px 1px var(--light),
+    inset -2px -2px var(--shade), inset 2px 2px var(--hi),
+    4px 5px 0 rgba(26, 16, 8, 0.5);
+}
+.mp-window button { font: inherit; color: inherit; cursor: default; }
+.mp-window [hidden] { display: none !important; }
+
+/* ── title bar ── */
+.mp-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+  padding: 1px 2px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: #fff;
+  font-weight: 700;
+}
+.mp-appicon { width: 16px; height: 16px; image-rendering: pixelated; flex-shrink: 0; }
+.mp-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-tbtns { display: flex; gap: 2px; margin-left: 2px; }
+.mp-tb {
+  width: 16px; height: 14px; padding: 0; border: 0; position: relative;
+  background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light);
+}
+.mp-tb:active { box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--dark), inset -2px -2px var(--light), inset 2px 2px var(--shade); }
+.mp-tb i { position: absolute; display: block; background: #000; }
+.mp-min i { left: 4px; bottom: 3px; width: 6px; height: 2px; }
+.mp-max i { left: 3px; top: 2px; width: 8px; height: 8px; background: none; border: 1px solid #000; border-top-width: 2px; }
+.mp-close i { left: 3px; top: 3px; width: 8px; height: 8px; background:
+  linear-gradient(45deg, transparent 42%, #000 42% 58%, transparent 58%),
+  linear-gradient(-45deg, transparent 42%, #000 42% 58%, transparent 58%); }
+
+/* ── menu bar ── */
+.mp-menubar { display: flex; height: 19px; padding: 1px 0; flex-shrink: 0; position: relative; }
+.mp-mi { padding: 2px 6px; border: 0; background: none; line-height: 14px; }
+.mp-mi u { text-decoration: underline; }
+.mp-mi:hover, .mp-mi.open { box-shadow: inset -1px -1px var(--shade), inset 1px 1px var(--hi); }
+.mp-mi.open { box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); padding: 3px 5px 1px 7px; }
+
+.mp-menu {
+  position: absolute; z-index: 40; padding: 3px; min-width: 150px;
+  background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--light), inset -2px -2px var(--shade), inset 2px 2px var(--hi), 3px 3px 0 rgba(0,0,0,0.3);
+}
+.mp-it {
+  position: relative; display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 3px 22px 3px 22px; border: 0; background: none; text-align: left; white-space: nowrap;
+}
+.mp-it .mp-key { margin-left: auto; padding-left: 26px; }
+.mp-it .mp-check { position: absolute; left: 7px; top: 3px; }
+.mp-it .mp-arrow { position: absolute; right: 7px; }
+.mp-it:hover:not(.dis), .mp-it.hot:not(.dis) { background: var(--navy); color: #fff; }
+.mp-it.dis { color: var(--shade); text-shadow: 1px 1px 0 var(--hi); }
+.mp-it.dis:hover { background: none; color: var(--shade); }
+.mp-sep { height: 0; margin: 3px 1px; border-top: 1px solid var(--shade); border-bottom: 1px solid var(--hi); }
+
+/* ── text toolbar ── */
+.mp-textbar { display: flex; align-items: center; gap: 4px; padding: 3px 4px; flex-shrink: 0; flex-wrap: wrap;
+  box-shadow: inset -1px -1px var(--shade), inset 1px 1px var(--hi); }
+.mp-textbar select { font: inherit; height: 20px; background: #fff; border: 2px inset var(--shade); border-width: 2px; }
+.mp-fbtn { width: 22px; height: 20px; padding: 0; border: 0; background: var(--face); font-weight: 700;
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light); }
+.mp-fbtn.on { box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--dark), inset -2px -2px var(--light), inset 2px 2px var(--shade);
+  background: conic-gradient(#fff 25%, #c0c0c0 0 50%, #fff 0 75%, #c0c0c0 0) 0 0 / 2px 2px; }
+
+/* ── middle: toolbox + workspace ── */
+.mp-main { flex: 1 1 auto; min-height: 0; display: flex; gap: 3px; margin-top: 2px; position: relative; }
+
+.mp-toolbox { width: 57px; flex-shrink: 0; padding: 3px 2px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.mp-tools { display: grid; grid-template-columns: 26px 26px; justify-content: center; }
+.mp-tool {
+  width: 26px; height: 26px; padding: 0; border: 0; position: relative; background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light);
+}
+.mp-tool canvas, .mp-tool img { position: absolute; left: 5px; top: 5px; width: 16px; height: 16px; image-rendering: pixelated; pointer-events: none; }
+.mp-tool.on {
+  box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--dark), inset -2px -2px var(--light), inset 2px 2px var(--shade);
+  background: conic-gradient(#fff 25%, #c0c0c0 0 50%, #fff 0 75%, #c0c0c0 0) 0 0 / 2px 2px;
+}
+.mp-tool.on canvas, .mp-tool.on img { left: 6px; top: 6px; }
+
+.mp-options {
+  min-height: 66px; padding: 2px; display: flex; flex-direction: column; align-items: stretch; gap: 1px; flex-shrink: 0;
+  box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade), inset -2px -2px var(--light), inset 2px 2px var(--dark);
+}
+.mp-options[data-kind="brush"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.mp-opt { display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: var(--face); min-height: 13px; }
+.mp-opt.on { background: var(--navy); color: #fff; }
+.mp-opt canvas { image-rendering: pixelated; display: block; }
+
+/* ── workspace ── */
+.mp-work {
+  flex: 1; min-width: 0; min-height: 0; overflow: auto; position: relative;
+  background: var(--shade); padding: 5px 9px 9px 5px;
+  box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade), inset -2px -2px var(--light), inset 2px 2px var(--dark);
+}
+.mp-canvaswrap { position: relative; margin: 0; background: #fff; touch-action: none; }
+.mp-canvaswrap canvas { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
+#mp-ov { touch-action: none; cursor: crosshair; }
+.mp-canvaswrap[data-tool="zoom"] #mp-ov { cursor: zoom-in; }
+.mp-canvaswrap[data-tool="text"] #mp-ov { cursor: text; }
+.mp-canvaswrap[data-tool="pick"] #mp-ov { cursor: copy; }
+.mp-canvaswrap[data-tool="fill"] #mp-ov { cursor: cell; }
+.mp-canvaswrap.over-sel #mp-ov { cursor: move; }
+.mp-grid { position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(to right, rgba(128,128,128,0.55) 1px, transparent 1px), linear-gradient(to bottom, rgba(128,128,128,0.55) 1px, transparent 1px); }
+
+.mp-handle { position: absolute; width: 3px; height: 3px; background: var(--navy); z-index: 5; touch-action: none; }
+.mp-handle::after { content: ''; position: absolute; inset: -6px; } /* a fatter target than the 3px square */
+.mp-handle.h-e { right: -5px; top: calc(50% - 1px); cursor: ew-resize; }
+.mp-handle.h-s { bottom: -5px; left: calc(50% - 1px); cursor: ns-resize; }
+.mp-handle.h-se { right: -5px; bottom: -5px; cursor: nwse-resize; }
+.mp-ghost { position: absolute; left: 0; top: 0; border: 1px dotted #000; pointer-events: none; z-index: 4; outline: 1px dotted #fff; }
+
+.mp-textarea {
+  position: absolute; z-index: 6; margin: 0; padding: 0; border: 1px dashed #000; outline: 1px dashed #fff; resize: none; overflow: hidden;
+  background: transparent; white-space: pre; user-select: text; -webkit-user-select: text; cursor: text;
+}
+
+.mp-thumb { position: absolute; right: 18px; top: 8px; z-index: 12; padding: 2px; background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light), 2px 2px 0 rgba(0,0,0,0.3); }
+.mp-thumb canvas { display: block; background: #fff; box-shadow: inset 0 0 0 1px var(--shade); }
+
+/* Win98-ish scrollbars (WebKit/Blink; Firefox keeps its own) */
+.mp-work::-webkit-scrollbar { width: 16px; height: 16px; }
+.mp-work::-webkit-scrollbar-track { background: conic-gradient(#fff 25%, #c0c0c0 0 50%, #fff 0 75%, #c0c0c0 0) 0 0 / 2px 2px; }
+.mp-work::-webkit-scrollbar-thumb { background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light); }
+.mp-work::-webkit-scrollbar-button:single-button { display: block; width: 16px; height: 16px; background-color: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light);
+  background-repeat: no-repeat; background-position: center; }
+.mp-work::-webkit-scrollbar-button:single-button:vertical:decrement { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M4 10h8L8 5z'/%3E%3C/svg%3E"); }
+.mp-work::-webkit-scrollbar-button:single-button:vertical:increment { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M4 6h8L8 11z'/%3E%3C/svg%3E"); }
+.mp-work::-webkit-scrollbar-button:single-button:horizontal:decrement { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M10 4v8L5 8z'/%3E%3C/svg%3E"); }
+.mp-work::-webkit-scrollbar-button:single-button:horizontal:increment { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M6 4v8l5-4z'/%3E%3C/svg%3E"); }
+.mp-work::-webkit-scrollbar-corner { background: var(--face); }
+
+/* ── colour box ── */
+.mp-colorbox { display: flex; gap: 6px; padding: 4px 3px 3px; flex-shrink: 0; align-items: center; margin-top: 2px; }
+.mp-cur { position: relative; width: 31px; height: 31px; flex-shrink: 0; background: var(--face);
+  box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade), inset -2px -2px var(--light), inset 2px 2px var(--dark); }
+.mp-cur-bg, .mp-cur-fg { position: absolute; width: 14px; height: 14px; box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); border: 1px solid #fff; border-color: var(--face); }
+.mp-cur-bg { right: 4px; bottom: 4px; background: #fff; box-shadow: 0 0 0 1px #000; }
+.mp-cur-fg { left: 4px; top: 4px; background: #000; box-shadow: 0 0 0 1px #000; z-index: 1; }
+.mp-palette { display: grid; grid-template-columns: repeat(14, 16px); grid-auto-rows: 16px; gap: 0; }
+.mp-sw { width: 16px; height: 16px; padding: 0; border: 0; background-clip: content-box;
+  border: 2px solid transparent; box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); box-sizing: border-box; }
+.mp-sw { position: relative; }
+.mp-sw::before { content: ''; position: absolute; inset: 2px; background: var(--c); box-shadow: 0 0 0 1px rgba(0,0,0,0.0); }
+
+/* ── status bar ── */
+.mp-status { display: grid; grid-template-columns: 1fr 96px 96px; gap: 2px; padding-top: 2px; flex-shrink: 0; }
+.mp-status span { padding: 2px 4px; min-height: 18px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); }
+
+/* ── dialogs ── */
+.mp-modal { position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.12); }
+.mp-dialog { max-width: calc(100% - 12px); max-height: calc(100% - 12px); display: flex; flex-direction: column; padding: 3px; background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--light), inset -2px -2px var(--shade), inset 2px 2px var(--hi), 4px 5px 0 rgba(0,0,0,0.4); }
+.mp-dialog .mp-titlebar { cursor: default; }
+.mp-dbody { padding: 10px 10px 4px; overflow: auto; line-height: 1.4; }
+.mp-dbody p { margin: 0 0 8px; }
+.mp-dbtns { display: flex; gap: 6px; justify-content: center; padding: 8px 10px 8px; flex-wrap: wrap; }
+.mp-btn { min-width: 75px; height: 23px; padding: 0 10px; border: 0; background: var(--face);
+  box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light); }
+.mp-btn.def { box-shadow: 0 0 0 1px #000, inset -1px -1px var(--dark), inset 1px 1px var(--hi), inset -2px -2px var(--shade), inset 2px 2px var(--light); }
+.mp-btn:active { box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--dark), inset -2px -2px var(--light), inset 2px 2px var(--shade); }
+.mp-btn:focus-visible, .mp-tool:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+.mp-group { margin: 0 0 8px; padding: 6px 8px 6px; border: 1px solid var(--shade); box-shadow: 1px 1px 0 var(--hi), inset 1px 1px 0 var(--hi); }
+.mp-group > legend, .mp-group > .lg { padding: 0 3px; margin: -13px 0 4px; background: var(--face); width: fit-content; }
+.mp-group label { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.mp-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+.mp-row > span:first-child { min-width: 62px; }
+.mp-dbody input[type="text"], .mp-dbody input[type="number"] { font: inherit; height: 21px; padding: 1px 3px; background: #fff; border: 2px solid; border-color: var(--shade) var(--hi) var(--hi) var(--shade); width: 80px; user-select: text; -webkit-user-select: text; }
+.mp-dbody input[type="text"] { width: 190px; }
+.mp-basic { display: grid; grid-template-columns: repeat(8, 20px); gap: 3px; margin: 4px 0 8px; }
+.mp-basic button { width: 20px; height: 18px; padding: 0; border: 0; background: var(--c); box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); }
+.mp-basic button.on { outline: 2px solid #000; outline-offset: 1px; }
+.mp-preview { width: 62px; height: 40px; background: var(--c); box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); }
+.mp-helptext { max-height: 220px; overflow: auto; padding: 6px 8px; background: #fff; box-shadow: inset -1px -1px var(--hi), inset 1px 1px var(--shade); user-select: text; -webkit-user-select: text; }
+.mp-viewbmp { background: #000; align-items: flex-start; justify-content: flex-start; overflow: auto; z-index: 70; }
+.mp-viewbmp canvas { image-rendering: pixelated; margin: auto; }
+
+/* panels the user switched off from the View menu */
+.mp-window.no-toolbox .mp-toolbox,
+.mp-window.no-colorbox .mp-colorbox,
+.mp-window.no-status .mp-status { display: none; }
+
+/* ── small screens: tighten, don't change ── */
+@media (max-width: 760px) {
+  .mp-root { padding: 0 3px 4px 0; }
+  .mp-window { padding: 2px; }
+  .mp-toolbox { width: 55px; }
+  .mp-status { grid-template-columns: 1fr 64px 64px; }
+  /* the help line wraps instead of being cut off; nobody has room for the tooltip-sized text otherwise */
+  .mp-status span:first-child { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; }
+  .mp-colorbox { gap: 4px; }
+  /* the palette's swatches grow with the screen: as big as fit the window, 13-19px */
+  .mp-window { --sw: clamp(13px, calc((100vw - 140px) / 14), 19px); }
+  .mp-palette { grid-template-columns: repeat(14, var(--sw)); grid-auto-rows: var(--sw); }
+  .mp-sw { width: var(--sw); height: var(--sw); }
+  .mp-dbody { padding: 8px 8px 2px; }
+}
+
+/* the narrowest phones: slim the swatches so the whole palette fits the window */
+@media (max-width: 360px) {
+  .mp-cur { width: 27px; height: 27px; }
+  .mp-colorbox { gap: 4px; padding: 3px 2px 2px; }
+}
+
+/* a fingertip rather than a mouse, and room to spare: bigger tool buttons */
+@media (pointer: coarse) and (min-height: 700px) {
+  .mp-toolbox { width: 69px; }
+  .mp-tools { grid-template-columns: 30px 30px; }
+  .mp-tool { width: 30px; height: 30px; }
+  .mp-tool canvas, .mp-tool img { left: 7px; top: 7px; }
+  .mp-tool.on canvas, .mp-tool.on img { left: 8px; top: 8px; }
+}

@@ -22,6 +22,9 @@
 
 * { box-sizing: border-box; }
 
+/* Anything with the hidden attribute stays hidden, whatever display its class gives it */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   height: 100vh;
@@ -204,7 +207,7 @@ a { color: var(--forest); }
   transition: transform 0.15s ease, filter 0.15s ease;
   transform: translateX(0);
 }
-.tab-btn:hover { transform: translateX(3px); filter: none; }
+@media (hover: hover) { .tab-btn:hover { transform: translateX(3px); filter: none; } }
 .tab-btn.active { transform: translateX(7px); filter: none; }
 
 /* ── Page furniture: heading row, view switch, footer ────────────── */
@@ -274,7 +277,7 @@ a { color: var(--forest); }
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.tool-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); background: var(--sage); }
+@media (hover: hover) { .tool-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); background: var(--sage); } }
 
 .page-foot {
   flex: 0 0 auto;
@@ -413,7 +416,7 @@ a { color: var(--forest); }
   display: inline-block;
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.social-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+@media (hover: hover) { .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); } }
 
 /* padding leaves room for the stars, which sit just outside the photo frame */
 .about-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 14px 16px; }
@@ -457,7 +460,7 @@ a { color: var(--forest); }
   color: var(--ink);
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.truth-option:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+@media (hover: hover) { .truth-option:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); } }
 .truth-option:disabled { cursor: default; }
 .truth-option.is-lie { background: var(--sage); }
 .truth-option.is-wrong-pick { background: #e3c9c9; }
@@ -639,7 +642,7 @@ a { color: var(--forest); }
   width: 100%;
   transition: transform 0.15s ease;
 }
-.project-card:hover { transform: translateY(-3px); }
+@media (hover: hover) { .project-card:hover { transform: translateY(-3px); } }
 
 .sticky-note {
   position: relative;
@@ -655,7 +658,7 @@ a { color: var(--forest); }
   box-shadow: 3px 3px 0 var(--ink);
   transition: box-shadow 0.15s ease;
 }
-.project-card:hover .sticky-note { box-shadow: 5px 5px 0 var(--ink); }
+@media (hover: hover) { .project-card:hover .sticky-note { box-shadow: 5px 5px 0 var(--ink); } }
 /* turned-up bottom corner */
 .sticky-note::after {
   content: '';
@@ -730,7 +733,7 @@ a { color: var(--forest); }
   font-family: var(--cs);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.photo-card:hover { transform: scale(1.05); box-shadow: 4px 4px 0 var(--accent); }
+@media (hover: hover) { .photo-card:hover { transform: scale(1.05); box-shadow: 4px 4px 0 var(--accent); } }
 .photo-thumb { display: block; background: #d0c8b8; aspect-ratio: 4 / 3; overflow: hidden; }
 .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-card-caption {
@@ -799,7 +802,7 @@ a { color: var(--forest); }
   box-shadow: 3px 3px 0 var(--ink);
   transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
 }
-.colors-action-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); background: var(--sage); }
+@media (hover: hover) { .colors-action-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); background: var(--sage); } }
 
 .colors-workspace {
   display: none;
@@ -830,6 +833,8 @@ a { color: var(--forest); }
   position: absolute;
   pointer-events: none;
 }
+/* the live camera is a mirror, like every selfie view; script.js flips the ring to match */
+.colors-stage video { transform: scaleX(-1); }
 .colors-dim {
   position: absolute;
   inset: 0;
@@ -868,7 +873,7 @@ a { color: var(--forest); }
   box-shadow: 2px 2px 0 var(--ink);
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.colors-small-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+@media (hover: hover) { .colors-small-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); } }
 
 .colors-controls {
   width: 320px;
@@ -972,7 +977,59 @@ a { color: var(--forest); }
   margin: 2px 0 10px;
   flex-shrink: 0;
 }
-.booth-group { display: flex; align-items: center; gap: 7px; }
+.booth-group { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 7px; }
+
+/* top row: the filter chips (always reachable) and the shoot / look / edit tabs */
+.booth-topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px 14px; flex-wrap: wrap; margin: 2px 0 6px; flex-shrink: 0; }
+.booth-filtergroup { flex: 1 1 260px; min-width: 0; align-items: flex-start; }
+.booth-filtergroup .booth-group-label { padding-top: 3px; }
+.booth-lockhint { margin: 0 0 6px; font-family: var(--cs); font-size: 12.5px; color: #8a4b3a; flex-shrink: 0; }
+.booth-pane { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 18px; margin: 0 0 8px; flex-shrink: 0; }
+.booth-pane[hidden] { display: none; }
+.booth-input {
+  font-family: var(--cs); font-weight: 700; font-size: 13px; width: 188px; padding: 2px 8px;
+  border: 2px solid var(--ink); border-radius: 6px; background: var(--cream); color: var(--ink);
+}
+.booth-input:focus-visible { outline: 2px dashed var(--forest); outline-offset: 2px; }
+.booth-count-mini { font-family: var(--cs); font-size: 11.5px; color: #7a6a58; min-width: 34px; }
+.booth-check { display: flex; align-items: center; gap: 6px; font-family: var(--cs); font-weight: 700; font-size: 12.5px; }
+.booth-check input { accent-color: var(--forest); }
+.booth-pickinfo { flex: 1 0 100%; font-family: var(--cs); font-size: 12.5px; color: #5a4a38; }
+.tool-btn.mini { font-size: 12px; padding: 2px 9px; }
+.tool-btn.mini[disabled] { opacity: 0.45; cursor: default; box-shadow: 2px 2px 0 var(--ink); transform: none; }
+.chip-row .sticker-chip { font-size: 17px; padding: 0 10px; line-height: 1.3; }
+.booth-strip-wrap { position: relative; }
+
+/* each kind of filter only shows on its own tab: mirrors while shooting, colours afterwards */
+.booth-page[data-pane="shoot"] .f-color, .booth-page[data-pane="edit"] .f-warp { display: none !important; }
+.booth-page[data-pane="shoot"] .lbl-color, .booth-page[data-pane="edit"] .lbl-warp { display: none !important; }
+
+/* editing the strip doesn't need the camera: its view goes away (on every screen size) and the strip takes the room */
+.booth-page[data-pane="edit"] .booth-stage { display: none; }
+.booth-page[data-pane="edit"] .booth-side { flex: 1 1 auto; }
+
+/* the camera button is the main one only while the camera is off */
+#booth-start.is-on { background: var(--cream); }
+.chip-row .chip.is-off { opacity: 0.38; cursor: default; }
+.chip-row .chip.is-off:hover { background: var(--paper); }
+
+/* the crop dialog: covers the booth page, card in the middle */
+.booth-crop { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(255, 253, 246, 0.9); }
+.booth-crop[hidden] { display: none; }
+.booth-crop-card {
+  display: flex; flex-direction: column; align-items: center; gap: 7px; max-width: 100%;
+  padding: 11px 14px 12px; background: var(--cream); border: 2.5px solid var(--ink); box-shadow: 4px 5px 0 var(--ink);
+}
+.booth-crop-title { font-family: var(--cs); font-weight: 700; font-size: 17px; }
+#bgc-canvas { display: block; border: 2px solid var(--ink); background: #ddd; touch-action: none; cursor: grab; max-width: 100%; }
+#bgc-canvas:active { cursor: grabbing; }
+.booth-crop-row { display: flex; align-items: center; gap: 8px; font-family: var(--cs); font-weight: 700; font-size: 12.5px; }
+.booth-crop-row > span { min-width: 34px; }
+.booth-crop-row input[type="range"] { width: 150px; accent-color: var(--forest); }
+.booth-crop-hint { margin: 0; font-family: var(--cs); font-size: 12px; color: #5a4a38; text-align: center; }
+.booth-crop-btns { display: flex; gap: 8px; }
+.booth-pick { position: absolute; z-index: 3; pointer-events: none; border: 3px dashed var(--forest); outline: 2px solid #fff; }
+#booth-strip.is-placing { cursor: crosshair; }
 .booth-group-label {
   font-family: var(--cs);
   font-weight: 700;
@@ -994,7 +1051,7 @@ a { color: var(--forest); }
   cursor: pointer;
   box-shadow: none;
 }
-.chip-row .chip:hover { background: #eef3e2; }
+@media (hover: hover) { .chip-row .chip:hover { background: #eef3e2; } }
 .chip-row .chip.active { background: var(--sage); box-shadow: 2px 2px 0 var(--ink); }
 /* the layout can't change once a strip is under way */
 .chip-row.is-locked { opacity: 0.45; }
@@ -1045,6 +1102,8 @@ a { color: var(--forest); }
   color: #6b6052;
 }
 .booth-frame.is-live .booth-placeholder { display: none; }
+.booth-placeholder { border: 0; background: none; cursor: pointer; padding: 6px; width: 100%; height: 100%; text-align: center; line-height: 1.3; font-family: var(--cs); }
+.booth-placeholder:hover { color: var(--ink); }
 
 .booth-count {
   position: absolute;
@@ -1101,7 +1160,7 @@ a { color: var(--forest); }
 }
 #booth-strip.is-ready { display: block; }
 .booth-strip-empty { font-family: var(--cs); font-size: 13px; color: #7a6a58; text-align: center; margin: 0; }
-#booth-strip.is-ready + .booth-strip-empty { display: none; }
+#booth-strip.is-ready ~ .booth-strip-empty { display: none; }
 
 .booth-buttons { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; flex-shrink: 0; }
 .booth-buttons .tool-btn { text-decoration: none; text-align: center; }
@@ -1118,12 +1177,34 @@ a { color: var(--forest); }
 }
 
 @media (max-width: 760px) {
-  .booth-controls { gap: 2px 12px; margin-bottom: 6px; }
-  .booth-group { gap: 5px; }
-  .booth { flex-direction: column; gap: 10px; }
-  .booth-stage { flex: 0 0 auto; height: 38vh; }
-  .booth-side { flex: 1 1 auto; flex-direction: column-reverse; justify-content: flex-end; }
-  .booth-strip-wrap { max-height: 30vh; }
+  /* Phone: the camera and the strip sit side by side, buttons underneath, so
+     both stay on screen. The controls above are squeezed to match. */
+  .booth-page .page-title { font-size: 24px; }
+  .booth-page .page-head { margin-bottom: 4px; gap: 2px 8px; }   /* may wrap to two rows on the narrowest phones */
+  .booth-page .back-btn { font-size: 11.5px; padding: 3px 9px; }
+  .booth-topbar { gap: 4px 8px; margin-bottom: 4px; }
+  .booth-filtergroup { flex-basis: 100%; }
+  .booth-filtergroup .booth-group-label { display: none; }
+  .booth-topbar .switch { order: -2; }          /* shoot / edit first, then the section bar under it */
+  .booth-group { gap: 4px; }
+  .booth-group-label { font-size: 10.5px; }
+  .booth-pane { gap: 3px 10px; margin-bottom: 4px; }
+  .chip-row { gap: 3px; }
+  .chip-row .chip { font-size: 11px; padding: 1px 7px 2px; }
+  .booth-input { width: 150px; }
+  .booth { display: grid; grid-template-columns: minmax(0, 1fr) 31%; grid-template-rows: minmax(0, 1fr) auto auto; grid-template-areas: "stage strip" "btns btns" "hint hint"; gap: 4px 8px; padding-bottom: 0; }
+  .booth.is-wide { grid-template-columns: minmax(0, 1fr) 40%; }
+  /* the camera's paper mat is slimmer on a phone, so the picture gets the room */
+  .booth-frame { width: min(100cqw - 14px, (100cqh - 14px) * 4 / 3); height: min(100cqh - 14px, (100cqw - 14px) * 3 / 4); box-shadow: 0 0 0 5px var(--booth-paper, var(--paper)), 0 0 0 7px var(--ink), 3px 4px 0 var(--ink); }
+  /* editing the strip doesn't need the camera: on a phone the strip takes its place */
+  .booth-page[data-pane="edit"] .booth,
+  .booth-page[data-pane="edit"] .booth.is-wide { grid-template-columns: minmax(0, 1fr); grid-template-areas: "strip" "btns" "hint"; }
+  .booth-page[data-pane="edit"] .booth-stage { display: none; }
+  .booth-side { display: contents; }
+  .booth-stage { grid-area: stage; height: auto; flex: none; }
+  .booth-strip-wrap { grid-area: strip; max-height: none; min-height: 0; }
+  .booth-buttons { grid-area: btns; }
+  .booth-hint { grid-area: hint; font-size: 11.5px; min-height: 0; }
 }
 
 /* ── Playground shelf ────────────────────────────────────────────── */
@@ -1135,125 +1216,60 @@ a { color: var(--forest); }
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--sage) transparent;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  grid-auto-rows: min-content;
-  gap: 14px;
-  align-content: start;
-  padding: 4px 10px 10px 2px;
-}
-.toy-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 14px 15px 16px;
-  text-align: left;
-  cursor: pointer;
-  background: var(--note);
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 0 10px 10px;
 }
-.toy-card:hover { transform: translateY(-3px); box-shadow: 5px 5px 0 var(--ink); }
+/* One row of drawings. margin:auto centres it both ways in the page, and if the
+   row ever outgrows the page it simply scrolls instead of being cut off. */
+.toy-row {
+  margin: auto;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;   /* equal-height drawing slots, so every caption lines up */
+  gap: 26px clamp(16px, 4vw, 56px);
+}
+.toy-card {
+  flex: 1 1 0;       /* the three share the row equally, up to a cap, so it never wraps */
+  max-width: 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 4px 8px 6px;
+  text-align: center;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transition: transform 0.15s ease;
+}
+@media (hover: hover) { .toy-card:hover { transform: translateY(-4px); } }
 /* A standing drawing at the top of each card. If the file isn't there yet the
    slot is removed in script.js and the card falls back to text alone. */
-.toy-art { display: block; width: 100%; aspect-ratio: 2 / 3; margin-bottom: 2px; }
-.toy-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.toy-text { display: flex; flex-direction: column; gap: 5px; }
+.toy-art { display: block; width: 100%; height: clamp(110px, 32vh, 250px); }
+.toy-art img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+.toy-text { display: flex; flex-direction: column; align-items: inherit; gap: 1px; }
 
 /* Standing cards need the width for one row of them. Below that the shelf would
    wrap to two rows and have to scroll, so the drawing moves beside the words and
    all of them stay on screen. */
 @media (max-width: 940px) {
-  .toy-grid { grid-template-columns: 1fr; gap: 10px; }
-  .toy-card { flex-direction: row; align-items: center; gap: 14px; padding: 12px 15px; }
-  .toy-art { flex: 0 0 96px; width: 96px; margin-bottom: 0; }
+  .toy-grid { display: block; padding: 0 6px 6px 0; }
+  .toy-row { margin: 0; flex-direction: column; align-items: stretch; gap: 10px; }
+  .toy-card { flex: 0 0 auto; max-width: none; flex-direction: row; align-items: center; text-align: left; gap: 14px; padding: 8px 4px 8px 2px; }
+  .toy-card + .toy-card { border-top: 2px dotted #cbbf9f; }
+  .toy-text { align-items: flex-start; }
+  .toy-art { flex: 0 0 64px; width: 64px; height: 64px; margin-bottom: 0; }
+  .toy-art img { object-position: center; }
 }
 
 .toy-name { font-family: var(--cs); font-weight: 700; font-size: 19px; color: var(--ink); }
 .toy-blurb { font-family: var(--cs); font-size: 13px; line-height: 1.4; color: #4f5c3a; }
 
 .back-btn { white-space: nowrap; }
-
-/* ── Paint ───────────────────────────────────────────────────────── */
-
-.paint-page { display: flex; flex-direction: column; }
-
-.paint-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 18px;
-  margin: 2px 0 10px;
-  flex-shrink: 0;
-}
-.paint-group { display: flex; align-items: center; gap: 7px; }
-.paint-label {
-  font-family: var(--cs);
-  font-weight: 700;
-  font-size: 11.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: #6b5c48;
-}
-.paint-group input[type="range"] { width: 92px; accent-color: var(--forest); }
-.paint-size-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  border: 1.5px solid var(--ink);
-  background: var(--ink);
-  flex-shrink: 0;
-}
-
-.paint-swatches { display: flex; flex-wrap: wrap; gap: 3px; max-width: 320px; }
-.swatch {
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: 1.5px solid var(--ink);
-  border-radius: 3px;
-  cursor: pointer;
-}
-.swatch.active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink); }
-#paint-custom {
-  width: 30px;
-  height: 24px;
-  padding: 0;
-  border: 1.5px solid var(--ink);
-  border-radius: 3px;
-  background: none;
-  cursor: pointer;
-}
-.paint-actions { margin-left: auto; gap: 6px; }
-
-/* the sheet, taped onto the notebook page */
-.paint-stage {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
-  margin-bottom: 4px;
-  background: #fffdf6;
-  border: 2.5px solid var(--ink);
-  box-shadow: 4px 5px 0 var(--ink);
-  overflow: hidden;
-}
-#paint-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  touch-action: none; /* so dragging draws instead of scrolling the page */
-  cursor: crosshair;
-}
-
-@media (max-width: 760px) {
-  .paint-controls { gap: 4px 12px; margin-bottom: 6px; }
-  .paint-group input[type="range"] { width: 70px; }
-  .paint-swatches { max-width: 200px; }
-  .paint-actions { margin-left: 0; }
-}
 
 /* ── Small screens: tabs move to the top edge ────────────────────── */
 
@@ -1277,11 +1293,12 @@ a { color: var(--forest); }
     align-items: flex-end;
     align-content: flex-end;
     max-height: none;
-    gap: 3px 4px;
-    padding: 0 8px;
+    gap: 3px 2px;
+    padding: 0 6px;
   }
   .tab-btn {
-    padding: 8px clamp(9px, 1.5vw, 16px) 10px;
+    font-size: clamp(9px, 2.95vw, 13.5px);
+    padding: 7px clamp(3px, 1.5vw, 10px) 9px;
     margin: 0 0 -2.5px;
     border: 2.5px solid var(--ink);
     border-bottom: none;
@@ -1295,14 +1312,30 @@ a { color: var(--forest); }
   .index-label-name { font-size: 28px; }
   .index-list button { font-size: 20px; }
 
-  .about-heading { font-size: 40px; margin-top: 0; }
-  .about-bio { font-size: 16px; line-height: 1.6; margin-top: 10px; }
-  .social-row { margin-top: 14px; gap: 8px; }
-  .about-grid { gap: 10px; padding: 0; }
-  .about-photo-wrap { gap: 8px; padding: 8px 10px; }
-  .about-photo { width: 112px; }
-  .truths-options { gap: 6px; }
-  .truth-option { padding: 6px 10px; }
+  /* On a phone the photo moves up beside the heading, where there's spare width,
+     instead of stacking above the truths. The two wrappers dissolve so every
+     piece becomes a cell of one grid. */
+  .about-grid > div, .about-photo-wrap { display: contents; }
+  .about-grid {
+    grid-template-columns: minmax(0, 1fr) 84px;
+    grid-template-areas: "head photo" "bio bio" "social social" "truths truths";
+    gap: 6px 10px;
+    align-items: start;
+    align-content: start;
+    min-height: 0;
+    padding: 0;
+  }
+  .about-heading { grid-area: head; font-size: 40px; margin: 0; align-self: center; }
+  .about-photo { grid-area: photo; width: 84px; justify-self: end; }
+  .about-star-1, .about-star-2 { display: none; }
+  .about-bio { grid-area: bio; font-size: 15px; line-height: 1.5; margin: 0; max-width: none; }
+  .social-row { grid-area: social; margin: 2px 0 0; gap: 6px; }
+  .social-btn { font-size: 12px; padding: 5px 10px; }
+  .truths-game { grid-area: truths; max-width: none; margin-top: 4px; }
+  .truths-prompt { margin-bottom: 6px; }
+  .truths-options { gap: 5px; }
+  .truth-option { padding: 5px 10px; font-size: 12.5px; }
+  .truths-result { margin-top: 6px; min-height: 16px; }
 
   .page-sub { display: none; }
 
@@ -1315,7 +1348,7 @@ a { color: var(--forest); }
   .photo-page-text { flex: 0 1 auto; max-height: 45%; justify-content: flex-start; }
   .photo-page-caption { font-size: 21px; }
   .photo-page-desc { font-size: 14px; margin-top: 8px; }
-  .photo-page-frame img { margin: auto auto 0; }
+  .photo-page-frame img { inset: 0 0 auto 0; margin: 0 auto; }
 
   .colors-workspace.is-active { flex: 0 0 auto; }
   .colors-workspace.is-active { gap: 12px; }
@@ -1343,4 +1376,222 @@ a { color: var(--forest); }
   .jake-entry, .jake-section { break-inside: avoid; }
   .jake-section-title { break-after: avoid; }
   @page { margin: 0.5in; }
+}
+
+/* ── Phone polish ────────────────────────────────────────────────────
+   Touch targets of 36-44px, text you can read, press feedback so a tap visibly
+   lands, and nothing that makes iOS zoom the page. Short phones tighten again
+   in the blocks after this one. */
+@media (max-width: 760px) {
+  * { -webkit-tap-highlight-color: transparent; }
+  button, a, select, label, summary { touch-action: manipulation; }   /* no double-tap-zoom delay */
+
+  /* prev / next at the foot of a page are how you turn pages on a phone (there is no swipe) */
+  .page-foot { padding: 0 0 4px; }
+  .page-foot-btn { min-height: 46px; min-width: 70px; padding: 4px 2px; font-size: 16px; display: inline-flex; align-items: center; }
+  .page-foot-num { font-size: 14px; }
+
+  .tab-btn { padding-top: 9px; padding-bottom: 10px; }
+  .tool-btn { min-height: 40px; padding: 6px 15px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; }
+  .tool-btn.mini { min-height: 36px; padding: 4px 12px; font-size: 13px; }
+  .switch button { min-height: 38px; padding: 6px 18px; font-size: 14px; }
+  select, .chip-select { min-height: 40px; font-size: 16px; padding: 4px 10px; max-width: 100%; }
+  .page-tools { min-width: 0; max-width: 100%; }   /* 16px: smaller makes iOS zoom in on focus */
+  input[type="text"], textarea { font-size: 16px; }
+
+  .index-list li { margin-bottom: 0; }
+  .index-list button { min-height: 56px; align-items: center; }
+  .social-btn { padding: 10px 14px; font-size: 13px; }
+  .truth-option { padding: 10px 12px; font-size: 14px; min-height: 42px; }
+  .truth-option { display: flex; align-items: center; }
+  .resume-contact a { padding: 8px 4px; }
+  .photo-card-caption { font-size: 12.5px; }
+  .sticky-cat { font-size: 11.5px; }
+  .project-tag { font-size: 12px; }
+
+  /* the playground list: bigger drawings and words while there is height for them */
+  .toy-art { flex-basis: clamp(64px, 11vh, 100px); width: clamp(64px, 11vh, 100px); height: clamp(64px, 11vh, 100px); }
+  .toy-name { font-size: 21px; }
+  .toy-blurb { font-size: 14px; }
+  .toy-card { padding-top: 12px; padding-bottom: 12px; }
+
+  /* the colour tool needs its one-line explanation: without it the first screen is two buttons and blank paper */
+  .colors-page .page-sub { display: block; font-size: 13.5px; margin: 0 0 10px; }
+
+  /* photobooth */
+  .chip-row .chip { min-height: 34px; font-size: 13px; padding: 4px 11px; display: inline-flex; align-items: center; }
+  .chip-row .sticker-chip { min-width: 44px; justify-content: center; font-size: 19px; }
+  .booth-group-label { font-size: 11.5px; }
+  .booth-check { min-height: 36px; font-size: 14px; }
+  .booth-check input { width: 22px; height: 22px; }
+  .booth-input { font-size: 16px; min-height: 38px; flex: 1 1 150px; width: auto; }
+  .booth-buttons { gap: 8px; }
+  .booth-buttons .tool-btn { min-height: 46px; font-size: 15px; padding: 8px 18px; }
+  #booth-start, #booth-shoot { background: var(--sage); }          /* the main actions look like the main actions */
+  #booth-start[disabled], #booth-shoot[disabled] { background: var(--cream); }
+  .booth-hint { font-size: 13px; }
+  .booth-placeholder { font-size: 13.5px; }
+  .booth-page .back-btn { font-size: 12.5px; padding: 4px 11px; min-height: 36px; }
+  .booth-pickinfo { font-size: 13px; }
+}
+
+/* the edit tab on a phone: pick a section, see only that section */
+.booth-secbar { display: none; }
+@media (max-width: 760px) {
+  .booth-page[data-pane="edit"] .booth-secbar { display: flex; flex: 1 0 100%; flex-wrap: wrap; gap: 4px; order: -1; margin: 0 0 2px; }
+  .booth-secbar button {
+    font-family: var(--cs); font-weight: 700; font-size: 13px; min-height: 34px; padding: 4px 11px;
+    border: 1.5px solid var(--ink); border-radius: 4px 7px 5px 8px; background: var(--paper); color: var(--ink);
+  }
+  .booth-secbar button.active { background: var(--sage); box-shadow: 2px 2px 0 var(--ink); }
+  .booth-secbar button:active { transform: translate(1px, 1px); }
+  .booth-page[data-pane="edit"] [data-sec]:not(.is-open-sec) { display: none; }
+  .booth-page[data-pane="edit"] .booth-pane[data-pane="edit"] .booth-group-label { display: none; }
+  .booth-page[data-pane="edit"] .booth-pickinfo { display: none; }
+  .booth-page[data-pane="edit"][data-sec="filter"] .booth-pickinfo,
+  .booth-page[data-pane="edit"][data-sec="photo"] .booth-pickinfo { display: block; }
+  .booth-page[data-pane="edit"] .booth-filtergroup .booth-group-label { display: none; }
+}
+
+/* the very shortest phones: the shoot tab gets the one-section-at-a-time treatment too */
+@media (max-height: 480px), (max-width: 760px) and (max-height: 600px) {
+  .booth-page[data-pane="shoot"] .booth-secbar { display: flex; flex: 1 0 100%; flex-wrap: wrap; gap: 4px; order: -1; margin: 0 0 2px; }
+  .booth-page[data-pane="shoot"] [data-sec]:not(.is-open-sec) { display: none; }
+  .booth-page[data-pane="shoot"] .booth-group-label { display: none; }
+}
+
+/* Press feedback everywhere: the control sinks into the page while it's held */
+.tool-btn:active, .colors-action-btn:active, .colors-small-btn:active, .social-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
+.chip-row .chip:active, .switch button:active, .truth-option:active:not(:disabled) { transform: translate(1px, 1px); }
+.page-foot-btn:active { opacity: 0.6; }
+
+/* Very small / short phones: shave the about page so it still fits unscrolled */
+@media (max-width: 760px) and (max-height: 680px) {
+  .about-heading { font-size: 34px; }
+  .about-photo { width: 66px; }
+  .about-grid { grid-template-columns: minmax(0, 1fr) 66px; gap: 4px 8px; }
+  .about-bio { font-size: 14px; line-height: 1.4; }
+  .social-btn { padding: 4px 8px; font-size: 11.5px; }
+  .truths-prompt { font-size: 12px; margin-bottom: 4px; }
+  .truths-options { gap: 4px; }
+  .truth-option { padding: 4px 8px; font-size: 12px; }
+}
+
+/* Short phones: tighten the index so the whole list fits without scrolling */
+@media (max-width: 760px) and (max-height: 620px) {
+  .index-label { margin: 0 0 12px 4px; padding: 8px 18px 10px; }
+  .index-label-name { font-size: 24px; }
+  .index-title { font-size: 40px; margin: 0 0 8px; }
+  .index-list li { margin-bottom: 8px; }
+  .index-list button { font-size: 18px; }
+}
+
+/* Short phones: keep the booth and the about page on screen by trimming the comfort a little */
+@media (max-width: 760px) and (max-height: 700px) {
+  .chip-row .chip { min-height: 28px; font-size: 12px; padding: 2px 9px; }
+  .chip-row .sticker-chip { min-width: 40px; font-size: 17px; }
+  .booth-check { min-height: 30px; }
+  .booth-buttons .tool-btn { min-height: 40px; }
+  .tool-btn.mini { min-height: 32px; }
+  .switch button { min-height: 34px; }
+  .page-foot-btn { min-height: 40px; }
+  .truth-option { min-height: 0; }
+  .toy-art { flex-basis: 60px; width: 60px; height: 60px; }
+  .index-list button { min-height: 44px; }
+}
+
+/* The very shortest phones (320x568 and friends): everything a notch tighter, so the strip keeps a usable height */
+@media (max-height: 480px), (max-width: 760px) and (max-height: 600px) {
+  .booth-page .page-title { font-size: 19px; }
+  .booth-page .page-head { flex-wrap: nowrap; gap: 6px; margin-bottom: 2px; }
+  .booth-page .back-btn { font-size: 11px; padding: 2px 6px; min-height: 32px; flex-shrink: 1; }
+  .booth-secbar button { min-height: 30px; font-size: 12.5px; padding: 3px 9px; }
+  .booth-page .chip-row .chip { min-height: 26px; padding: 1px 8px; font-size: 12px; }
+  .booth-page .switch button { min-height: 32px; }
+  .booth-buttons { gap: 6px; }
+  .booth-buttons .tool-btn { min-height: 38px; padding: 6px 12px; font-size: 14px; }
+  .booth-page[data-pane="edit"] .booth-pickinfo { display: none !important; }   /* the section names say enough; the room is for the strip */
+}
+
+/* ── A phone held sideways ───────────────────────────────────────────
+   Only ~370px of height, so the notebook goes two-column: the index lists
+   beside its title, and the booth keeps its controls on the left with the
+   camera and strip on the right. */
+@media (max-height: 480px) {
+  :root { --rings-w: 40px; }
+  .desk { padding: 4px 8px 6px; }
+  .page { padding: 8px 18px 0 calc(var(--rings-w) + 14px); }
+  .page-head { margin-bottom: 4px; }
+  .page-title { font-size: 26px; }
+  .page-sub { display: none; }
+  .page-foot { padding: 0 0 2px; }
+  .page-foot-btn { min-height: 34px; font-size: 14px; }
+  .binder-tabs { padding-top: 14px; gap: 3px 3px; }
+  .tab-btn { padding: 6px 12px 7px 10px; font-size: 12.5px; }
+
+  /* index: the label and title on the left, the list on the right */
+  .index-page { display: grid; grid-template-columns: minmax(170px, 0.85fr) 1.3fr; grid-template-areas: "label list" "title list"; gap: 0 28px; align-items: center; padding: 0; }
+  .index-label { grid-area: label; margin: 0 0 4px 4px; padding: 8px 16px 10px; align-self: end; }
+  .index-label-name { font-size: 24px; }
+  .index-title { grid-area: title; font-size: 44px; margin: 0; align-self: start; }
+  .index-list { grid-area: list; max-width: none; }
+  .index-list button { min-height: 42px; font-size: 20px; }
+
+  /* about: heading, photo, words and links on the left; the truths on the right */
+  .about-grid > div, .about-photo-wrap { display: contents; }
+  .about-grid {
+    grid-template-columns: minmax(0, 1fr) 76px minmax(210px, 0.95fr);
+    grid-template-areas: "head photo truths" "bio bio truths" "social social truths";
+    gap: 6px 14px; align-items: start; align-content: start; padding: 0; min-height: 0;
+  }
+  .about-heading { grid-area: head; font-size: 38px; margin: 0; align-self: center; }
+  .about-photo { grid-area: photo; width: 72px; justify-self: end; }
+  .about-star-1, .about-star-2 { display: none; }
+  .about-bio { grid-area: bio; font-size: 14px; line-height: 1.45; margin: 0; max-width: none; }
+  .social-row { grid-area: social; margin: 2px 0 0; gap: 6px; }
+  .social-btn { padding: 5px 10px; font-size: 12px; }
+  .truths-game { grid-area: truths; max-width: none; }
+  .truths-prompt { margin-bottom: 4px; font-size: 12.5px; }
+  .truths-options { gap: 4px; }
+  .truth-option { padding: 4px 10px; font-size: 12.5px; min-height: 0; }
+  .truths-result { margin-top: 4px; min-height: 16px; }
+
+  /* the booth: controls left, camera + strip + buttons right */
+  .booth-page { display: grid; grid-template-columns: minmax(180px, 36%) minmax(0, 1fr); grid-template-rows: auto auto auto auto minmax(0, 1fr);
+    grid-template-areas: "head head" "top booth" "pane booth" "lock booth" ". booth"; column-gap: 14px; align-content: start; }
+  .booth-page > .page-head { grid-area: head; }
+  .booth-page > .booth-topbar { grid-area: top; }
+  .booth-page > .booth-pane { grid-area: pane; }
+  .booth-page > .booth-lockhint { grid-area: lock; }
+  .booth-page > .booth { grid-area: booth; min-height: 0; }
+  .booth-filtergroup { flex-basis: 100%; }
+  .booth-filtergroup .booth-group-label { display: none; }
+  .booth-topbar .switch { order: -2; }
+  .booth-page[data-pane="edit"] .booth-secbar { display: flex; flex: 1 0 100%; flex-wrap: wrap; gap: 4px; order: -1; margin: 0 0 2px; }
+  .booth-page[data-pane="edit"] [data-sec]:not(.is-open-sec) { display: none; }
+  .booth-page[data-pane="edit"] .booth-pane[data-pane="edit"] .booth-group-label { display: none; }
+  .booth-page[data-pane="edit"] .booth-pickinfo { display: none !important; }
+  .booth-secbar button { font-family: var(--cs); font-weight: 700; font-size: 12.5px; min-height: 30px; padding: 3px 9px;
+    border: 1.5px solid var(--ink); border-radius: 4px 7px 5px 8px; background: var(--paper); color: var(--ink); }
+  .booth-secbar button.active { background: var(--sage); box-shadow: 2px 2px 0 var(--ink); }
+  /* camera | strip, buttons underneath: the phone arrangement, in the right-hand column */
+  .booth { display: grid; grid-template-columns: minmax(0, 1fr) 31%; grid-template-rows: minmax(0, 1fr) auto auto; grid-template-areas: "stage strip" "btns btns" "hint hint"; gap: 4px 8px; padding-bottom: 0; }
+  .booth.is-wide { grid-template-columns: minmax(0, 1fr) 40%; }
+  .booth-side { display: contents; }
+  .booth-stage { grid-area: stage; height: auto; flex: none; }
+  .booth-strip-wrap { grid-area: strip; max-height: none; min-height: 0; }
+  .booth-buttons { grid-area: btns; }
+  .booth-hint { grid-area: hint; font-size: 12px; min-height: 0; }
+  .booth-page[data-pane="edit"] .booth,
+  .booth-page[data-pane="edit"] .booth.is-wide { grid-template-columns: minmax(0, 1fr); grid-template-areas: "strip" "btns" "hint"; }
+  .booth-page[data-pane="edit"] .booth-stage { display: none; }
+  .booth-frame { width: min(100cqw - 14px, (100cqh - 14px) * 4 / 3); height: min(100cqh - 14px, (100cqw - 14px) * 3 / 4); box-shadow: 0 0 0 5px var(--booth-paper, var(--paper)), 0 0 0 7px var(--ink), 3px 4px 0 var(--ink); }
+}
+
+@media (max-height: 480px) {
+  .booth-crop-card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 6px; align-items: center; padding: 8px 12px 10px; }
+  .booth-crop-title { grid-column: 1 / -1; font-size: 15px; }
+  #bgc-canvas { grid-column: 1; grid-row: 2 / span 4; }
+  .booth-crop-card > :not(.booth-crop-title):not(canvas) { grid-column: 2; }
+  .booth-crop-hint { text-align: left; }
 }
